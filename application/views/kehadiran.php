@@ -169,27 +169,34 @@
         padding: 20px;
     }
 
+    .card.h-100.w-100 {
+        margin-top: 10px; /* atau 5px */
+    }
+
 </style>
 <body>
-<div class="container-fluid py-5">
-<div class="row align-items-start mb-3 ms-3 me-3">
+<div class="container-fluid py-2">
+<div class="row align-items-center mb-2">
   <!-- Judul -->
-  <div class="col-12">
+  <div class="col-md-6 col-12">
     <h3 class="mb-2 h4 fw-bold">Data Kehadiran</h3>
   </div>
 
   <!-- Tombol-tombol -->
-  <div class="col-12 d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-    <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
-      <i class="fas fa-plus"></i> Tambah
-    </a>
-    <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
-      <i class="fas fa-file-pdf"></i> Export PDF
-    </a>
-    <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
-      <i class="fas fa-file-excel"></i> Export Excel
-    </a>
+  <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
+    <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
+      <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
+        <i class="fas fa-plus"></i> Tambah
+      </a>
+      <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
+        <i class="fas fa-file-pdf"></i> Export PDF
+      </a>
+      <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
+        <i class="fas fa-file-excel"></i> Export Excel
+      </a>
+    </div>
   </div>
+</div>
 </div>
 
 

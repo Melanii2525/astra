@@ -92,7 +92,7 @@
 
 <body>
     <div class="container mt-4">
-        <h4 class="text-center mb-4">Form Input Data Siswa</h4>
+        <h4 class="text-center mb-3 h4 fw-bold">Form Input Data Siswa</h4>
 
         <div class="form-container mt-3 mx-auto" style="max-width: 100%;">
                 <form id="formSiswa">

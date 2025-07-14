@@ -5,9 +5,22 @@
 .bg-dashboard {
   background: linear-gradient(135deg, #2C6A74, #5DA9B0) !important;
 }
+
+.sidenav {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 1200px) {
+  .main-content {
+    margin-left: 270px;
+    padding-right: 0.5rem;
+  }
+}
 </style>
 
-<body class="g-sidenav-show  bg-gray-100 g-sidenav-hidden">
+<body class="g-sidenav-show bg-gray-100 g-sidenav-pinned">
+
   <?php
   function active_menu($uri) {
     return uri_string() == $uri ? 'active bg-dashboard text-white' : 'text-dark';
@@ -19,7 +32,9 @@
 
   ?>
   
-  <aside id="sidenav-main" class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" >
+  <aside id="sidebarToggle"
+  class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg bg-white my-2 offcanvas-xl offcanvas-start d-xl-block"
+  tabindex="-1">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand px-4 py-3 m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
@@ -94,7 +109,7 @@
         </li>
         <li class="nav-item">
         <a class="nav-link <?php echo active_menu('revisi'); ?>" href="<?php echo base_url('revisi'); ?>">
-          <i class="material-symbols-rounded opacity-5">how_to_reg</i>
+          <i class="material-symbols-rounded opacity-5">autorenew</i>
           <span class="nav-link-text ms-1">Revisi Poin</span>
         </a>
         </li>
@@ -124,13 +139,22 @@
     </div>
   </aside>
 
+    <!-- Tombol toggle sidebar di layar kecil -->
+  <div class="d-xl-none bg-white px-3 py-2 shadow-sm sticky-top zindex-sticky">
+    <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarToggle" aria-controls="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <!-- Navbar -->
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 shadow-none border-radius-xl">
       <div class="container-fluid py-1 px-3">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+        <li class="breadcrumb-item text-sm opacity-5 text-dark">
+          <span>Pages</span>
+        </li>
           <li class="breadcrumb-item text-sm text-dark active" aria-current="page"><?php echo get_page_title(); ?></li>
         </ol>
       </nav>
@@ -144,16 +168,7 @@
           </form>
           </div>
           <ul class="navbar-nav d-flex align-items-center  justify-content-end">
-            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                <div class="sidenav-toggler-inner">
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                  <i class="sidenav-toggler-line"></i>
-                </div>
-              </a>
-            </li>
-            
+
             <li class="nav-item d-flex align-items-center">
               <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
                 <i class="material-symbols-rounded">account_circle</i>
@@ -164,22 +179,6 @@
       </div>
     </nav>    
 
-    <script>
-  document.getElementById("iconNavbarSidenav").addEventListener("click", function () {
-    const sidenav = document.getElementById("sidenav-main");
-    const body = document.body;
-
-    if (body.classList.contains("g-sidenav-pinned")) {
-      body.classList.remove("g-sidenav-pinned");
-      body.classList.add("g-sidenav-hidden");
-      sidenav.classList.remove("bg-white");
-    } else {
-      body.classList.add("g-sidenav-pinned");
-      body.classList.remove("g-sidenav-hidden");
-      sidenav.classList.add("bg-white");
-    }
-  });
-</script>
 
 <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 
