@@ -62,7 +62,7 @@ footer.footer {
         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
           <span class="text-sm text-muted">
             © <script>document.write(new Date().getFullYear())</script>, made with ❤️ by 
-            <a href="https://www.creative-tim.com" target="_blank" class="text-decoration-none fw-bold">Creative Tim</a>
+            <a href="https://www.creative-tim.com" target="_blank" class="text-decoration-none fw-bold">Meyna</a>
           </span>
         </div>
         <div class="col-md-6">

@@ -44,7 +44,7 @@ class Pelanggaran extends CI_Controller
     public function tambahdata()
     {
         $data = [
-            'waktu' => $this->input->post('waktu'),
+            'tanggal' => $this->input->post('tanggal'),
             'nama' => strtoupper(trim($this->input->post('nama'))),
             'nisn' => $this->input->post('nisn'),
             'kelas' => strtoupper(trim($this->input->post('kelas'))),
@@ -73,7 +73,7 @@ class Pelanggaran extends CI_Controller
     {
         $id = $this->input->post('id');
         $data = [
-            'waktu' => $this->input->post('waktu'),
+            'tanggal' => $this->input->post('tanggal'),
             'nama' => strtoupper(trim($this->input->post('nama'))),
             'kelas' => strtoupper(trim($this->input->post('kelas'))),
             'kode' => strtoupper(trim($this->input->post('kode'))),
@@ -120,6 +120,7 @@ class Pelanggaran extends CI_Controller
         $this->db->select('k.*, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
         $this->db->from('tb_pelanggaran k');
         $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['pelanggaran'] = $this->db->get()->result();
 
         $this->load->view('laporan_pelanggaran/laporan_pdf', $data);
@@ -137,9 +138,10 @@ class Pelanggaran extends CI_Controller
     public function excel()
     {
         $this->load->model('m_pelanggaran');
-        $this->db->select('k.nisn, k.waktu, k.kode, k.keterangan, k.poin, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
+        $this->db->select('k.nisn, k.tanggal, k.kode, k.keterangan, k.poin, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
         $this->db->from('tb_pelanggaran k');
         $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['pelanggaran'] = $this->db->get()->result();
 
         $spreadsheet = new Spreadsheet();
@@ -161,7 +163,7 @@ class Pelanggaran extends CI_Controller
         foreach ($data['pelanggaran'] as $k) {
             $sheet->setCellValue('A'.$row, $no++);
             $sheet->setCellValue('B'.$row, $k->nisn);
-            $sheet->setCellValue('C'.$row, $k->waktu);
+            $sheet->setCellValue('C'.$row, $k->tanggal);
             $sheet->setCellValue('D'.$row, $k->nama);
             $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
             $sheet->setCellValue('F'.$row, $k->kelas);

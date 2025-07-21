@@ -45,13 +45,14 @@ class Kehadiran extends CI_Controller
     public function tambahdata()
     {
         $nisn = $this->input->post('nisn');
-        $waktu = $this->input->post('waktu');
+        $tanggal = $this->input->post('tanggal');
         $nama = $this->input->post('nama');
         $kelas = $this->input->post('kelas');
         $wali_kelas = $this->input->post('wali_kelas');
         $keterangan = $this->input->post('keterangan'); 
+        $poin = $this->input->post('poin'); 
 
-        if (empty($waktu) || empty($nama) || empty($nisn) || empty($kelas) || empty($keterangan) || empty($wali_kelas)) {
+        if (empty($tanggal) || empty($nama) || empty($nisn) || empty($kelas) || empty($keterangan) || empty($wali_kelas)) {
             $result = [
                 'status' => false,
                 'pesan' => 'Semua kolom wajib diisi!'
@@ -59,11 +60,12 @@ class Kehadiran extends CI_Controller
         } else {
             $data = [
                 'nisn' => $nisn,
-                'waktu' => $waktu,
+                'tanggal' => $tanggal,
                 'nama' => $nama,
                 'kelas' => $kelas,
                 'wali_kelas' => $wali_kelas,
-                'keterangan' => $keterangan
+                'keterangan' => $keterangan,
+                'poin' => $poin
             ];
             $this->m->tambahdata($data, 'tb_kehadiran');
 
@@ -89,10 +91,11 @@ class Kehadiran extends CI_Controller
         $data = [
             'nisn' => $this->input->post('nisn'),
             'nama' => $this->input->post('nama'),
-            'waktu' => $this->input->post('waktu'),
+            'tanggal' => $this->input->post('tanggal'),
             'kelas' => $this->input->post('kelas'),
             'wali_kelas' => $this->input->post('wali_kelas'),
             'keterangan' => $this->input->post('keterangan'),
+            'poin' => $this->input->post('poin')
         ];
 
         $id = $this->input->post('id');
@@ -135,6 +138,7 @@ class Kehadiran extends CI_Controller
         $this->db->select('k.*, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
         $this->db->from('tb_kehadiran k');
         $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['kehadiran'] = $this->db->get()->result();
 
         $this->load->view('laporan_kehadiran/laporan_pdf', $data);
@@ -155,11 +159,13 @@ class Kehadiran extends CI_Controller
         $this->db->select('k.*, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
         $this->db->from('tb_kehadiran k');
         $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['kehadiran'] = $this->db->get()->result();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
+        // header kolom
         $sheet->setCellValue('A1', 'NO');
         $sheet->setCellValue('B1', 'NISN');
         $sheet->setCellValue('C1', 'TANGGAL');
@@ -168,18 +174,20 @@ class Kehadiran extends CI_Controller
         $sheet->setCellValue('F1', 'KELAS');
         $sheet->setCellValue('G1', 'WALI KELAS');
         $sheet->setCellValue('H1', 'KETERANGAN');
+        $sheet->setCellValue('I1', 'POIN');
 
         $row = 2;
         $no = 1;
         foreach ($data['kehadiran'] as $k) {
             $sheet->setCellValue('A'.$row, $no++);
             $sheet->setCellValue('B'.$row, $k->nisn);
-            $sheet->setCellValue('C'.$row, $k->waktu);
+            $sheet->setCellValue('C'.$row, $k->tanggal);
             $sheet->setCellValue('D'.$row, $k->nama);
             $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
             $sheet->setCellValue('F'.$row, $k->kelas);
             $sheet->setCellValue('G'.$row, $k->wali_kelas);
             $sheet->setCellValue('H'.$row, $k->keterangan);
+            $sheet->setCellValue('I'.$row, $k->poin);
             $row++;
         }
 

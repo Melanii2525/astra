@@ -39,9 +39,23 @@
             background-color: #2c7075 !important;
         }
 
-        .custom-table {
-            border-radius: 20px;
-            overflow: hidden;
+        .custom-table th,
+        .custom-table td {
+            font-size: 0.85rem;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .form-container,
+            .table-wrapper {
+                padding: 10px;
+            }
         }
 
         .custom-btn {
@@ -219,6 +233,7 @@
             </div>
         </div>
 
+        <div class="table-responsive">
         <table class="table custom-table mb-0">
             <thead class="custom-thead text-white">
                 <tr class="group">
@@ -234,6 +249,7 @@
             </thead>
             <tbody id="tabelSiswa"></tbody>
         </table>
+        </div>
     </div>
 
     <script>

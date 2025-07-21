@@ -261,8 +261,8 @@
                         <form id="pelanggaran-form">
                             <input type="hidden" name="id">
                             <div class="form-group">
-                                <label class="group">Waktu:</label>
-                                <input type="date" name="waktu" class="form-control">
+                                <label class="group">Tanggal:</label>
+                                <input type="date" name="tanggal" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label class="group">Nama:</label>
@@ -328,7 +328,7 @@
                         baris += '<tr>' +
                             '<td>' + (i + 1) + '</td>' +
                             '<td>' + hasil[i].nisn + '</td>' +
-                            '<td>' + hasil[i].waktu + '</td>' +
+                            '<td>' + hasil[i].tanggal + '</td>' +
                             '<td>' + hasil[i].nama + '</td>' +
                             '<td>' + hasil[i].kelas + '</td>' +
                             '<td>' + hasil[i].kode + '</td>' +
@@ -363,7 +363,7 @@
 
         function tambahdata() {
             var nisn = $("[name='nisn']").val();
-            var waktu = $("[name='waktu']").val();
+            var tanggal = $("[name='tanggal']").val();
             var nama = $("[name='nama']").val();
             var kelas = $("[name='kelas']").val();
             var kode = $("[name='kode']").val();
@@ -372,7 +372,7 @@
                 type: 'POST',
                 url: '<?php echo base_url("index.php/pelanggaran/tambahdata") ?>',
                 data: {
-                    waktu: waktu,
+                    tanggal: tanggal,
                     nama: nama,
                     nisn: nisn,
                     kelas: kelas,
@@ -407,7 +407,7 @@
                 success: function(hasil) {
                     $('[name="id"]').val(hasil[0].id);
                     $('[name="nisn"]').val(hasil[0].nisn);
-                    $('[name="waktu"]').val(hasil[0].waktu);
+                    $('[name="tanggal"]').val(hasil[0].tanggal);
                     $('[name="nama"]').val(hasil[0].nama);
                     $('[name="kelas"]').val(hasil[0].kelas);
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
@@ -452,7 +452,7 @@
                     dataType: 'json',
                     success: function(hasil) {
                         $('[name="nisn"]').val(hasil[0].nisn);
-                        $('[name="waktu"]').val(hasil[0].waktu);
+                        $('[name="tanggal"]').val(hasil[0].tanggal);
                         $('[name="id"]').val(hasil[0].id);
                         $('[name="nama"]').val(hasil[0].nama);
                         $('[name="kelas"]').val(hasil[0].kelas);
@@ -471,11 +471,11 @@
             },
             "A-2": {
                 jenis: "Membuat kegaduhan di kelas atau di sekolah",
-                poin: 10
+                poin: 200
             },
             "A-3": {
                 jenis: "Mencoret-coret atau mengotori dinding, pintu, meja, kursi, dan pagar sekolah",
-                poin: 10
+                poin: 75
             },
             "A-4": {
                 jenis: "Membawa atau bermain kartu remi dan domino atau sejenisnya di sekolah",

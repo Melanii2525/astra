@@ -1,181 +1,165 @@
 <?php
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * @property m_pelanggaran $m
- * @property CI_Input $input
- * @property m_pelanggaran $m_pelanggaran
- * @property m_siswa $m_siswa
- * @property CI_Upload $upload
- * @property CI_Output $output
- * @property Dompdf_gen $dompdf_gen
  * @property CI_DB_query_builder $db
+ * @property CI_Input $input
+ * @property CI_Session $session
+ * @property M_revisi $M_revisi
  */
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+class Revisi extends CI_Controller {
 
-class Revisi extends CI_Controller
-{
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
-        $this->load->model('m_pelanggaran', 'm');
-        $this->load->helper(['form', 'url']);
+        $this->load->database();
+        $this->load->library('session'); 
+        $this->load->model('M_revisi');
     }
 
-    public function index(){
-        $this->load->model('m_siswa'); 
-        $data['title'] = "Data Pelanggaran";
-        $data['siswa'] = $this->m_siswa->ambildata('tb_siswa')->result(); 
-    
-        $this->load->view('templates/header', $data);
+    public function index()
+    {
+        $pelanggaran = $this->M_revisi->get_pelanggaran();
+        $kehadiran = $this->M_revisi->get_kehadiran();
+
+        $siswa = [];
+
+        // Proses pelanggaran
+        foreach ($pelanggaran as $p) {
+            $nisn = $p['nisn'];
+            if (!isset($siswa[$nisn])) {
+                $siswa[$nisn] = [
+                    'nisn' => $p['nisn'],
+                    'nama' => $p['nama'],
+                    'kelas' => $p['kelas'],
+                    'wali_kelas' => $p['wali_kelas'],
+                    'poin' => 0,
+                    'keterangan' => [],
+                    'tanggal' => [],
+                    'jenis_data' => [],
+                ];
+            }
+
+            $siswa[$nisn]['poin'] += (int)$p['poin'];
+            $siswa[$nisn]['keterangan'][] = $p['keterangan'];
+            $siswa[$nisn]['tanggal'][] = $p['tanggal'];
+            $siswa[$nisn]['jenis_data'][] = 'pelanggaran';
+        }
+
+        // Proses kehadiran
+        foreach ($kehadiran as $k) {
+            $nisn = $k['nisn'];
+            if (!isset($siswa[$nisn])) {
+                $siswa[$nisn] = [
+                    'nisn' => $k['nisn'],
+                    'nama' => $k['nama'],
+                    'kelas' => $k['kelas'],
+                    'wali_kelas' => $k['wali_kelas'],
+                    'poin' => 0,
+                    'keterangan' => [],
+                    'tanggal' => [],
+                    'jenis_data' => [],
+                ];
+            }
+
+            $siswa[$nisn]['poin'] += 1;
+            $siswa[$nisn]['keterangan'][] = $k['keterangan'];
+            $siswa[$nisn]['tanggal'][] = $k['tanggal'];
+            $siswa[$nisn]['jenis_data'][] = 'kehadiran';
+        }
+
+        // Ambil siswa yang memiliki poin >= 10
+        $data['revisi'] = [];
+        foreach ($siswa as $item) {
+            if ($item['poin'] >= 10) {
+                $data['revisi'][] = [
+                    'nisn' => $item['nisn'],
+                    'nama' => $item['nama'],
+                    'kelas' => $item['kelas'],
+                    'wali_kelas' => $item['wali_kelas'],
+                    'tanggal' => end($item['tanggal']),
+                    'keterangan' => implode('; ', $item['keterangan']),
+                    'jenis_data' => implode(', ', array_unique($item['jenis_data'])),
+                    'poin' => $item['poin'],
+                ];
+            }
+        }
+
+        // --- ambil keterangan yg pernah di-edit user ---
+        $nisns = array_column($data['revisi'], 'nisn');
+        $ketMap = $this->M_revisi->get_keterangan_revisi_batch($nisns);
+
+        // timpa / kosongkan keterangan
+        foreach ($data['revisi'] as &$row) {
+            if (isset($ketMap[$row['nisn']])) {
+                if (isset($ketMap[$row['nisn']]['keterangan'])) {
+                    $row['keterangan'] = $ketMap[$row['nisn']]['keterangan'];
+                }                
+                if (isset($ketMap[$row['nisn']]['poin'])) {
+                    $row['poin'] = $ketMap[$row['nisn']]['poin'];
+                }                
+            }
+        }              
+        unset($row);   // break reference
+
+        $this->load->view('templates/header');
         $this->load->view('templates/sidebar');
         $this->load->view('revisi', $data);
         $this->load->view('templates/footer');
-    }    
-
-    public function ambildata()
-    {
-        $data = $this->m->ambildata('tb_pelanggaran')->result();
-        echo json_encode($data);
     }
 
-    public function tambahdata()
+    public function simpan()
     {
+        $revisi = $this->input->post('revisi');
+
+        if ($revisi) {
+            foreach ($revisi as $r) {
+                $this->M_revisi->simpan_revisi([
+                    'nisn'       => $r['nisn'],
+                    'nama'       => $r['nama'],
+                    'kelas'      => $r['kelas'],
+                    'wali_kelas' => $r['wali_kelas'],
+                    'tanggal'    => $r['tanggal'],
+                    'jenis' => $r['jenis_data'],
+                    'keterangan' => $r['keterangan'],
+                    'poin'       => $r['poin'],
+                ]);
+            }
+            $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke tb_revisi.');
+        }
+
+        redirect('revisi');
+    }
+
+    public function update()
+    {
+        $nisn       = $this->input->post('nisn');
+        $keterangan = $this->input->post('keterangan');
+        $poin       = $this->input->post('poin');
+
+        $cek = $this->db->get_where('tb_revisi', ['nisn' => $nisn])->row();
+
         $data = [
-            'waktu' => $this->input->post('waktu'),
-            'nama' => strtoupper(trim($this->input->post('nama'))),
-            'nisn' => $this->input->post('nisn'),
-            'kelas' => strtoupper(trim($this->input->post('kelas'))),
+            'keterangan' => $keterangan,
+            'poin'       => $poin,
+            'nama'       => $this->input->post('nama'),
+            'kelas'      => $this->input->post('kelas'),
             'wali_kelas' => $this->input->post('wali_kelas'),
-            'kode' => strtoupper(trim($this->input->post('kode'))),
-            'keterangan' => $this->input->post('keterangan'), 
-            'poin' => $this->input->post('poin'),             
+            'tanggal'    => date('Y-m-d'),
+            'jenis'      => 'manual'
         ];
 
-        $sukses = $this->m->tambahdata($data, 'tb_pelanggaran');
-
-        echo json_encode([
-            'pesan' => $sukses ? '' : 'Gagal menyimpan data'
-        ]);
-    }
-
-    public function ambilId()
-    {
-        $id = $this->input->post('id');
-        $where = ['id' => $id];
-        $data = $this->m->ambilId('tb_pelanggaran', $where)->result();
-        echo json_encode($data);
-    }
-
-    public function ubahdata()
-    {
-        $id = $this->input->post('id');
-        $data = [
-            'waktu' => $this->input->post('waktu'),
-            'nama' => strtoupper(trim($this->input->post('nama'))),
-            'kelas' => strtoupper(trim($this->input->post('kelas'))),
-            'kode' => strtoupper(trim($this->input->post('kode'))),
-            'keterangan' => $this->input->post('keterangan'),
-            'poin' => $this->input->post('poin'),
-        ];
-        $where = ['id' => $id];
-        $sukses = $this->m->ubahdata('tb_pelanggaran', $data, $where);
-
-        echo json_encode([
-            'pesan' => $sukses ? '' : 'Gagal mengubah data'
-        ]);
-    }
-
-    public function detail($id)
-    {
-        $this->db->select('p.*, s.jk AS jenis_kelamin');
-        $this->db->from('tb_pelanggaran p');
-        $this->db->join('tb_siswa s', 'p.nisn = s.nisn', 'left');
-        $this->db->where('p.id', $id);
-        $row = $this->db->get()->row();
-
-        if (!$row) {
-            show_404();
+        if ($cek) {
+            $this->db->where('nisn', $nisn)->update('tb_revisi', $data);
+            $msg = 'Data berhasil diperbarui.';
+        } else {
+            $this->db->insert('tb_revisi', $data);
+            $msg = 'Data baru berhasil disimpan.';
         }
 
-        $data['title'] = 'Detail Pelanggaran';
-        $data['data'] = $row;
+        $this->session->set_flashdata('success', $msg);
+        redirect('revisi');
+    }  
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('detail_pelanggaran', $data);
-        $this->load->view('templates/footer');
-    }
-
-    // public function print(){
-    //     $data['kehadiran'] = $this->m_kehadiran->tampil_data("tb_kehadiran")->result();
-    //     $this->load->view('print_kehadiran', $data);
-    // }
-
-    public function export_pdf()
-    {
-        $this->load->library('dompdf_gen');
-        $this->db->select('k.*, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
-        $this->db->from('tb_pelanggaran k');
-        $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
-        $data['pelanggaran'] = $this->db->get()->result();
-
-        $this->load->view('laporan_pelanggaran/laporan_pdf', $data);
-
-        $paper_size = 'A4';
-        $orientation = 'landscape';
-        $html = $this->output->get_output();
-
-        $this->dompdf_gen->dompdf->setPaper($paper_size, $orientation);
-        $this->dompdf_gen->dompdf->loadHtml($html);
-        $this->dompdf_gen->dompdf->render();
-        $this->dompdf_gen->dompdf->stream("laporan_pelanggaran.pdf", array("Attachment" => 0));
-    }
-
-    public function excel()
-    {
-        $this->load->model('m_pelanggaran');
-        $this->db->select('k.nisn, k.waktu, k.kode, k.keterangan, k.poin, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
-        $this->db->from('tb_pelanggaran k');
-        $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
-        $data['pelanggaran'] = $this->db->get()->result();
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->setCellValue('A1', 'NO');
-        $sheet->setCellValue('B1', 'NISN');
-        $sheet->setCellValue('C1', 'TANGGAL');
-        $sheet->setCellValue('D1', 'NAMA');
-        $sheet->setCellValue('E1', 'JENIS KELAMIN');
-        $sheet->setCellValue('F1', 'KELAS');
-        $sheet->setCellValue('G1', 'WALI KELAS');
-        $sheet->setCellValue('H1', 'KODE');
-        $sheet->setCellValue('I1', 'KETERANGAN');
-        $sheet->setCellValue('J1', 'POIN');
-
-        $row = 2;
-        $no = 1;
-        foreach ($data['pelanggaran'] as $k) {
-            $sheet->setCellValue('A'.$row, $no++);
-            $sheet->setCellValue('B'.$row, $k->nisn);
-            $sheet->setCellValue('C'.$row, $k->waktu);
-            $sheet->setCellValue('D'.$row, $k->nama);
-            $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
-            $sheet->setCellValue('F'.$row, $k->kelas);
-            $sheet->setCellValue('G'.$row, $k->wali_kelas);
-            $sheet->setCellValue('H'.$row, $k->kode);
-            $sheet->setCellValue('I' . $row, $k->keterangan);
-            $sheet->setCellValue('J' . $row, $k->poin);
-            $row++;
-        }
-
-        $writer = new Xlsx($spreadsheet);
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Data_Pelanggaran.xlsx"');
-        header('Cache-Control: max-age=0');
-        $writer->save('php://output');
-    }
 }

@@ -214,6 +214,7 @@
                   <th class="text-center" style="width: 25%;">NAMA SISWA</th>
                   <th class="text-center" style="width: 15%;">KELAS</th>
                   <th class="text-center" style="width: 15%;">KETERANGAN</th>
+                  <th class="text-center" style="width: 10%;">POIN</th> 
                   <th class="text-center" style="width: 20%;">AKSI</th>
                 </tr>
               </thead>
@@ -229,10 +230,12 @@
                         <p id="pesan" class="text-danger text-center"></p>
                         <form id="kehadiran-form">
                             <input type="hidden" name="id">
+
                             <div class="form-group">
-                                <label class="group">Waktu:</label>
-                                <input type="date" name="waktu" class="form-control">
+                                <label class="group">Tanggal:</label>
+                                <input type="date" name="tanggal" class="form-control">
                             </div>
+
                             <div class="form-group">
                                 <label class="group">Nama:</label>
                                 <input type="text" name="nama" id="nama_input" class="form-control" list="list-nama" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
@@ -242,6 +245,7 @@
                                     <?php endforeach; ?>
                                 </datalist>
                             </div>
+
                             <div class="form-group">
                                 <label class="group">NISN:</label>
                                 <input type="text" class="form-control" name="nisn" id="nisn" placeholder="NISN" readonly>
@@ -256,9 +260,17 @@
                                 <label class="group">Wali Kelas:</label>
                                 <input type="text" class="form-control" name="wali_kelas" id="wali_kelas" placeholder="Wali Kelas" readonly>
                             </div>
+
+                            <div class="form-group">
                                 <label class="group">Keterangan:</label>
-                                <input type="text" name="keterangan" class="form-control" placeholder="Keterangan">
+                                <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" id="keterangan_input">
                             </div>
+
+                            <div class="form-group">
+                                <label class="group">Poin:</label>
+                                <input type="text" class="form-control" name="poin" id="poin" placeholder="Poin" readonly>
+                            </div>
+
                             <div class="text-end d-flex justify-content-end mt-4">
                                 <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
                                 <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
@@ -286,10 +298,11 @@
                         baris += '<tr>' +
                             '<td>' + (i + 1) + '</td>' +
                             '<td>' + hasil[i].nisn + '</td>' +
-                            '<td>' + hasil[i].waktu + '</td>' +
+                            '<td>' + hasil[i].tanggal + '</td>' +
                             '<td>' + hasil[i].nama + '</td>' +
                             '<td>' + hasil[i].kelas + '</td>' +
                             '<td>' + hasil[i].keterangan + '</td>' +
+                            '<td>' + hasil[i].poin + '</td>' +
                             '<td class="td-aksi">' +
                             '<a href="javascript:void(0);" class="btn custom-btn btn-sm" onclick="editData(' + hasil[i].id + ')">' +
                             ' <i class="fas fa-edit"></i> Edit</a>' +
@@ -321,21 +334,23 @@
 
         function tambahdata() {
             var nisn = $("[name='nisn']").val();
-            var waktu = $("[name='waktu']").val();
+            var tanggal = $("[name='tanggal']").val();
             var nama = $("[name='nama']").val();
             var kelas = $("[name='kelas']").val();
             var keterangan = $("[name='keterangan']").val();
+            var poin = $("[name='poin']").val();
 
             $.ajax({
                 type: 'POST',
                 url: '<?php echo base_url("index.php/kehadiran/tambahdata") ?>',
                 data: {
-                    waktu: waktu,
+                    tanggal: tanggal,
                     nama: nama,
                     nisn: nisn,
                     kelas: kelas,
                     wali_kelas: $("[name='wali_kelas']").val(),
-                    keterangan: keterangan
+                    keterangan: keterangan,
+                    poin: poin
                 },
                 dataType: 'json',
                 success: function(hasil) {
@@ -363,11 +378,12 @@
                 success: function(hasil) {
                     $('[name="id"]').val(hasil[0].id);
                     $('[name="nisn"]').val(hasil[0].nisn);
-                    $('[name="waktu"]').val(hasil[0].waktu);
+                    $('[name="tanggal"]').val(hasil[0].tanggal);
                     $('[name="nama"]').val(hasil[0].nama);
                     $('[name="kelas"]').val(hasil[0].kelas);
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="keterangan"]').val(hasil[0].keterangan);
+                    $('[name="poin"]').val(hasil[0].poin);
                 }
             });
         }
@@ -406,7 +422,7 @@
                     dataType: 'json',
                     success: function(hasil) {
                         $('[name="nisn"]').val(hasil[0].nisn);
-                        $('[name="waktu"]').val(hasil[0].waktu);
+                        $('[name="tanggal"]').val(hasil[0].tanggal);
                         $('[name="id"]').val(hasil[0].id);
                         $('[name="nama"]').val(hasil[0].nama);
                         $('[name="kelas"]').val(hasil[0].kelas);
@@ -438,6 +454,18 @@
             });
             });
         }
+    </script>
+
+    <script>
+        const keteranganInput = document.getElementById('keterangan_input');
+        const poinInput = document.querySelector('input[name="poin"]');
+
+        keteranganInput.addEventListener('input', function () {
+            const ket = keteranganInput.value.trim().toLowerCase();
+            if (ket === 'alpha') {
+                poinInput.value = 1;
+            }
+        });
     </script>
 
     <script>
