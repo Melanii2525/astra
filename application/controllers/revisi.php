@@ -31,7 +31,7 @@ class Revisi extends CI_Controller {
             if (!isset($siswa[$nisn])) {
                 $siswa[$nisn] = [
                     'nisn' => $p['nisn'],
-                    'nama' => $p['nama'],
+                    'nama_siswa' => $p['nama_siswa'],
                     'kelas' => $p['kelas'],
                     'wali_kelas' => $p['wali_kelas'],
                     'poin' => 0,
@@ -53,7 +53,7 @@ class Revisi extends CI_Controller {
             if (!isset($siswa[$nisn])) {
                 $siswa[$nisn] = [
                     'nisn' => $k['nisn'],
-                    'nama' => $k['nama'],
+                    'nama_siswa' => $k['nama_siswa'],
                     'kelas' => $k['kelas'],
                     'wali_kelas' => $k['wali_kelas'],
                     'poin' => 0,
@@ -75,7 +75,7 @@ class Revisi extends CI_Controller {
             if ($item['poin'] >= 10) {
                 $data['revisi'][] = [
                     'nisn' => $item['nisn'],
-                    'nama' => $item['nama'],
+                    'nama_siswa' => $item['nama_siswa'],
                     'kelas' => $item['kelas'],
                     'wali_kelas' => $item['wali_kelas'],
                     'tanggal' => end($item['tanggal']),
@@ -117,7 +117,7 @@ class Revisi extends CI_Controller {
             foreach ($revisi as $r) {
                 $this->M_revisi->simpan_revisi([
                     'nisn'       => $r['nisn'],
-                    'nama'       => $r['nama'],
+                    'nama_siswa'       => $r['nama_siswa'],
                     'kelas'      => $r['kelas'],
                     'wali_kelas' => $r['wali_kelas'],
                     'tanggal'    => $r['tanggal'],
@@ -126,7 +126,7 @@ class Revisi extends CI_Controller {
                     'poin'       => $r['poin'],
                 ]);
             }
-            $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke tb_revisi.');
+            $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');
         }
 
         redirect('revisi');
@@ -138,12 +138,12 @@ class Revisi extends CI_Controller {
         $keterangan = $this->input->post('keterangan');
         $poin       = $this->input->post('poin');
 
-        $cek = $this->db->get_where('tb_revisi', ['nisn' => $nisn])->row();
+        $cek = $this->db->get_where('revisi', ['nisn' => $nisn])->row();
 
         $data = [
             'keterangan' => $keterangan,
             'poin'       => $poin,
-            'nama'       => $this->input->post('nama'),
+            'nama_siswa'       => $this->input->post('nama_siswa'),
             'kelas'      => $this->input->post('kelas'),
             'wali_kelas' => $this->input->post('wali_kelas'),
             'tanggal'    => date('Y-m-d'),
@@ -151,10 +151,10 @@ class Revisi extends CI_Controller {
         ];
 
         if ($cek) {
-            $this->db->where('nisn', $nisn)->update('tb_revisi', $data);
+            $this->db->where('nisn', $nisn)->update('revisi', $data);
             $msg = 'Data berhasil diperbarui.';
         } else {
-            $this->db->insert('tb_revisi', $data);
+            $this->db->insert('revisi', $data);
             $msg = 'Data baru berhasil disimpan.';
         }
 

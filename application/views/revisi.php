@@ -202,7 +202,7 @@
             <div class="timeline-line"></div>
             <div class="card course-card <?= $bgClass ?>">
               <div class="card-body">
-                <h6 class="course-title"><?= $item['nama'] ?> — <?= $item['kelas'] ?></h6>
+                <h6 class="course-title"><?= $item['nama_siswa'] ?> — <?= $item['kelas'] ?></h6>
                 <p class="course-desc">NISN: <?= $item['nisn'] ?></p>
                 <p class="course-info">Wali Kelas: <?= $item['wali_kelas'] ?></p>
                 <?php if (!empty($item['catatan'])): ?>
@@ -216,7 +216,7 @@
                 <a href="javascript:void(0);" 
                   onclick="editRevisi(
                     '<?= $item['nisn'] ?>',
-                    '<?= $item['nama'] ?>',
+                    '<?= $item['nama_siswa'] ?>',
                     '<?= $item['kelas'] ?>',
                     '<?= $item['wali_kelas'] ?>',
                     '', 
@@ -244,8 +244,8 @@
         <input type="hidden" name="nisn" id="edit-nisn">
 
         <div class="form-group">
-          <label for="edit-nama">Nama:</label>
-          <input type="text" name="nama" id="edit-nama" class="form-control" readonly>
+          <label for="edit-nama_siswa">Nama:</label>
+          <input type="text" name="nama_siswa" id="edit-nama_siswa" class="form-control" readonly>
         </div>
 
         <div class="form-group">
@@ -288,16 +288,16 @@
 </div>
 
     <!-- <div class="text-center mt-4">
-      <button type="submit" class="btn btn-primary px-4">Simpan ke tb_revisi</button>
+      <button type="submit" class="btn btn-primary px-4">Simpan ke revisi</button>
     </div> -->
   </form>
 
 
 
 <script>
-function editRevisi(nisn, nama, kelas, wali_kelas, catatan, poin) {
+function editRevisi(nisn, nama_siswa, kelas, wali_kelas, catatan, poin) {
     $('#edit-nisn').val(nisn);
-    $('#edit-nama').val(nama);
+    $('#edit-nama_siswa').val(nama_siswa);
     $('#edit-kelas').val(kelas);
     $('#edit-wali_kelas').val(wali_kelas);
     $('#edit-catatan').val(catatan);

@@ -238,10 +238,10 @@
 
                             <div class="form-group">
                                 <label class="group">Nama:</label>
-                                <input type="text" name="nama" id="nama_input" class="form-control" list="list-nama" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
-                                <datalist id="list-nama">
+                                <input type="text" name="nama_siswa" id="nama_input" class="form-control" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
+                                <datalist id="list-nama_siswa">
                                     <?php foreach ($siswa as $row): ?>
-                                        <option value="<?= $row->nama ?>"></option>
+                                        <option value="<?= $row->nama_siswa ?>"></option>
                                     <?php endforeach; ?>
                                 </datalist>
                             </div>
@@ -299,7 +299,7 @@
                             '<td>' + (i + 1) + '</td>' +
                             '<td>' + hasil[i].nisn + '</td>' +
                             '<td>' + hasil[i].tanggal + '</td>' +
-                            '<td>' + hasil[i].nama + '</td>' +
+                            '<td>' + hasil[i].nama_siswa + '</td>' +
                             '<td>' + hasil[i].kelas + '</td>' +
                             '<td>' + hasil[i].keterangan + '</td>' +
                             '<td>' + hasil[i].poin + '</td>' +
@@ -335,7 +335,7 @@
         function tambahdata() {
             var nisn = $("[name='nisn']").val();
             var tanggal = $("[name='tanggal']").val();
-            var nama = $("[name='nama']").val();
+            var nama_siswa = $("[name='nama_siswa']").val();
             var kelas = $("[name='kelas']").val();
             var keterangan = $("[name='keterangan']").val();
             var poin = $("[name='poin']").val();
@@ -345,7 +345,7 @@
                 url: '<?php echo base_url("index.php/kehadiran/tambahdata") ?>',
                 data: {
                     tanggal: tanggal,
-                    nama: nama,
+                    nama_siswa: nama_siswa,
                     nisn: nisn,
                     kelas: kelas,
                     wali_kelas: $("[name='wali_kelas']").val(),
@@ -379,7 +379,7 @@
                     $('[name="id"]').val(hasil[0].id);
                     $('[name="nisn"]').val(hasil[0].nisn);
                     $('[name="tanggal"]').val(hasil[0].tanggal);
-                    $('[name="nama"]').val(hasil[0].nama);
+                    $('[name="nama_siswa"]').val(hasil[0].nama_siswa);
                     $('[name="kelas"]').val(hasil[0].kelas);
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="keterangan"]').val(hasil[0].keterangan);
@@ -424,7 +424,7 @@
                         $('[name="nisn"]').val(hasil[0].nisn);
                         $('[name="tanggal"]').val(hasil[0].tanggal);
                         $('[name="id"]').val(hasil[0].id);
-                        $('[name="nama"]').val(hasil[0].nama);
+                        $('[name="_siswa"]').val(hasil[0].nama_siswa);
                         $('[name="kelas"]').val(hasil[0].kelas);
                         $('[name="keterangan"]').val(hasil[0].keterangan);
                     }
@@ -479,13 +479,13 @@
                     data: { nisn: nisn },
                     dataType: "json",
                     success: function(data) {
-                        $('#nama').val(data.nama);
+                        $('#nama_siswa').val(data.nama_siswa);
                         $('#kelas').val(data.kelas);
                         $('#wali_kelas').val(data.wali_kelas);
                     }
                 });
             } else {
-                $('#nama').val('');
+                $('#nama_siswa').val('');
                 $('#kelas').val('');
                 $('#wali_kelas').val('');
             }
@@ -496,7 +496,7 @@
     <script>
         const siswaList = [
             <?php foreach ($siswa as $row): ?> {
-                nama: "<?= addslashes($row->nama) ?>",
+                nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
                 nisn: "<?= $row->nisn ?>",
                 kelas: "<?= $row->kelas ?>",
                 wali_kelas: "<?= $row->wali_kelas ?>"
@@ -509,8 +509,8 @@
         const inputNama = document.getElementById('nama_input');
 
         function isiOtomatis() {
-            const nama = inputNama.value.trim();
-            const siswa = siswaList.find(s => s.nama.toLowerCase().trim() === nama.toLowerCase().trim());
+            const nama_siswa = inputNama.value.trim();
+            const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
 
             if (siswa) {
                 document.getElementById('nisn').value = siswa.nisn;

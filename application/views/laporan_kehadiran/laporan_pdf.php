@@ -85,7 +85,7 @@
                     <td><?= $no++ ?></td>
                     <td><?= $row->nisn ?></td>
                     <td><?= date('d-m-Y', strtotime($row->tanggal)) ?></td>
-                    <td><?= $row->nama ?></td>
+                    <td><?= $row->nama_siswa ?></td>
                     <td><?= $row->jenis_kelamin == 'L' ? 'Laki-laki' : ($row->jenis_kelamin == 'P' ? 'Perempuan' : '-') ?></td>
                     <td><?= $row->kelas ?></td>
                     <td><?= $row->wali_kelas ?></td>

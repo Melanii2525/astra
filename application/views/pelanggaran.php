@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title; ?></title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <script src="assets/js/material-dashboard.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -266,10 +267,10 @@
                             </div>
                             <div class="form-group">
                                 <label class="group">Nama:</label>
-                                <input type="text" name="nama" id="nama_input" class="form-control" list="list-nama" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
-                                <datalist id="list-nama">
+                                <input type="text" name="nama_siswa" id="nama_input" class="form-control" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
+                                <datalist id="list-nama_siswa">
                                     <?php foreach ($siswa as $row): ?>
-                                        <option value="<?= $row->nama ?>"></option>
+                                        <option value="<?= $row->nama_siswa ?>"></option>
                                     <?php endforeach; ?>
                                 </datalist>
                             </div>
@@ -287,7 +288,12 @@
                             </div>
                             <div class="form-group">
                                 <label class="group">Kode:</label>
-                                <input type="text" name="kode" class="form-control" placeholder="Contoh: A-2" oninput="this.value = this.value.toUpperCase(); isiDetailPelanggaran(this.value);">
+                            <input type="text" name="kode" class="form-control" list="list-kode" placeholder="Contoh: A-2 atau kata kunci" oninput="isiDetailPelanggaran(this.value);">
+                            <datalist id="list-kode">
+                                <?php foreach ($kodeMap as $kode => $detail): ?>
+                                    <option value="<?= $kode ?>"><?= $detail['jenis'] ?></option>
+                                <?php endforeach; ?>
+                            </datalist>
                             </div>
                             <div class="form-group">
                                 <label class="group">Jenis Pelanggaran:</label>
@@ -329,7 +335,7 @@
                             '<td>' + (i + 1) + '</td>' +
                             '<td>' + hasil[i].nisn + '</td>' +
                             '<td>' + hasil[i].tanggal + '</td>' +
-                            '<td>' + hasil[i].nama + '</td>' +
+                            '<td>' + hasil[i].nama_siswa + '</td>' +
                             '<td>' + hasil[i].kelas + '</td>' +
                             '<td>' + hasil[i].kode + '</td>' +
                             '<td class="td-aksi">' +
@@ -364,7 +370,7 @@
         function tambahdata() {
             var nisn = $("[name='nisn']").val();
             var tanggal = $("[name='tanggal']").val();
-            var nama = $("[name='nama']").val();
+            var nama_siswa = $("[name='nama_siswa']").val();
             var kelas = $("[name='kelas']").val();
             var kode = $("[name='kode']").val();
 
@@ -373,7 +379,7 @@
                 url: '<?php echo base_url("index.php/pelanggaran/tambahdata") ?>',
                 data: {
                     tanggal: tanggal,
-                    nama: nama,
+                    nama_siswa: nama_siswa,
                     nisn: nisn,
                     kelas: kelas,
                     wali_kelas: $("[name='wali_kelas']").val(),
@@ -408,7 +414,7 @@
                     $('[name="id"]').val(hasil[0].id);
                     $('[name="nisn"]').val(hasil[0].nisn);
                     $('[name="tanggal"]').val(hasil[0].tanggal);
-                    $('[name="nama"]').val(hasil[0].nama);
+                    $('[name="nama_siswa"]').val(hasil[0].nama_siswa);
                     $('[name="kelas"]').val(hasil[0].kelas);
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="kode"]').val(hasil[0].kode);
@@ -454,7 +460,7 @@
                         $('[name="nisn"]').val(hasil[0].nisn);
                         $('[name="tanggal"]').val(hasil[0].tanggal);
                         $('[name="id"]').val(hasil[0].id);
-                        $('[name="nama"]').val(hasil[0].nama);
+                        $('[name="nama_siswa"]').val(hasil[0].nama_siswa);
                         $('[name="kelas"]').val(hasil[0].kelas);
                         $('[name="kode"]').val(hasil[0].kode);
                     }
@@ -464,54 +470,33 @@
     </script>
 
     <script>
-        const kodeMap = {
-            "A-1": {
-                jenis: "Tidak membawa alat atau bahan pembelajaran yang disepakati",
-                poin: 10
-            },
-            "A-2": {
-                jenis: "Membuat kegaduhan di kelas atau di sekolah",
-                poin: 200
-            },
-            "A-3": {
-                jenis: "Mencoret-coret atau mengotori dinding, pintu, meja, kursi, dan pagar sekolah",
-                poin: 75
-            },
-            "A-4": {
-                jenis: "Membawa atau bermain kartu remi dan domino atau sejenisnya di sekolah",
-                poin: 10
-            },
-            "A-5": {
-                jenis: "Memarkir sepeda/motor tidak pada tempatnya",
-                poin: 10
-            },
-            "A-6": {
-                jenis: "Bermain bola di koridor dan di dalam kelas",
-                poin: 10
-            },
-            "A-7": {
-                jenis: "Menyontek",
-                poin: 10
-            },
-            "A-8": {
-                jenis: "Menggunakan kendaraan bermotor tidak sesuai standar",
-                poin: 10
-            },
-            "A-9": {
-                jenis: "Melindungi teman yang bersalah",
-                poin: 15
-            },
-            "A-10": {
-                jenis: "Menggunakan handphone pada tanggal KBM yang tidak sesuai kesepakatan",
-                poin: 20
-            }
-        };
+        const kodeMap = <?php echo json_encode([
+            "A-1" => ["jenis" => "Tidak membawa alat atau bahan pembelajaran yang disepakati", "poin" => 10],
+            "A-2" => ["jenis" => "Membuat kegaduhan di kelas atau di sekolah", "poin" => 200],
+            // dst...
+        ]); ?>;
 
-        function isiDetailPelanggaran(kode) {
-            const data = kodeMap[kode.trim().toUpperCase()];
-            if (data) {
-                $("[name='keterangan']").val(data.jenis);
-                $("[name='poin']").val(data.poin);
+        function isiDetailPelanggaran(input) {
+            const keyword = input.trim().toUpperCase();
+            let foundKode = '';
+
+            // Cek apakah input adalah kode langsung
+            if (kodeMap[keyword]) {
+                foundKode = keyword;
+            } else {
+                // Cari berdasarkan kata kunci dalam keterangan
+                for (const [kode, data] of Object.entries(kodeMap)) {
+                    if (data.jenis.toUpperCase().includes(keyword)) {
+                        foundKode = kode;
+                        break;
+                    }
+                }
+            }
+
+            if (foundKode) {
+                $("[name='kode']").val(foundKode); // Tetap isi kode
+                $("[name='keterangan']").val(kodeMap[foundKode].jenis);
+                $("[name='poin']").val(kodeMap[foundKode].poin);
             } else {
                 $("[name='keterangan']").val('');
                 $("[name='poin']").val('');
@@ -544,7 +529,7 @@
     <script>
         const siswaList = [
             <?php foreach ($siswa as $row): ?> {
-                nama: "<?= addslashes($row->nama) ?>",
+                nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
                 nisn: "<?= $row->nisn ?>",
                 kelas: "<?= $row->kelas ?>",
                 wali_kelas: "<?= $row->wali_kelas ?>"
@@ -557,8 +542,8 @@
         const inputNama = document.getElementById('nama_input');
 
         function isiOtomatis() {
-            const nama = inputNama.value.trim();
-            const siswa = siswaList.find(s => s.nama.toLowerCase().trim() === nama.toLowerCase().trim());
+            const nama_siswa = inputNama.value.trim();
+            const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
 
             if (siswa) {
                 document.getElementById('nisn').value = siswa.nisn;
@@ -573,6 +558,16 @@
 
         inputNama.addEventListener('input', isiOtomatis);
         inputNama.addEventListener('change', isiOtomatis);
+    </script>
+
+    <script>
+        $(document).ready(function () {
+  $("#btn-tambah").click(function () {
+    $("#formTambahData").trigger("reset");
+    $("#modalTambah").modal("show");
+  });
+});
+
     </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

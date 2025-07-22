@@ -27,7 +27,7 @@ class Pelanggaran extends CI_Controller
     public function index(){
         $this->load->model('m_siswa'); 
         $data['title'] = "Data Pelanggaran";
-        $data['siswa'] = $this->m_siswa->ambildata('tb_siswa')->result(); 
+        $data['siswa'] = $this->m_siswa->ambildata('data_siswa')->result(); 
     
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
@@ -37,24 +37,34 @@ class Pelanggaran extends CI_Controller
 
     public function ambildata()
     {
-        $data = $this->m->ambildata('tb_pelanggaran')->result();
+        $data = $this->m->ambildata('pelanggaran')->result();
         echo json_encode($data);
     }
 
     public function tambahdata()
     {
+        $nisn = $this->input->post('nisn');
+
+        // Ambil data siswa berdasarkan nisn
+        $siswa = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row_array();
+
+        if (!$siswa) {
+            echo json_encode(['pesan' => 'Data siswa tidak ditemukan']);
+            return;
+        }
+
         $data = [
             'tanggal' => $this->input->post('tanggal'),
-            'nama' => strtoupper(trim($this->input->post('nama'))),
-            'nisn' => $this->input->post('nisn'),
-            'kelas' => strtoupper(trim($this->input->post('kelas'))),
-            'wali_kelas' => $this->input->post('wali_kelas'),
+            'nisn' => $nisn,
+            'nama_siswa' => strtoupper(trim($siswa['nama'])),
+            'kelas' => strtoupper(trim($siswa['kelas'])),
+            'wali_kelas' => $siswa['wali_kelas'],
             'kode' => strtoupper(trim($this->input->post('kode'))),
-            'keterangan' => $this->input->post('keterangan'), 
-            'poin' => $this->input->post('poin'),             
+            'keterangan' => $this->input->post('keterangan'),
+            'poin' => $this->input->post('poin'),
         ];
 
-        $sukses = $this->m->tambahdata($data, 'tb_pelanggaran');
+        $sukses = $this->m->tambahdata($data, 'pelanggaran');
 
         echo json_encode([
             'pesan' => $sukses ? '' : 'Gagal menyimpan data'
@@ -65,7 +75,7 @@ class Pelanggaran extends CI_Controller
     {
         $id = $this->input->post('id');
         $where = ['id' => $id];
-        $data = $this->m->ambilId('tb_pelanggaran', $where)->result();
+        $data = $this->m->ambilId('pelanggaran', $where)->result();
         echo json_encode($data);
     }
 
@@ -74,14 +84,14 @@ class Pelanggaran extends CI_Controller
         $id = $this->input->post('id');
         $data = [
             'tanggal' => $this->input->post('tanggal'),
-            'nama' => strtoupper(trim($this->input->post('nama'))),
+            'nama_siswa' => strtoupper(trim($this->input->post('nama_siswa'))),
             'kelas' => strtoupper(trim($this->input->post('kelas'))),
             'kode' => strtoupper(trim($this->input->post('kode'))),
             'keterangan' => $this->input->post('keterangan'),
             'poin' => $this->input->post('poin'),
         ];
         $where = ['id' => $id];
-        $sukses = $this->m->ubahdata('tb_pelanggaran', $data, $where);
+        $sukses = $this->m->ubahdata('pelanggaran', $data, $where);
 
         echo json_encode([
             'pesan' => $sukses ? '' : 'Gagal mengubah data'
@@ -90,9 +100,9 @@ class Pelanggaran extends CI_Controller
 
     public function detail($id)
     {
-        $this->db->select('p.*, s.jk AS jenis_kelamin');
-        $this->db->from('tb_pelanggaran p');
-        $this->db->join('tb_siswa s', 'p.nisn = s.nisn', 'left');
+        $this->db->select('p.*, s.jenis_kelamin, s.wali_kelas');
+        $this->db->from('pelanggaran p');
+        $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
         $this->db->where('p.id', $id);
         $row = $this->db->get()->row();
 
@@ -110,16 +120,16 @@ class Pelanggaran extends CI_Controller
     }
 
     // public function print(){
-    //     $data['kehadiran'] = $this->m_kehadiran->tampil_data("tb_kehadiran")->result();
+    //     $data['kehadiran'] = $this->m_kehadiran->tampil_data("kehadiran")->result();
     //     $this->load->view('print_kehadiran', $data);
     // }
 
     public function export_pdf()
     {
         $this->load->library('dompdf_gen');
-        $this->db->select('k.*, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
-        $this->db->from('tb_pelanggaran k');
-        $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
+        $this->db->from('pelanggaran k');
+        $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
         $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['pelanggaran'] = $this->db->get()->result();
 
@@ -138,9 +148,9 @@ class Pelanggaran extends CI_Controller
     public function excel()
     {
         $this->load->model('m_pelanggaran');
-        $this->db->select('k.nisn, k.tanggal, k.kode, k.keterangan, k.poin, s.nama, s.kelas, s.jk as jenis_kelamin, s.wali_kelas');
-        $this->db->from('tb_pelanggaran k');
-        $this->db->join('tb_siswa s', 'k.nisn = s.nisn', 'left');
+        $this->db->select('k.nisn, k.tanggal, k.kode, k.keterangan, k.poin, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
+        $this->db->from('pelanggaran k');
+        $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
         $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
         $data['pelanggaran'] = $this->db->get()->result();
 
@@ -164,7 +174,7 @@ class Pelanggaran extends CI_Controller
             $sheet->setCellValue('A'.$row, $no++);
             $sheet->setCellValue('B'.$row, $k->nisn);
             $sheet->setCellValue('C'.$row, $k->tanggal);
-            $sheet->setCellValue('D'.$row, $k->nama);
+            $sheet->setCellValue('D'.$row, $k->nama_siswa);
             $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
             $sheet->setCellValue('F'.$row, $k->kelas);
             $sheet->setCellValue('G'.$row, $k->wali_kelas);
@@ -180,4 +190,20 @@ class Pelanggaran extends CI_Controller
         header('Cache-Control: max-age=0');
         $writer->save('php://output');
     }
+
+    public function get_kode()
+{
+    $searchTerm = $this->input->get('term');
+    $this->db->like('kode', $searchTerm);
+    $this->db->limit(10); // batasi hasil biar ringan
+    $result = $this->db->get('pelanggaran')->result();
+
+    $data = [];
+    foreach ($result as $row) {
+        $data[] = $row->kode; // hanya ambil kode saja
+    }
+
+    echo json_encode($data);
+}
+
 }
