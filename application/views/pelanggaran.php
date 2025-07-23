@@ -287,22 +287,20 @@
                                 <input type="text" class="form-control" name="wali_kelas" id="wali_kelas" placeholder="Wali Kelas" readonly>
                             </div>
                             <div class="form-group">
-                                <label class="group">Kode:</label>
-                            <input type="text" name="kode" class="form-control" list="list-kode" placeholder="Contoh: A-2 atau kata kunci" oninput="isiDetailPelanggaran(this.value);">
-                            <datalist id="list-kode">
-                                <?php foreach ($kodeMap as $kode => $detail): ?>
-                                    <option value="<?= $kode ?>"><?= $detail['jenis'] ?></option>
-                                <?php endforeach; ?>
-                            </datalist>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Jenis Pelanggaran:</label>
-                                <input type="text" name="keterangan" class="form-control" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Poin:</label>
-                                <input type="number" name="poin" class="form-control" readonly>
-                            </div>
+    <label class="group">Kode / Kata Kunci:</label>
+    <input type="text" name="kode" id="kode_input" class="form-control" placeholder="Contoh: A-1 atau kata kunci" oninput="this.value = this.value.toUpperCase();">
+</div>
+
+<div class="form-group">
+    <label class="group">Jenis Pelanggaran:</label>
+    <input type="text" name="keterangan" id="keterangan_input" class="form-control" readonly>
+</div>
+
+<div class="form-group">
+    <label class="group">Poin:</label>
+    <input type="number" name="poin" id="poin_input" class="form-control" readonly>
+</div>
+
                             <div class="text-end d-flex flex-wrap justify-content-end gap-2 mt-4">
                                 <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
                                 <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
@@ -469,40 +467,98 @@
         }
     </script>
 
-    <script>
-        const kodeMap = <?php echo json_encode([
-            "A-1" => ["jenis" => "Tidak membawa alat atau bahan pembelajaran yang disepakati", "poin" => 10],
-            "A-2" => ["jenis" => "Membuat kegaduhan di kelas atau di sekolah", "poin" => 200],
-            // dst...
-        ]); ?>;
+<script>
+    const kodeMap = <?php echo json_encode([
+        "A-1" => ["jenis" => "Tidak membawa alat atau bahan pembelajaran yang disepakati", "poin" => 10],
+        "A-2" => ["jenis" => "Membuat kegaduhan di kelas atau di sekolah", "poin" => 200],
+        // Tambahkan kode lainnya di sini
+    ]); ?>;
 
-        function isiDetailPelanggaran(input) {
-            const keyword = input.trim().toUpperCase();
-            let foundKode = '';
+    const dataAutocomplete = [];
 
-            // Cek apakah input adalah kode langsung
-            if (kodeMap[keyword]) {
-                foundKode = keyword;
-            } else {
-                // Cari berdasarkan kata kunci dalam keterangan
-                for (const [kode, data] of Object.entries(kodeMap)) {
-                    if (data.jenis.toUpperCase().includes(keyword)) {
-                        foundKode = kode;
-                        break;
-                    }
+    // Buat list untuk autocomplete
+    for (const [kode, data] of Object.entries(kodeMap)) {
+        dataAutocomplete.push({
+            label: `${kode} - ${data.jenis}`,
+            value: kode,
+            jenis: data.jenis,
+            poin: data.poin
+        });
+        dataAutocomplete.push({
+            label: `${data.jenis} (${kode})`,
+            value: kode,
+            jenis: data.jenis,
+            poin: data.poin
+        });
+    }
+
+    $(function () {
+    $("#kode_input").autocomplete({
+        source: function (request, response) {
+            const keyword = request.term.toLowerCase();
+            const results = [];
+
+            for (const [kode, data] of Object.entries(kodeMap)) {
+                if (
+                    kode.toLowerCase().includes(keyword) ||
+                    data.jenis.toLowerCase().includes(keyword)
+                ) {
+                    results.push({
+                        label: `${kode} - ${data.jenis}`,
+                        value: kode,
+                        jenis: data.jenis,
+                        poin: data.poin
+                    });
                 }
             }
 
-            if (foundKode) {
-                $("[name='kode']").val(foundKode); // Tetap isi kode
-                $("[name='keterangan']").val(kodeMap[foundKode].jenis);
-                $("[name='poin']").val(kodeMap[foundKode].poin);
-            } else {
-                $("[name='keterangan']").val('');
-                $("[name='poin']").val('');
-            }
+            response(results);
+        },
+        select: function (event, ui) {
+            // Ketika dipilih, ubah input menjadi kode
+            $("#kode_input").val(ui.item.value); // Set hanya kode
+            $("#keterangan_input").val(ui.item.jenis);
+            $("#poin_input").val(ui.item.poin);
+            return false;
+        },
+        focus: function (event, ui) {
+            // Saat navigasi autocomplete, tampilkan label
+            $("#kode_input").val(ui.item.label);
+            return false;
+        },
+        minLength: 1
+    });
+
+    // Ketika mengetik manual kode
+    $("#kode_input").on("input", function () {
+        const kode = $(this).val().toUpperCase();
+        if (kodeMap[kode]) {
+            $("#keterangan_input").val(kodeMap[kode].jenis);
+            $("#poin_input").val(kodeMap[kode].poin);
+        } else {
+            $("#keterangan_input").val('');
+            $("#poin_input").val('');
         }
-    </script>
+    });
+});
+
+
+
+        // Jika user langsung mengetik kode
+        $("#kode_input").on("blur", function () {
+    const input = $(this).val().toLowerCase();
+    for (const [kode, data] of Object.entries(kodeMap)) {
+        if (data.jenis.toLowerCase().includes(input)) {
+            $("#kode_input").val(kode);
+            $("#keterangan_input").val(data.jenis);
+            $("#poin_input").val(data.poin);
+            break;
+        }
+    }
+});
+
+</script>
+
     
     <script>
         if (document.querySelector('.input-group input')) {

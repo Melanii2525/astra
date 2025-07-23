@@ -56,7 +56,7 @@ class Pelanggaran extends CI_Controller
         $data = [
             'tanggal' => $this->input->post('tanggal'),
             'nisn' => $nisn,
-            'nama_siswa' => strtoupper(trim($siswa['nama'])),
+            'nama_siswa' => strtoupper(trim($siswa['nama_siswa'])),
             'kelas' => strtoupper(trim($siswa['kelas'])),
             'wali_kelas' => $siswa['wali_kelas'],
             'kode' => strtoupper(trim($this->input->post('kode'))),
