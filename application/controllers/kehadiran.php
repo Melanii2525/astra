@@ -50,14 +50,32 @@ class Kehadiran extends CI_Controller
         $kelas = $this->input->post('kelas');
         $wali_kelas = $this->input->post('wali_kelas');
         $keterangan = $this->input->post('keterangan'); 
-        $poin = $this->input->post('poin'); 
-
+        $jam = (int) $this->input->post('jam_tidak_hadir'); // ambil jam
+        $poin = 0;
+    
         if (empty($tanggal) || empty($nama_siswa) || empty($nisn) || empty($kelas) || empty($keterangan) || empty($wali_kelas)) {
             $result = [
                 'status' => false,
                 'pesan' => 'Semua kolom wajib diisi!'
             ];
         } else {
+            // Logika hanya untuk Alpha
+            if (strtolower(trim($keterangan)) === 'alpha') {
+                // Ambil total jam sebelumnya
+                $this->db->select_sum('jam_tidak_hadir');
+                $this->db->where('nisn', $nisn);
+                $this->db->where('keterangan', 'Alpha');
+                $hasil = $this->db->get('kehadiran')->row();
+                $total_jam = $hasil->jam_tidak_hadir ?? 0;
+    
+                $total_baru = $total_jam + $jam;
+    
+                // Jika melewati 10 jam dari sebelumnya, berikan poin
+                if ($total_jam < 10 && $total_baru >= 10) {
+                    $poin = 7;
+                }
+            }
+    
             $data = [
                 'nisn' => $nisn,
                 'tanggal' => $tanggal,
@@ -65,18 +83,21 @@ class Kehadiran extends CI_Controller
                 'kelas' => $kelas,
                 'wali_kelas' => $wali_kelas,
                 'keterangan' => $keterangan,
+                'jam_tidak_hadir' => $jam,
                 'poin' => $poin
             ];
+    
             $this->m->tambahdata($data, 'kehadiran');
-
+    
             $result = [
                 'status' => true,
                 'pesan' => ''
             ];
         }
-
+    
         echo json_encode($result);
     }
+    
 
     public function ambilId()
     {

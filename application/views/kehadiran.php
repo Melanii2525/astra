@@ -271,6 +271,11 @@
                                 <input type="text" class="form-control" name="poin" id="poin" placeholder="Poin" readonly>
                             </div>
 
+                            <div class="form-group">
+                                <label class="group">Jam Tidak Hadir:</label>
+                                <input type="number" class="form-control" name="jam_tidak_hadir" id="jam_tidak_hadir" placeholder="Contoh: 2">
+                            </div>
+
                             <div class="text-end d-flex justify-content-end mt-4">
                                 <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
                                 <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
@@ -384,6 +389,7 @@
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="keterangan"]').val(hasil[0].keterangan);
                     $('[name="poin"]').val(hasil[0].poin);
+                    $('[name="jam_tidak_hadir"]').val(hasil[0].jam_tidak_hadir);
                 }
             });
         }

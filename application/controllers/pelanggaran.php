@@ -37,6 +37,8 @@ class Pelanggaran extends CI_Controller
 
     public function ambildata()
     {
+        $this->db->order_by('tanggal', 'DESC');
+        $this->db->order_by('kelas', 'ASC');
         $data = $this->m->ambildata('pelanggaran')->result();
         echo json_encode($data);
     }
@@ -87,7 +89,7 @@ class Pelanggaran extends CI_Controller
             'nama_siswa' => strtoupper(trim($this->input->post('nama_siswa'))),
             'kelas' => strtoupper(trim($this->input->post('kelas'))),
             'kode' => strtoupper(trim($this->input->post('kode'))),
-            'keterangan' => $this->input->post('keterangan'),
+            'keterangan' => $this->input->post('deskripsi'),
             'poin' => $this->input->post('poin'),
         ];
         $where = ['id' => $id];
@@ -130,7 +132,8 @@ class Pelanggaran extends CI_Controller
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
+        $this->db->order_by('k.tanggal', 'ASC'); 
+        $this->db->order_by('s.kelas', 'ASC');
         $data['pelanggaran'] = $this->db->get()->result();
 
         $this->load->view('laporan_pelanggaran/laporan_pdf', $data);
@@ -151,7 +154,8 @@ class Pelanggaran extends CI_Controller
         $this->db->select('k.nisn, k.tanggal, k.kode, k.keterangan, k.poin, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
+        $this->db->order_by('k.tanggal', 'ASC'); 
+        $this->db->order_by('s.kelas', 'ASC');
         $data['pelanggaran'] = $this->db->get()->result();
 
         $spreadsheet = new Spreadsheet();
@@ -192,18 +196,39 @@ class Pelanggaran extends CI_Controller
     }
 
     public function get_kode()
-{
-    $searchTerm = $this->input->get('term');
-    $this->db->like('kode', $searchTerm);
-    $this->db->limit(10); // batasi hasil biar ringan
-    $result = $this->db->get('pelanggaran')->result();
+    {
+        $searchTerm = $this->input->get('term');
+        $this->db->like('kode', $searchTerm);
+        $this->db->limit(10); 
+        $result = $this->db->get('pelanggaran')->result();
 
-    $data = [];
-    foreach ($result as $row) {
-        $data[] = $row->kode; // hanya ambil kode saja
+        $data = [];
+        foreach ($result as $row) {
+            $data[] = $row->kode; 
+        }
+
+        echo json_encode($data);
     }
 
-    echo json_encode($data);
-}
+    public function get_autocomplete_jenis()
+    {
+        $term = $this->input->get('term');
+        $this->db->like('deskripsi', $term);
+        $this->db->select('kode, deskripsi, poin');
+        $this->db->from('jenis_pelanggaran');
+        $data = $this->db->get()->result();
+
+        $result = [];
+        foreach ($data as $row) {
+            $result[] = [
+                'label' => $row->deskripsi, 
+                'value' => $row->deskripsi, 
+                'kode'  => $row->kode,
+                'poin'  => $row->poin
+            ];
+        }
+
+        echo json_encode($result);
+    }
 
 }

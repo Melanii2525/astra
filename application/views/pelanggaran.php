@@ -74,7 +74,7 @@
     }
 
     .card.h-100.w-100 {
-        margin-top: 10px; /* atau 5px */
+        margin-top: 10px; 
     }
 
     .modal-header {
@@ -177,32 +177,48 @@
     }
 
     @media (max-width: 576px) {
-    #form-pelanggaran .card {
-        width: 95%;
-        padding: 15px;
-        margin: 20px auto;
+        #form-pelanggaran .card {
+            width: 95%;
+            padding: 15px;
+            margin: 20px auto;
+        }
+
+        .form-group label.group {
+            font-size: 14px;
+        }
+
+        .form-control {
+            font-size: 14px;
+        }
+
+        .btn-custom-submit {
+            font-size: 14px;
+            padding: 6px 16px;
+        }
+
+        .td-aksi a.btn {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
     }
 
-    .form-group label.group {
+    .ui-autocomplete {
+        position: absolute;
+        z-index: 2000 !important;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         font-size: 14px;
     }
 
-    .form-control {
-        font-size: 14px;
+    .modal,
+    .modal-dialog,
+    .modal-content {
+    overflow: visible !important;
     }
-
-    .btn-custom-submit {
-        font-size: 14px;
-        padding: 6px 16px;
-    }
-
-    .td-aksi a.btn {
-        font-size: 12px;
-        padding: 5px 10px;
-    }
-}
-
-
 </style>
 
 <body>
@@ -231,7 +247,7 @@
 </div>
 
 
-  <div class="row">
+<div class="row">
     <div class="col-12">
       <div class="card h-100 w-100">
         <div class="card-body p-3">
@@ -287,20 +303,19 @@
                                 <input type="text" class="form-control" name="wali_kelas" id="wali_kelas" placeholder="Wali Kelas" readonly>
                             </div>
                             <div class="form-group">
-    <label class="group">Kode / Kata Kunci:</label>
-    <input type="text" name="kode" id="kode_input" class="form-control" placeholder="Contoh: A-1 atau kata kunci" oninput="this.value = this.value.toUpperCase();">
-</div>
+                                <label class="group">Jenis Pelanggaran:</label>
+                                <input type="text" name="deskripsi" id="deskripsi" class="form-control" placeholder="Cari jenis pelanggaran...">
+                            </div>
 
-<div class="form-group">
-    <label class="group">Jenis Pelanggaran:</label>
-    <input type="text" name="keterangan" id="keterangan_input" class="form-control" readonly>
-</div>
+                            <div class="form-group">
+                                <label class="group">Kode & Kategori:</label>
+                                <input type="text" name="kode" id="kode" class="form-control" placeholder="Kode pelanggaran" readonly>
+                            </div>
 
-<div class="form-group">
-    <label class="group">Poin:</label>
-    <input type="number" name="poin" id="poin_input" class="form-control" readonly>
-</div>
-
+                            <div class="form-group">
+                                <label class="group">Poin:</label>
+                                <input type="text" name="poin" id="poin" class="form-control" placeholder="Poin" readonly>
+                            </div>
                             <div class="text-end d-flex flex-wrap justify-content-end gap-2 mt-4">
                                 <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
                                 <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
@@ -311,13 +326,13 @@
                 </div>
             </div>
             <!-- End Modal Form -->
-
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
         ambilData();
 
@@ -332,7 +347,7 @@
                         baris += '<tr>' +
                             '<td>' + (i + 1) + '</td>' +
                             '<td>' + hasil[i].nisn + '</td>' +
-                            '<td>' + hasil[i].tanggal + '</td>' +
+                            '<td>' + formatTanggal(hasil[i].tanggal) + '</td>' +
                             '<td>' + hasil[i].nama_siswa + '</td>' +
                             '<td>' + hasil[i].kelas + '</td>' +
                             '<td>' + hasil[i].kode + '</td>' +
@@ -348,6 +363,11 @@
                     $('#target').html(baris);
                 }
             });
+        }
+
+        function formatTanggal(tanggal) {
+            var parts = tanggal.split('-'); 
+            return parts[2] + '-' + parts[1] + '-' + parts[0]; 
         }
 
         function tampilkanForm() {
@@ -381,8 +401,8 @@
                     nisn: nisn,
                     kelas: kelas,
                     wali_kelas: $("[name='wali_kelas']").val(),
+                    keterangan: $("[name='deskripsi']").val(),
                     kode: kode,
-                    keterangan: $("[name='keterangan']").val(),
                     poin: $("[name='poin']").val()
                 },
                 dataType: 'json',
@@ -416,6 +436,8 @@
                     $('[name="kelas"]').val(hasil[0].kelas);
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="kode"]').val(hasil[0].kode);
+                    $('[name="deskripsi"]').val(hasil[0].keterangan); 
+                    $('[name="poin"]').val(hasil[0].poin); 
 
                     isiDetailPelanggaran(hasil[0].kode);
                 }
@@ -465,105 +487,38 @@
                 });
             }
         }
-    </script>
-
-<script>
-    const kodeMap = <?php echo json_encode([
-        "A-1" => ["jenis" => "Tidak membawa alat atau bahan pembelajaran yang disepakati", "poin" => 10],
-        "A-2" => ["jenis" => "Membuat kegaduhan di kelas atau di sekolah", "poin" => 200],
-        // Tambahkan kode lainnya di sini
-    ]); ?>;
-
-    const dataAutocomplete = [];
-
-    // Buat list untuk autocomplete
-    for (const [kode, data] of Object.entries(kodeMap)) {
-        dataAutocomplete.push({
-            label: `${kode} - ${data.jenis}`,
-            value: kode,
-            jenis: data.jenis,
-            poin: data.poin
-        });
-        dataAutocomplete.push({
-            label: `${data.jenis} (${kode})`,
-            value: kode,
-            jenis: data.jenis,
-            poin: data.poin
-        });
-    }
-
-    $(function () {
-    $("#kode_input").autocomplete({
-        source: function (request, response) {
-            const keyword = request.term.toLowerCase();
-            const results = [];
-
-            for (const [kode, data] of Object.entries(kodeMap)) {
-                if (
-                    kode.toLowerCase().includes(keyword) ||
-                    data.jenis.toLowerCase().includes(keyword)
-                ) {
-                    results.push({
-                        label: `${kode} - ${data.jenis}`,
-                        value: kode,
-                        jenis: data.jenis,
-                        poin: data.poin
-                    });
-                }
-            }
-
-            response(results);
-        },
-        select: function (event, ui) {
-            // Ketika dipilih, ubah input menjadi kode
-            $("#kode_input").val(ui.item.value); // Set hanya kode
-            $("#keterangan_input").val(ui.item.jenis);
-            $("#poin_input").val(ui.item.poin);
-            return false;
-        },
-        focus: function (event, ui) {
-            // Saat navigasi autocomplete, tampilkan label
-            $("#kode_input").val(ui.item.label);
-            return false;
-        },
-        minLength: 1
-    });
-
-    // Ketika mengetik manual kode
-    $("#kode_input").on("input", function () {
-        const kode = $(this).val().toUpperCase();
-        if (kodeMap[kode]) {
-            $("#keterangan_input").val(kodeMap[kode].jenis);
-            $("#poin_input").val(kodeMap[kode].poin);
-        } else {
-            $("#keterangan_input").val('');
-            $("#poin_input").val('');
-        }
-    });
-});
-
-
-
-        // Jika user langsung mengetik kode
-        $("#kode_input").on("blur", function () {
-    const input = $(this).val().toLowerCase();
-    for (const [kode, data] of Object.entries(kodeMap)) {
-        if (data.jenis.toLowerCase().includes(input)) {
-            $("#kode_input").val(kode);
-            $("#keterangan_input").val(data.jenis);
-            $("#poin_input").val(data.poin);
-            break;
-        }
-    }
-});
-
 </script>
 
-    
-    <script>
-        if (document.querySelector('.input-group input')) {
-            var inputs = document.querySelectorAll('.input-group input');
-            inputs.forEach(input => {
+<script>
+    $(function() {
+        $("#deskripsi").autocomplete({
+            source: function(request, response) {
+            $.ajax({
+                url: "<?= base_url('index.php/pelanggaran/get_autocomplete_jenis') ?>",
+                dataType: "json",
+                data: {
+                term: request.term
+                },
+                success: function(data) {
+                response(data);
+                }
+            });
+            },
+            select: function(event, ui) {
+            $("#deskripsi").val(ui.item.value); 
+            $("#kode").val(ui.item.kode);       
+            $("#poin").val(ui.item.poin);      
+            return false;
+            },
+            appendTo: "body" 
+        });
+    });
+</script>
+
+<script>
+    if (document.querySelector('.input-group input')) {
+        var inputs = document.querySelectorAll('.input-group input');
+        inputs.forEach(input => {
             if (input.value != "") {
                 input.parentElement.classList.add("is-filled");
             }
@@ -574,57 +529,56 @@
 
             input.addEventListener("blur", function () {
                 if (input.value == "") {
-                input.parentElement.classList.remove("is-filled");
+                    input.parentElement.classList.remove("is-filled");
                 }
                 input.parentElement.classList.remove("is-focused");
             });
-            });
+        });
+    }
+</script>
+
+<script>
+    const siswaList = [
+        <?php foreach ($siswa as $row): ?> {
+            nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
+            nisn: "<?= $row->nisn ?>",
+            kelas: "<?= $row->kelas ?>",
+            wali_kelas: "<?= $row->wali_kelas ?>"
+        },
+        <?php endforeach; ?>
+    ];
+</script>
+
+<script>
+    const inputNama = document.getElementById('nama_input');
+
+    function isiOtomatis() {
+        const nama_siswa = inputNama.value.trim();
+        const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
+
+        if (siswa) {
+            document.getElementById('nisn').value = siswa.nisn;
+            document.getElementById('kelas').value = siswa.kelas;
+            document.getElementById('wali_kelas').value = siswa.wali_kelas;
+        } else {
+            document.getElementById('nisn').value = '';
+            document.getElementById('kelas').value = '';
+            document.getElementById('wali_kelas').value = '';
         }
-    </script>
+    }
 
-    <script>
-        const siswaList = [
-            <?php foreach ($siswa as $row): ?> {
-                nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
-                nisn: "<?= $row->nisn ?>",
-                kelas: "<?= $row->kelas ?>",
-                wali_kelas: "<?= $row->wali_kelas ?>"
-            },
-            <?php endforeach; ?>
-        ];
-    </script>
+    inputNama.addEventListener('input', isiOtomatis);
+    inputNama.addEventListener('change', isiOtomatis);
+</script>
 
-    <script>
-        const inputNama = document.getElementById('nama_input');
-
-        function isiOtomatis() {
-            const nama_siswa = inputNama.value.trim();
-            const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
-
-            if (siswa) {
-                document.getElementById('nisn').value = siswa.nisn;
-                document.getElementById('kelas').value = siswa.kelas;
-                document.getElementById('wali_kelas').value = siswa.wali_kelas;
-            } else {
-                document.getElementById('nisn').value = '';
-                document.getElementById('kelas').value = '';
-                document.getElementById('wali_kelas').value = '';
-            }
-        }
-
-        inputNama.addEventListener('input', isiOtomatis);
-        inputNama.addEventListener('change', isiOtomatis);
-    </script>
-
-    <script>
-        $(document).ready(function () {
-  $("#btn-tambah").click(function () {
-    $("#formTambahData").trigger("reset");
-    $("#modalTambah").modal("show");
-  });
-});
-
-    </script>
+<script>
+    $(document).ready(function () {
+        $("#btn-tambah").click(function () {
+            $("#formTambahData").trigger("reset");
+            $("#modalTambah").modal("show");
+        });
+    });
+</script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         </div>

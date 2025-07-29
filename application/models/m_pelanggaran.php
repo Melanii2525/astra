@@ -33,4 +33,4 @@ class M_pelanggaran extends CI_Model
     {
         return $this->db->delete($table, $where);
     }
-}
+}                                                              

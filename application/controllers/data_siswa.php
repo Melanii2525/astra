@@ -23,37 +23,19 @@ class Data_siswa extends CI_Controller
     public function index()
     {
         $data['title'] = "Data Siswa";
-        $data['siswa'] = $this->m->get_all_ordered(); // ambil data siswa dari model
+        $data['siswa'] = $this->m->get_all_ordered(); 
 
         $this->load->view('templates/header');
         $this->load->view('templates/sidebar');
-        $this->load->view('data_siswa', $data); // sekarang $siswa tersedia di view
+        $this->load->view('data_siswa', $data); 
         $this->load->view('templates/footer');
     }
 
     public function ambildata()
     {
-        $all = $this->m->get_all_ordered();
-
-        $data = [
-            'kelas_x' => [],
-            'kelas_xi' => [],
-            'kelas_xii' => []
-        ];
-
-        foreach ($all as $siswa) {
-            if (strpos($siswa->kelas, 'XII') === 0) {
-                $data['kelas_xii'][] = $siswa;
-            } elseif (strpos($siswa->kelas, 'XI') === 0) {
-                $data['kelas_xi'][] = $siswa;
-            } elseif (strpos($siswa->kelas, 'X') === 0) {
-                $data['kelas_x'][] = $siswa;
-            }
-        }
-
-        echo json_encode($data);
-    }
-
+        $data = $this->m->get_all_ordered();
+        echo json_encode(['siswa' => $data]);
+    }         
 
     public function tambahdata()
     {
@@ -63,25 +45,30 @@ class Data_siswa extends CI_Controller
         $kelas  = $this->input->post('kelas');
         $jenis_kelamin     = $this->input->post('jenis_kelamin');
         $wali_kelas = $this->input->post('wali_kelas');
-
+    
+        $result['pesan'] = '';
+    
         if ($nisn == '' || $nipd == '' || $nama_siswa == '' || $kelas == '' || $jenis_kelamin == '') {
             $result['pesan'] = 'Semua field wajib diisi.';
         } else {
-            $result['pesan'] = '';
-            $data = [
-                'nisn'  => $nisn,
-                'nipd'  => $nipd,
-                'nama_siswa'  => $nama_siswa,
-                'kelas' => $kelas,
-                'jenis_kelamin'    => $jenis_kelamin,
-                'wali_kelas'  => $wali_kelas
-            ];
-
-            $this->m->tambahdata($data, 'data_siswa');
+            $cek = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
+            if ($cek) {
+                $result['pesan'] = 'Data dengan NISN tersebut sudah ada.';
+            } else {
+                $data = [
+                    'nisn'  => $nisn,
+                    'nipd'  => $nipd,
+                    'nama_siswa'  => strtoupper($nama_siswa),
+                    'kelas' => strtoupper($kelas),
+                    'jenis_kelamin'    => strtoupper($jenis_kelamin),
+                    'wali_kelas'  => strtoupper($wali_kelas)
+                ];
+                $this->m->tambahdata($data, 'data_siswa');
+            }
         }
-
+    
         echo json_encode($result);
-    }
+    }    
 
     public function ambilId()
     {
@@ -119,10 +106,10 @@ class Data_siswa extends CI_Controller
 
     public function simpan_wali()
     {
-        $tingkat = $this->input->post('kelas'); // X / XI / XII
+        $tingkat = $this->input->post('kelas'); 
         $wali = $this->input->post('wali');
 
-        $this->db->like('kelas', $tingkat, 'after'); // contoh: kelas LIKE 'X%'
+        $this->db->like('kelas', $tingkat, 'after'); 
         $this->db->update('data_siswa', ['walikelas' => $wali]);
 
         echo json_encode(['status' => 'ok']);
@@ -158,55 +145,71 @@ class Data_siswa extends CI_Controller
         }
     }
 
-    public function hapusdata()
+    public function hapus_semua()
     {
-        $id = $this->input->post('id');
-        $this->db->where('id', $id);
-        $hapus = $this->db->delete('data_siswa'); // sesuaikan dengan nama tabel
-
+        $hapus = $this->db->empty_table('data_siswa'); // Kosongkan seluruh isi tabel
+    
         if ($hapus) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'failed']);
         }
-    }
+    }    
 
     public function import_excel()
-{
-    $file_excel = $_FILES['excel_siswa']['tmp_name'];
-
-    if ($file_excel) {
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $spreadsheet = $reader->load($file_excel);
-        $sheetData = $spreadsheet->getActiveSheet()->toArray();
-
-        // Asumsi: baris pertama (index 0) berisi info kelas dan wali
-        $kelas = isset($sheetData[0][0]) ? $sheetData[0][0] : '';
-        $wali_kelas = isset($sheetData[0][1]) ? $sheetData[0][1] : '';
-
-        foreach ($sheetData as $i => $row) {
-            if ($i <= 1) continue; // Skip baris 0 dan 1 (judul + header kolom)
-
-            // Cek apakah kolom cukup
-            if (!isset($row[0], $row[1], $row[2], $row[3])) continue;
-
-            $data = [
-                'nisn' => $row[0],
-                'nipd' => $row[1],
-                'nama_siswa' => $row[2],
-                'jenis_kelamin'   => $row[3],
-                'kelas' => $kelas,
-                'wali_kelas' => $wali_kelas,
-            ];
-            $this->db->insert('data_siswa', $data);
+    {
+        $file = $_FILES['excel_siswa']['tmp_name'];
+    
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        $kelas = $sheet->getCell('B1')->getValue();
+        $wali_kelas = $sheet->getCell('B2')->getValue();
+    
+        $data = [];
+        $duplikat = [];
+    
+        for ($row = 5; $row <= $sheet->getHighestRow(); $row++) {
+            $nisn = $sheet->getCell('B' . $row)->getValue();
+            $nipd = $sheet->getCell('C' . $row)->getValue();
+            $nama = $sheet->getCell('D' . $row)->getValue();
+            $jk   = $sheet->getCell('E' . $row)->getValue();
+    
+            if ($nisn && $nipd && $nama && $jk) {
+                // Cek apakah NISN sudah ada di database
+                $cek = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
+    
+                if ($cek) {
+                    $duplikat[] = $nisn; // Simpan NISN yang sudah ada
+                } else {
+                    $data[] = [
+                        'nisn' => $nisn,
+                        'nipd' => $nipd,
+                        'nama_siswa' => strtoupper($nama),
+                        'kelas' => strtoupper($kelas),
+                        'jenis_kelamin' => strtoupper($jk),
+                        'wali_kelas' => strtoupper($wali_kelas),
+                    ];
+                }
+            }
         }
-
-        $this->session->set_flashdata('success', 'Data siswa berhasil diimport!');
-    } else {
-        $this->session->set_flashdata('error', 'File tidak ditemukan.');
-    }
-
-    redirect('data_siswa');
-}
+    
+        if (!empty($data)) {
+            $this->db->insert_batch('data_siswa', $data);
+        }
+    
+        // Set flashdata sesuai kondisi
+        if (!empty($data) && empty($duplikat)) {
+            $this->session->set_flashdata('sukses', 'Semua data berhasil diimport.');
+        } elseif (!empty($data) && !empty($duplikat)) {
+            $this->session->set_flashdata('sukses', 'Beberapa data berhasil diimport, tetapi ada ' . count($duplikat) . ' NISN duplikat yang dilewati.');
+        } elseif (empty($data) && !empty($duplikat)) {
+            $this->session->set_flashdata('error', 'Semua data gagal diimport karena NISN sudah ada.');
+        } else {
+            $this->session->set_flashdata('error', 'Tidak ada data valid yang bisa diimport.');
+        }
+    
+        redirect('data_siswa');
+    }    
 
 }

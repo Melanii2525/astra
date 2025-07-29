@@ -129,9 +129,14 @@
               <label for="excel_siswa">Upload File Excel</label>
               <input type="file" name="excel_siswa" class="form-control-file" accept=".xls,.xlsx" required>
             </div>
-            <button type="submit" class="btn btn-success">
-              <i class="fas fa-upload mr-1"></i> Import
-            </button>
+            <div class="d-flex align-items-center">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-upload mr-1"></i> Import
+              </button>
+              <a href="<?= base_url('assets/template/template_siswa.xlsx') ?>" class="btn btn-warning ml-2" download>
+                <i class="fas fa-download mr-1"></i> Download Template
+              </a>
+            </div>
           </form>
         </div>
       </div>
@@ -140,17 +145,55 @@
 
   <!-- Toast Success -->
   <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1080;">
-    <div id="toastSukses" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+    <div id="toastSukses" class="toast toast-success fade" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500">
       <div class="toast-header bg-success text-white">
         <strong class="mr-auto"><i class="fas fa-check-circle mr-2"></i> Berhasil</strong>
-        <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>
+        <button type="button" class="ml-2 mb-1 close text-white btn-close-toast">&times;</button>
       </div>
       <div class="toast-body">Data siswa berhasil disimpan!</div>
     </div>
+
+    <div id="toastError" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+      <div class="toast-header bg-danger text-white">
+        <strong class="mr-auto"><i class="fas fa-exclamation-circle mr-2"></i> Gagal</strong>
+        <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>
+      </div>
+      <div class="toast-body" id="toastErrorBody">Terjadi kesalahan saat menyimpan data.</div>
+    </div>
+
+        <!-- Toast Flashdata (Import Excel) -->
+    <?php if ($this->session->flashdata('sukses')): ?>
+      <div class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500" id="toastFlashSukses">
+        <div class="toast-header bg-success text-white">
+          <strong class="mr-auto"><i class="fas fa-check-circle mr-2"></i> Berhasil</strong>
+          <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>
+        </div>
+        <div class="toast-body">
+          <?= $this->session->flashdata('sukses') ?>
+        </div>
+      </div>
+    <?php elseif ($this->session->flashdata('error')): ?>
+      <div class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="toastFlashError">
+        <div class="toast-header bg-danger text-white">
+          <strong class="mr-auto"><i class="fas fa-exclamation-circle mr-2"></i> Gagal</strong>
+          <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>
+        </div>
+        <div class="toast-body">
+          <?= $this->session->flashdata('error') ?>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 
   <!-- Table -->
   <h5 class="text-center font-weight-bold mb-3 mt-5">Daftar Siswa Terdata</h5>
+
+  <div class="d-flex justify-content-end mb-2">
+      <button class="btn btn-danger" onclick="hapusSemuaSiswa()">
+        <i class="fas fa-trash-alt mr-1"></i> Hapus Semua Data
+      </button>
+  </div>
+
   <div class="table-responsive">
     <table class="table table-bordered table-striped">
       <thead class="thead-custom">
@@ -173,35 +216,75 @@
 <script>
   $(document).ready(function () {
     ambilData();
+
+    // 1. Inisialisasi toast dengan config
+    $('#toastSukses').toast({ autohide: true, delay: 1500 });
+    $('#toastError').toast({ autohide: true, delay: 2000 });
+
+    // 2. Jika ada flashdata dari PHP
+    if ($("#toastFlashSukses").length) {
+      $("#toastFlashSukses").toast({ autohide: true, delay: 1500 }).toast('show');
+    }
+
+    if ($("#toastFlashError").length) {
+      $("#toastFlashError").toast({ autohide: true, delay: 2000 }).toast('show');
+    }
+
+    // 3. Tombol close manual
+    $('.btn-close-toast').on('click', function () {
+      $(this).closest('.toast').toast('hide');
+    });
   });
 
   function ambilData() {
     $.ajax({
-      type: 'POST',
-      url: '<?= base_url("index.php/data_siswa/ambildata") ?>',
-      dataType: 'json',
+      type: "GET",
+      url: "<?= base_url('data_siswa/ambildata') ?>",
+      dataType: "json",
       success: function (res) {
-        const semuaData = [...res.kelas_x, ...res.kelas_xi, ...res.kelas_xii];
-        renderTable(semuaData);
+        console.log(res); // Debug: Lihat di console
+        renderTable(res.siswa); // Pastikan fungsi ini ada
+      },
+      error: function () {
+        alert("Gagal ambil data");
       }
     });
   }
 
-  function renderTable(data) {
-    let baris = '';
-    for (let i = 0; i < data.length; i++) {
-      baris += `
-        <tr id="baris-${data[i].id}">
-          <td>${i + 1}</td>
-          <td>${data[i].nisn}</td>
-          <td>${data[i].nipd}</td>
-          <td>${data[i].nama_siswa}</td>
-          <td>${data[i].kelas}</td>
-          <td>${data[i].jenis_kelamin}</td>
-          <td>${data[i].wali_kelas}</td>
-        </tr>`;
+  function hapusSemuaSiswa() {
+    if (confirm("Yakin ingin menghapus semua data siswa? Tindakan ini tidak bisa dibatalkan.")) {
+      $.ajax({
+        type: "POST",
+        url: "<?= base_url('index.php/data_siswa/hapus_semua') ?>",
+        success: function (res) {
+          ambilData(); // refresh tabel
+          alert("Semua data siswa berhasil dihapus.");
+        },
+        error: function () {
+          alert("Terjadi kesalahan saat menghapus data.");
+        }
+      });
     }
-    $('#tabelSiswa').html(baris);
+  }
+
+  function renderTable(data) {
+    let html = "";
+    let no = 1;
+
+    data.forEach(item => {
+      html += `
+        <tr>
+          <td>${no++}</td>
+          <td>${item.nisn}</td>
+          <td>${item.nipd}</td>
+          <td>${item.nama_siswa}</td>
+          <td>${item.kelas}</td>
+          <td>${item.jenis_kelamin}</td>
+          <td>${item.wali_kelas}</td>
+        </tr>`;
+    });
+
+    $("#tabelSiswa").html(html); 
   }
 
   $('#formSiswa').submit(function (e) {
@@ -229,11 +312,14 @@
           ambilData();
           $('#toastSukses').toast('show');
         } else {
-          alert(res.pesan);
+          $('#toastErrorBody').text(res.pesan || "Terjadi kesalahan saat menyimpan data.");
+          $('#toastError').toast('show');
+          $('#formSiswa')[0].reset(); 
         }
       }
     });
   });
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

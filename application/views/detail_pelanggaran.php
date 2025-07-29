@@ -68,7 +68,7 @@
         <div class="row row-detail">
             <div class="col-md-6">
                 <p><strong>NISN:</strong> <?= $data->nisn ?></p>
-                <p><strong>Tanggal:</strong> <?= $data->tanggal ?></p>
+                <p><strong>Tanggal:</strong> <?= date('d-m-Y', strtotime($data->tanggal)) ?></p>
                 <p><strong>Nama:</strong> <?= $data->nama_siswa ?></p>
                 <p><strong>Jenis Kelamin:</strong> <?= $data->jenis_kelamin ?></p>
                 <p><strong>Kelas:</strong> <?= $data->kelas ?></p>

@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @property CI_DB_query_builder $db
@@ -8,13 +8,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property M_revisi $M_revisi
  */
 
-class Revisi extends CI_Controller {
+class Revisi extends CI_Controller
+{
 
     public function __construct()
     {
         parent::__construct();
         $this->load->database();
-        $this->load->library('session'); 
+        $this->load->library('session');
         $this->load->model('M_revisi');
     }
 
@@ -38,6 +39,8 @@ class Revisi extends CI_Controller {
                     'keterangan' => [],
                     'tanggal' => [],
                     'jenis_data' => [],
+                    'pelanggaran' => [],
+                    'kehadiran' => []
                 ];
             }
 
@@ -45,6 +48,11 @@ class Revisi extends CI_Controller {
             $siswa[$nisn]['keterangan'][] = $p['keterangan'];
             $siswa[$nisn]['tanggal'][] = $p['tanggal'];
             $siswa[$nisn]['jenis_data'][] = 'pelanggaran';
+
+            $siswa[$nisn]['pelanggaran'][] = [
+                'jenis' => $p['keterangan'],
+                'poin' => (int)$p['poin']
+            ];
         }
 
         // Proses kehadiran
@@ -60,6 +68,8 @@ class Revisi extends CI_Controller {
                     'keterangan' => [],
                     'tanggal' => [],
                     'jenis_data' => [],
+                    'pelanggaran' => [],
+                    'kehadiran' => []
                 ];
             }
 
@@ -67,6 +77,11 @@ class Revisi extends CI_Controller {
             $siswa[$nisn]['keterangan'][] = $k['keterangan'];
             $siswa[$nisn]['tanggal'][] = $k['tanggal'];
             $siswa[$nisn]['jenis_data'][] = 'kehadiran';
+
+            $siswa[$nisn]['kehadiran'][] = [
+                'jenis' => $k['keterangan'] ?? 'Alpha',
+                'poin' => 1
+            ];
         }
 
         // Ambil siswa yang memiliki poin >= 10
@@ -82,6 +97,8 @@ class Revisi extends CI_Controller {
                     'keterangan' => implode('; ', $item['keterangan']),
                     'jenis_data' => implode(', ', array_unique($item['jenis_data'])),
                     'poin' => $item['poin'],
+                    'pelanggaran' => $item['pelanggaran'],
+                    'kehadiran' => $item['kehadiran']
                 ];
             }
         }
@@ -95,12 +112,12 @@ class Revisi extends CI_Controller {
             if (isset($ketMap[$row['nisn']])) {
                 if (isset($ketMap[$row['nisn']]['keterangan'])) {
                     $row['keterangan'] = $ketMap[$row['nisn']]['keterangan'];
-                }                
+                }
                 if (isset($ketMap[$row['nisn']]['poin'])) {
                     $row['poin'] = $ketMap[$row['nisn']]['poin'];
-                }                
+                }
             }
-        }              
+        }
         unset($row);   // break reference
 
         $this->load->view('templates/header');
@@ -160,6 +177,5 @@ class Revisi extends CI_Controller {
 
         $this->session->set_flashdata('success', $msg);
         redirect('revisi');
-    }  
-
+    }
 }
