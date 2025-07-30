@@ -38,66 +38,60 @@ class Kehadiran extends CI_Controller
 
     public function ambildata()
     {
-        $data = $this->m->ambildata('kehadiran')->result();
+        $data = $this->m->ambildata()->result(); // ambil dari model yang JOIN
         echo json_encode($data);
-    }
+    }       
 
     public function tambahdata()
     {
-        $nisn = $this->input->post('nisn');
-        $tanggal = $this->input->post('tanggal');
-        $nama_siswa = $this->input->post('nama_siswa');
-        $kelas = $this->input->post('kelas');
-        $wali_kelas = $this->input->post('wali_kelas');
-        $keterangan = $this->input->post('keterangan'); 
-        $jam = (int) $this->input->post('jam_tidak_hadir'); // ambil jam
-        $poin = 0;
+        $data = [
+            'nisn' => $this->input->post('nisn'),
+            'tanggal' => $this->input->post('tanggal'),
+            'keterangan' => $this->input->post('keterangan'), 
+            'poin' => $this->input->post('poin')
+        ];        
     
-        if (empty($tanggal) || empty($nama_siswa) || empty($nisn) || empty($kelas) || empty($keterangan) || empty($wali_kelas)) {
-            $result = [
-                'status' => false,
-                'pesan' => 'Semua kolom wajib diisi!'
-            ];
-        } else {
-            // Logika hanya untuk Alpha
-            if (strtolower(trim($keterangan)) === 'alpha') {
-                // Ambil total jam sebelumnya
-                $this->db->select_sum('jam_tidak_hadir');
-                $this->db->where('nisn', $nisn);
-                $this->db->where('keterangan', 'Alpha');
-                $hasil = $this->db->get('kehadiran')->row();
-                $total_jam = $hasil->jam_tidak_hadir ?? 0;
-    
-                $total_baru = $total_jam + $jam;
-    
-                // Jika melewati 10 jam dari sebelumnya, berikan poin
-                if ($total_jam < 10 && $total_baru >= 10) {
-                    $poin = 7;
-                }
+        $this->m->tambahdata($data, 'kehadiran'); 
+        echo json_encode(['pesan' => '']);
+    }      
+
+    public function tambah()
+    {
+        $this->load->model('m_kehadiran');
+        $this->load->model('m_siswa');
+
+        $data['siswa'] = $this->m_siswa->get_all();
+        $data['title'] = 'Tambah Data Kehadiran';
+
+        if ($this->input->post()) {
+            $nis = $this->input->post('nis');
+            $tanggal = $this->input->post('tanggal');
+            $keterangan = strtoupper($this->input->post('keterangan'));
+
+            // Validasi: hanya boleh huruf A
+            if ($keterangan !== 'A') {
+                $this->session->set_flashdata('error', 'Keterangan hanya boleh huruf A.');
+                redirect('kehadiran/tambah');
             }
-    
-            $data = [
-                'nisn' => $nisn,
+
+            $poin = 7;
+
+            $data_insert = [
+                'nis' => $nis,
                 'tanggal' => $tanggal,
-                'nama_siswa' => $nama_siswa,
-                'kelas' => $kelas,
-                'wali_kelas' => $wali_kelas,
                 'keterangan' => $keterangan,
-                'jam_tidak_hadir' => $jam,
                 'poin' => $poin
             ];
-    
-            $this->m->tambahdata($data, 'kehadiran');
-    
-            $result = [
-                'status' => true,
-                'pesan' => ''
-            ];
+
+            $this->m_kehadiran->insert($data_insert);
+            $this->session->set_flashdata('success', 'Data kehadiran berhasil disimpan.');
+            redirect('kehadiran');
         }
-    
-        echo json_encode($result);
+
+        $this->load->view('template/header', $data);
+        $this->load->view('kehadiran/tambah', $data);
+        $this->load->view('template/footer');
     }
-    
 
     public function ambilId()
     {
@@ -107,46 +101,41 @@ class Kehadiran extends CI_Controller
         echo json_encode($data);
     }
 
-    public function ubahdata()
+    public function hapusdata()
     {
-        $data = [
-            'nisn' => $this->input->post('nisn'),
-            'nama_siswa' => $this->input->post('nama_siswa'),
-            'tanggal' => $this->input->post('tanggal'),
-            'kelas' => $this->input->post('kelas'),
-            'wali_kelas' => $this->input->post('wali_kelas'),
-            'keterangan' => $this->input->post('keterangan'),
-            'poin' => $this->input->post('poin')
-        ];
-
         $id = $this->input->post('id');
-
+        $where = ['id' => $id];
+    
         $this->load->model('m_kehadiran');
-        $this->m_kehadiran->ubahdata($data, ['id' => $id], 'kehadiran');
-
-        echo json_encode(['pesan' => '']);
-    }
+        $hapus = $this->m_kehadiran->hapusdata('kehadiran', $where);
+    
+        if ($hapus) {
+            echo json_encode(['status' => true]);
+        } else {
+            echo json_encode(['status' => false]);
+        }
+    }    
 
     public function detail($id)
     {
-        $this->db->select('k.*, s.jenis_kelamin');
+        $this->db->select('k.*, s.jenis_kelamin, s.nama_siswa, s.kelas, s.wali_kelas');
         $this->db->from('kehadiran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
         $this->db->where('k.id', $id);
         $row = $this->db->get()->row();
-
+    
         if (!$row) {
             show_404();
         }
-
+    
         $data['title'] = 'Detail Kehadiran';
         $data['data'] = $row;
-
+    
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
-        $this->load->view('detail_kehadiran', $data); // pastikan nama file view ini benar
+        $this->load->view('detail_kehadiran', $data);
         $this->load->view('templates/footer');
-    }
+    }    
 
     // public function print(){
     //     $data['kehadiran'] = $this->m_kehadiran->tampil_data("kehadiran")->result();
@@ -202,7 +191,7 @@ class Kehadiran extends CI_Controller
         foreach ($data['kehadiran'] as $k) {
             $sheet->setCellValue('A'.$row, $no++);
             $sheet->setCellValue('B'.$row, $k->nisn);
-            $sheet->setCellValue('C'.$row, $k->tanggal);
+            $sheet->setCellValue('C'.$row, date('d-m-Y', strtotime($k->tanggal)));
             $sheet->setCellValue('D'.$row, $k->nama_siswa);
             $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
             $sheet->setCellValue('F'.$row, $k->kelas);

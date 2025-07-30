@@ -73,14 +73,14 @@ class Revisi extends CI_Controller
                 ];
             }
 
-            $siswa[$nisn]['poin'] += 1;
+            $siswa[$nisn]['poin'] += 7;
             $siswa[$nisn]['keterangan'][] = $k['keterangan'];
             $siswa[$nisn]['tanggal'][] = $k['tanggal'];
             $siswa[$nisn]['jenis_data'][] = 'kehadiran';
 
             $siswa[$nisn]['kehadiran'][] = [
                 'jenis' => $k['keterangan'] ?? 'Alpha',
-                'poin' => 1
+                'poin' => 7
             ];
         }
 

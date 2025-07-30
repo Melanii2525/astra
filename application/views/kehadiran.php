@@ -238,7 +238,7 @@
 
                             <div class="form-group">
                                 <label class="group">Nama:</label>
-                                <input type="text" name="nama_siswa" id="nama_input" class="form-control" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
+                                <input type="text" name="nama_siswa" id="nama_input" class="form-control" id="nama_siswa_display" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
                                 <datalist id="list-nama_siswa">
                                     <?php foreach ($siswa as $row): ?>
                                         <option value="<?= $row->nama_siswa ?>"></option>
@@ -263,17 +263,15 @@
 
                             <div class="form-group">
                                 <label class="group">Keterangan:</label>
-                                <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" id="keterangan_input">
+                                <input type="text" id="input_display" class="form-control text-uppercase" maxlength="10" placeholder="Masukkan A">
+                                <small id="keterangan-deskripsi" class="form-text text-light mt-1"></small>
                             </div>
+                                
+                            <input type="hidden" id="input_keterangan" name="keterangan">
 
                             <div class="form-group">
                                 <label class="group">Poin:</label>
-                                <input type="text" class="form-control" name="poin" id="poin" placeholder="Poin" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="group">Jam Tidak Hadir:</label>
-                                <input type="number" class="form-control" name="jam_tidak_hadir" id="jam_tidak_hadir" placeholder="Contoh: 2">
+                                <input type="number" id="poin" name="poin" class="form-control" readonly required placeholder="Poin">
                             </div>
 
                             <div class="text-end d-flex justify-content-end mt-4">
@@ -292,6 +290,14 @@
     <script type="text/javascript">
         ambilData();
 
+        function formatTanggal(isoDate) {
+            const date = new Date(isoDate);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); 
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
         function ambilData() {
             $.ajax({
                 type: 'POST',
@@ -301,20 +307,21 @@
                     var baris = '';
                     for (var i = 0; i < hasil.length; i++) {
                         baris += '<tr>' +
-                            '<td>' + (i + 1) + '</td>' +
-                            '<td>' + hasil[i].nisn + '</td>' +
-                            '<td>' + hasil[i].tanggal + '</td>' +
-                            '<td>' + hasil[i].nama_siswa + '</td>' +
-                            '<td>' + hasil[i].kelas + '</td>' +
-                            '<td>' + hasil[i].keterangan + '</td>' +
-                            '<td>' + hasil[i].poin + '</td>' +
-                            '<td class="td-aksi">' +
-                            '<a href="javascript:void(0);" class="btn custom-btn btn-sm" onclick="editData(' + hasil[i].id + ')">' +
-                            ' <i class="fas fa-edit"></i> Edit</a>' +
-                            '<a href="<?= base_url("index.php/kehadiran/detail/") ?>' + hasil[i].id + '" class="btn custom-btn btn-sm">' +
-                            '<i class="fas fa-eye"></i> Detail</a>' +
-                            '</td>'
-
+                        '<td>' + (i + 1) + '</td>' +
+                        '<td>' + hasil[i].nisn + '</td>' +
+                        '<td>' + formatTanggal(hasil[i].tanggal) + '</td>' +
+                        '<td>' + hasil[i].nama_siswa + '</td>' +
+                        '<td>' + hasil[i].kelas + '</td>' +
+                        '<td>' + hasil[i].keterangan + '</td>' +
+                        '<td>' + hasil[i].poin + '</td>' +
+                        '<td class="td-aksi">' +
+                            '<div class="d-flex justify-content-center gap-2">' +
+                                '<a href="<?= base_url("index.php/kehadiran/detail/") ?>' + hasil[i].id + '" class="btn btn-sm btn-info">' +
+                                '<i class="fas fa-eye"></i> Detail</a>' +
+                                '<a href="javascript:void(0);" class="btn btn-sm btn-danger" onclick="hapusData(' + hasil[i].id + ')">' +
+                                '<i class="fas fa-trash-alt"></i> Hapus</a>' +
+                            '</div>' +
+                        '</td>' +
                         '</tr>';
                     }
                     $('#target').html(baris);
@@ -350,10 +357,7 @@
                 url: '<?php echo base_url("index.php/kehadiran/tambahdata") ?>',
                 data: {
                     tanggal: tanggal,
-                    nama_siswa: nama_siswa,
                     nisn: nisn,
-                    kelas: kelas,
-                    wali_kelas: $("[name='wali_kelas']").val(),
                     keterangan: keterangan,
                     poin: poin
                 },
@@ -389,27 +393,30 @@
                     $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
                     $('[name="keterangan"]').val(hasil[0].keterangan);
                     $('[name="poin"]').val(hasil[0].poin);
-                    $('[name="jam_tidak_hadir"]').val(hasil[0].jam_tidak_hadir);
                 }
             });
         }
 
-        function ubahdata() {
-            $.ajax({
-                type: 'POST',
-                url: '<?php echo base_url("index.php/kehadiran/ubahdata") ?>',
-                data: $('#kehadiran-form').serialize(),
-                dataType: 'json',
-                success: function(hasil) {
-                    $('#pesan').html(hasil.pesan);
-                    if (hasil.pesan == '') {
-                        ambilData();
-                        sembunyikanForm();
-                        $('#btn-ubah').hide();
-                        $('.btn-custom-submit:contains("Tambah")').show();
+        function hapusData(id) {
+            if (confirm("Yakin ingin menghapus data ini?")) {
+                $.ajax({
+                    type: 'POST',
+                    url: '<?php echo base_url("index.php/kehadiran/hapusdata") ?>',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status === true) {
+                            ambilData(); // Refresh tabel
+                            alert("Data berhasil dihapus.");
+                        } else {
+                            alert("Gagal menghapus data.");
+                        }
+                    },
+                    error: function () {
+                        alert("Terjadi kesalahan saat menghapus.");
                     }
-                }
-            });
+                });
+            }
         }
 
         function submit(id) {
@@ -533,6 +540,29 @@
         inputNama.addEventListener('input', isiOtomatis);
         inputNama.addEventListener('change', isiOtomatis);
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const inputDisplay = document.getElementById('input_display');
+    const inputHidden = document.getElementById('input_keterangan');
+    const poinInput = document.getElementById('poin');
+
+    inputDisplay.addEventListener('input', function () {
+        let val = this.value.trim().toUpperCase();
+
+        if (val === 'A' || val.startsWith('A')) {
+            this.value = 'A (10 JAM)';
+            inputHidden.value = 'A'; // hanya simpan A ke database
+            poinInput.value = 7;
+        } else {
+            this.value = '';
+            inputHidden.value = '';
+            poinInput.value = '';
+        }
+    });
+});
+</script>
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         </div>

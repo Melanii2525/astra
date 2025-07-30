@@ -37,11 +37,15 @@ class Pelanggaran extends CI_Controller
 
     public function ambildata()
     {
-        $this->db->order_by('tanggal', 'DESC');
-        $this->db->order_by('kelas', 'ASC');
-        $data = $this->m->ambildata('pelanggaran')->result();
+        $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
+        $this->db->from('pelanggaran p');
+        $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
+        $this->db->order_by('p.tanggal', 'DESC');
+        $this->db->order_by('s.kelas', 'ASC');
+        $data = $this->db->get()->result();
+    
         echo json_encode($data);
-    }
+    }    
 
     public function tambahdata()
     {
@@ -56,15 +60,12 @@ class Pelanggaran extends CI_Controller
         }
 
         $data = [
+            'nisn' => $this->input->post('nisn'),
             'tanggal' => $this->input->post('tanggal'),
-            'nisn' => $nisn,
-            'nama_siswa' => strtoupper(trim($siswa['nama_siswa'])),
-            'kelas' => strtoupper(trim($siswa['kelas'])),
-            'wali_kelas' => $siswa['wali_kelas'],
-            'kode' => strtoupper(trim($this->input->post('kode'))),
+            'kode' => $this->input->post('kode'),
             'keterangan' => $this->input->post('keterangan'),
             'poin' => $this->input->post('poin'),
-        ];
+        ];        
 
         $sukses = $this->m->tambahdata($data, 'pelanggaran');
 
@@ -86,23 +87,21 @@ class Pelanggaran extends CI_Controller
         $id = $this->input->post('id');
         $data = [
             'tanggal' => $this->input->post('tanggal'),
-            'nama_siswa' => strtoupper(trim($this->input->post('nama_siswa'))),
-            'kelas' => strtoupper(trim($this->input->post('kelas'))),
             'kode' => strtoupper(trim($this->input->post('kode'))),
             'keterangan' => $this->input->post('deskripsi'),
             'poin' => $this->input->post('poin'),
         ];
         $where = ['id' => $id];
         $sukses = $this->m->ubahdata('pelanggaran', $data, $where);
-
+    
         echo json_encode([
             'pesan' => $sukses ? '' : 'Gagal mengubah data'
         ]);
-    }
+    }    
 
     public function detail($id)
     {
-        $this->db->select('p.*, s.jenis_kelamin, s.wali_kelas');
+        $this->db->select('p.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran p');
         $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
         $this->db->where('p.id', $id);
