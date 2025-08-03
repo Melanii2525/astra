@@ -170,7 +170,17 @@
     }
 
     .card.h-100.w-100 {
-        margin-top: 10px; /* atau 5px */
+        margin-top: 10px; 
+    }
+
+    .btn-custom-detail {
+        background-color: #2C6A74;
+        color: white;
+        border: none;
+    }
+    .btn-custom-detail:hover {
+        background-color: #24565d;
+        color: #fff;
     }
 
 </style>
@@ -185,43 +195,55 @@
   <!-- Tombol-tombol -->
   <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
     <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-      <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
+    <?php if (!$siswa_kosong): ?>
+        <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
         <i class="fas fa-plus"></i> Tambah
-      </a>
-      <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
-        <i class="fas fa-file-pdf"></i> Export PDF
-      </a>
-      <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
-        <i class="fas fa-file-excel"></i> Export Excel
-      </a>
+        </a>
+    <?php endif; ?>
+        <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
+        <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </a>
     </div>
   </div>
 </div>
 </div>
 
-
-  <div class="row">
-    <div class="col-12">
-      <div class="card h-100 w-100">
-        <div class="card-body p-3">
-          <div class="table-responsive">
-          <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
-              <thead class="table-light">
-                <tr>
-                  <th class="text-center" style="width: 5%;">NO.</th>
-                  <th class="text-center" style="width: 5%;">NISN</th>
-                  <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
-                  <th class="text-center" style="width: 25%;">NAMA SISWA</th>
-                  <th class="text-center" style="width: 15%;">KELAS</th>
-                  <th class="text-center" style="width: 15%;">KETERANGAN</th>
-                  <th class="text-center" style="width: 10%;">POIN</th> 
-                  <th class="text-center" style="width: 20%;">AKSI</th>
-                </tr>
-              </thead>
-              <tbody id="target">
-                <!-- Data diisi via JS -->
-              </tbody>
-            </table>
+    <div class="row">
+        <div class="col-12">
+        <div class="card h-100 w-100">
+            <div class="card-body p-3">
+                <?php if ($siswa_kosong): ?>
+                    <div class="text-center p-5">
+                        <h4 class="text-danger">Data Siswa Kosong</h4>
+                        <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data kehadiran.</p>
+                        <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
+                            <i class="fas fa-user-plus"></i> Ke Halaman Data Siswa
+                        </a>
+                    </div>
+                <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 5%;">NO.</th>
+                            <th class="text-center" style="width: 15%;">NISN</th>
+                            <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
+                            <th class="text-center" style="width: 25%;">NAMA SISWA</th>
+                            <th class="text-center" style="width: 15%;">KELAS</th>
+                            <th class="text-center" style="width: 15%;">KODE</th>
+                            <th class="text-center" style="width: 15%;">POIN</th>
+                            <th class="text-center" style="width: 20%;">AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="target">
+                        <!-- Data akan diisi melalui JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
 
             <div id="form-kehadiran">
                 <div class="card">
@@ -316,7 +338,7 @@
                         '<td>' + hasil[i].poin + '</td>' +
                         '<td class="td-aksi">' +
                             '<div class="d-flex justify-content-center gap-2">' +
-                                '<a href="<?= base_url("index.php/kehadiran/detail/") ?>' + hasil[i].id + '" class="btn btn-sm btn-info">' +
+                                '<a href="<?= base_url("index.php/kehadiran/detail/") ?>' + hasil[i].id + '" class="btn btn-sm btn-custom-detail">' +
                                 '<i class="fas fa-eye"></i> Detail</a>' +
                                 '<a href="javascript:void(0);" class="btn btn-sm btn-danger" onclick="hapusData(' + hasil[i].id + ')">' +
                                 '<i class="fas fa-trash-alt"></i> Hapus</a>' +

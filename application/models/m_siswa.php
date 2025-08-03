@@ -1,6 +1,16 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
 class M_siswa extends CI_Model
 {
+    public function get_siswa_paginated($limit, $offset)
+    {
+        return $this->db->order_by('id', 'ASC')
+                        ->limit($limit, $offset)
+                        ->get('data_siswa')
+                        ->result();
+    }    
+
     public function ambildata($table)
     {
         return $this->db->get($table);
@@ -32,5 +42,4 @@ class M_siswa extends CI_Model
         $this->db->like('nama_siswa', $keyword);
         return $this->db->get('data_siswa')->result_array();
     }
-
 }

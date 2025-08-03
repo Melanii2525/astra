@@ -6,11 +6,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Input $input
  * @property CI_Session $session
  * @property M_revisi $M_revisi
- */
+*/
 
 class Revisi extends CI_Controller
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -73,7 +72,7 @@ class Revisi extends CI_Controller
                 ];
             }
 
-            $siswa[$nisn]['poin'] += 7;
+            $siswa[$nisn]['poin'] += (int)$k['poin'];
             $siswa[$nisn]['keterangan'][] = $k['keterangan'];
             $siswa[$nisn]['tanggal'][] = $k['tanggal'];
             $siswa[$nisn]['jenis_data'][] = 'kehadiran';
@@ -84,7 +83,6 @@ class Revisi extends CI_Controller
             ];
         }
 
-        // Ambil siswa yang memiliki poin >= 10
         $data['revisi'] = [];
         foreach ($siswa as $item) {
             if ($item['poin'] >= 10) {
@@ -103,11 +101,17 @@ class Revisi extends CI_Controller
             }
         }
 
-        // --- ambil keterangan yg pernah di-edit user ---
-        $nisns = array_column($data['revisi'], 'nisn');
-        $ketMap = $this->M_revisi->get_keterangan_revisi_batch($nisns);
+        // echo '<pre>';
+        // print_r($data['revisi']);  // pastikan poin pelanggaran dan kehadiran sudah terisi
+        // exit;
 
-        // timpa / kosongkan keterangan
+        $nisns = array_column($data['revisi'], 'nisn');
+        $ketMap = [];
+
+        if (!empty($nisns)) {
+            $ketMap = $this->M_revisi->get_keterangan_revisi_batch($nisns);
+        }
+
         foreach ($data['revisi'] as &$row) {
             if (isset($ketMap[$row['nisn']])) {
                 if (isset($ketMap[$row['nisn']]['keterangan'])) {
@@ -118,7 +122,7 @@ class Revisi extends CI_Controller
                 }
             }
         }
-        unset($row);   // break reference
+        unset($row);   
 
         $this->load->view('templates/header');
         $this->load->view('templates/sidebar');
@@ -132,15 +136,16 @@ class Revisi extends CI_Controller
 
         if ($revisi) {
             foreach ($revisi as $r) {
+                log_message('debug', 'REVISI POSTED: ' . json_encode($r));
                 $this->M_revisi->simpan_revisi([
                     'nisn'       => $r['nisn'],
-                    'nama_siswa'       => $r['nama_siswa'],
+                    'nama_siswa' => $r['nama_siswa'],
                     'kelas'      => $r['kelas'],
                     'wali_kelas' => $r['wali_kelas'],
                     'tanggal'    => $r['tanggal'],
-                    'jenis' => $r['jenis_data'],
+                    'jenis'      => $r['jenis_data'],
                     'keterangan' => $r['keterangan'],
-                    'poin'       => $r['poin'],
+                    'poin'       => $r['poin'], 
                 ]);
             }
             $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');

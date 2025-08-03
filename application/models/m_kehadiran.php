@@ -1,10 +1,9 @@
-    <?php
-    defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
-    class M_kehadiran extends CI_Model
-    {
-
-        public function tampil_data($table)
+class M_kehadiran extends CI_Model
+{
+    public function tampil_data($table)
         {
             return $this->db->get($table);
         }
@@ -36,5 +35,15 @@
         public function hapusdata($table, $where)
         {
             return $this->db->delete($table, $where);
+        }
+
+        public function get_all()
+        {
+            return $this->db->get('kehadiran')->result();
+        }
+
+        public function insert($data)
+        {
+            return $this->db->insert('kehadiran', $data);
         }
     }

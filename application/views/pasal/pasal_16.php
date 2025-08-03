@@ -94,7 +94,6 @@ html, body {
             </p>
 
             <div class="d-flex justify-content-center flex-wrap gap-3 mt-3">
-                <!-- Baris pertama -->
                 <img src="<?= base_url('assets/img/seragam1.jpg') ?>" alt="Seragam 1" class="img-fluid" style="max-width: 150px; border-radius: 8px;">
                 <img src="<?= base_url('assets/img/seragam2.jpg') ?>" alt="Seragam 2" class="img-fluid" style="max-width: 150px; border-radius: 8px;">
                 <img src="<?= base_url('assets/img/seragam3.jpg') ?>" alt="Seragam 3" class="img-fluid" style="max-width: 150px; border-radius: 8px;">

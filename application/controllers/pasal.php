@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
 class Pasal extends CI_Controller {
     public function __construct() {
         parent::__construct();
@@ -59,5 +61,4 @@ class Pasal extends CI_Controller {
         $this->load->view('pasal/pasal_23');
         $this->load->view('templates/footer');
     }
-
 }

@@ -232,15 +232,17 @@
   <!-- Tombol-tombol -->
   <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
     <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-      <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
+    <?php if (!$siswa_kosong): ?>
+        <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
         <i class="fas fa-plus"></i> Tambah
-      </a>
-      <a href="<?= base_url('index.php/pelanggaran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
-        <i class="fas fa-file-pdf"></i> Export PDF
-      </a>
-      <a href="<?= base_url('index.php/pelanggaran/excel') ?>" class="btn tab-kategori">
-        <i class="fas fa-file-excel"></i> Export Excel
-      </a>
+        </a>
+    <?php endif; ?>
+        <a href="<?= base_url('index.php/pelanggaran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
+        <a href="<?= base_url('index.php/pelanggaran/excel') ?>" class="btn tab-kategori">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </a>
     </div>
   </div>
 </div>
@@ -251,23 +253,34 @@
     <div class="col-12">
       <div class="card h-100 w-100">
         <div class="card-body p-3">
-          <div class="table-responsive">
-          <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
-              <thead class="table-light">
-                <tr>
-                  <th class="text-center" style="width: 5%;">NO.</th>
-                  <th class="text-center" style="width: 15%;">NISN</th>
-                  <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
-                  <th class="text-center" style="width: 25%;">NAMA SISWA</th>
-                  <th class="text-center" style="width: 15%;">KELAS</th>
-                  <th class="text-center" style="width: 15%;">KODE</th>
-                  <th class="text-center" style="width: 20%;">AKSI</th>
-                </tr>
-              </thead>
-              <tbody id="target">
-                <!-- Data akan diisi melalui JavaScript -->
-              </tbody>
-            </table>
+            <?php if ($siswa_kosong): ?>
+                <div class="text-center p-5">
+                    <h4 class="text-danger">Data Siswa Kosong</h4>
+                    <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data pelanggaran.</p>
+                    <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
+                        <i class="fas fa-user-plus"></i> Ke Halaman Data Siswa
+                    </a>
+                </div>
+            <?php else: ?>
+            <div class="table-responsive">
+            <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                    <th class="text-center" style="width: 5%;">NO.</th>
+                    <th class="text-center" style="width: 15%;">NISN</th>
+                    <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
+                    <th class="text-center" style="width: 25%;">NAMA SISWA</th>
+                    <th class="text-center" style="width: 15%;">KELAS</th>
+                    <th class="text-center" style="width: 15%;">KODE</th>
+                    <th class="text-center" style="width: 20%;">AKSI</th>
+                    </tr>
+                </thead>
+                <tbody id="target">
+                    <!-- Data akan diisi melalui JavaScript -->
+                </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
 
             <!-- Modal Form Pelanggaran -->
             <div id="form-pelanggaran">

@@ -44,7 +44,6 @@
     border-radius: 12px;
     padding: 20px;
     background-color: #aee3e0;
-    /* Card background tetap */
     color: white;
   }
 
@@ -95,6 +94,28 @@
     color: #2c6a74;
   }
 
+  .text-danger {
+    color: #dc3545 !important; 
+  }
+
+  .btn-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: #fff !important;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9 !important;
+    border-color: #0062cc !important;
+  }
+
+  .btn-primary:focus, 
+  .btn-primary:active {
+    background-color: #005cbf !important;
+    border-color: #0056b3 !important;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5) !important;
+  }
+
   .form-check-label {
     font-size: 0.85rem;
     color: black;
@@ -132,32 +153,34 @@
   }
 
   #filter-tindak-lanjut {
-  max-width: 400px;
-}
+    max-width: 400px;
+  }
 
-#filter-tindak-lanjut:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(93, 169, 176, 0.5);
-}
+  #filter-tindak-lanjut:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(93, 169, 176, 0.5);
+  }
 
-.form-group label {
-  font-weight: 600;
-  font-size: 15px;
-  color: #344767;
-  margin-bottom: 6px;
-}
+  .form-group label {
+    font-weight: 600;
+    font-size: 15px;
+    color: #344767;
+    margin-bottom: 6px;
+  }
 
-#filter-tindak-lanjut {
-  background-color: #2C6A74;
-  background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 32px;
-  padding-left: 20px;
-  appearance: none; /* remove default arrow */
-  color: white;
-}
+  #filter-tindak-lanjut {
+    background-color: #2C6A74;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 32px;
+    padding-left: 20px;
+    appearance: none;
+    color: white;
+  }
 
-
+  .p-5 {
+    padding: 3rem !important;
+  }
 </style>
 
 <div class="container-fluid py-4">
@@ -167,7 +190,7 @@
     <div class="card-body">
 
       <div class="form-group mb-3">
-        <label for="filter-tindak-lanjut" ><strong>Filter Tindak Lanjut:</strong></label>
+        <label for="filter-tindak-lanjut"><strong>Filter Tindak Lanjut:</strong></label>
         <select id="filter-tindak-lanjut" class="form-control " onchange="filterTindakLanjut()">
           <option value="semua">Semua</option>
           <option value="Pengarahan Tim Tatib">Pengarahan Tim Tatib</option>
@@ -182,10 +205,28 @@
         </select>
       </div>
 
+      <?php if (empty($revisi)): ?>
+        <div class="text-center p-5">
+          <h4 class="text-danger">Data Siswa Kosong</h4>
+          <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data revisi.</p>
+          <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
+            <i class="fas fa-user-plus"></i> Ke Halaman Data Siswa
+          </a>
+        </div>
+      <?php else: ?>
 
       <form action="<?= base_url('revisi/simpan') ?>" method="post">
         <div class="timeline">
           <?php foreach ($revisi as $index => $item): ?>
+            <input type="hidden" name="revisi[<?= $index ?>][nisn]" value="<?= $item['nisn'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][nama_siswa]" value="<?= $item['nama_siswa'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][kelas]" value="<?= $item['kelas'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][wali_kelas]" value="<?= $item['wali_kelas'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][tanggal]" value="<?= $item['tanggal'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][jenis_data]" value="<?= $item['jenis_data'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][keterangan]" value="<?= $item['keterangan'] ?>">
+            <input type="hidden" name="revisi[<?= $index ?>][poin]" id="poin_akhir_<?= $index ?>" value="<?= $item['poin'] ?>">
+
             <?php
             $badgeClass = '';
             if ($item['poin'] <= 55) {
@@ -257,21 +298,9 @@
 
                   <div class="mt-3">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="treatment1_<?= $index ?>" onchange="updatePoin(<?= $index ?>)">
+                      <input class="form-check-input" type="checkbox" id="treatment1_<?= $item['nisn'] ?>" onchange="updatePoin(<?= $index ?>, '<?= $item['nisn'] ?>')">
                       <label class="form-check-label" for="treatment1_<?= $index ?>">
-                        Telah menyelesaikan treatment 1
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="treatment2_<?= $index ?>" onchange="updatePoin(<?= $index ?>)">
-                      <label class="form-check-label" for="treatment2_<?= $index ?>">
-                        Telah menyelesaikan treatment 2
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="treatment3_<?= $index ?>" onchange="updatePoin(<?= $index ?>)">
-                      <label class="form-check-label" for="treatment3_<?= $index ?>">
-                        Telah menyelesaikan treatment 3
+                        Telah menyelesaikan treatment
                       </label>
                     </div>
                   </div>
@@ -279,15 +308,26 @@
                 </div>
               </div>
             </div>
+
+            <input type="hidden" name="nisn[]" value="<?= $item['nisn'] ?>">
+
           <?php endforeach; ?>
         </div>
 
+        <button type="submit" class="btn btn-success mt-3">Simpan Revisi</button>
+
       </form>
+    <?php endif; ?>
 
       <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success mt-3">
           <?= $this->session->flashdata('success') ?>
         </div>
+        <script>
+          <?php foreach ($revisi as $index => $item): ?>
+            localStorage.removeItem("treatment_state_<?= $index ?>");
+          <?php endforeach; ?>
+        </script>
       <?php endif; ?>
 
       <!-- MODAL DETAIL PELANGGARAN -->
@@ -302,7 +342,6 @@
     </div>
   </div>
 </div>
-
 
 <script>
   if (document.querySelector('.input-group input')) {
@@ -347,60 +386,61 @@
     }
   }
 
+  function updatePoin(index, nisn) {
+    const poinBadge = document.getElementById(`badge-poin-${index}`);
+    const poinValueSpan = document.getElementById(`poin-value-${index}`);
+    const initialPoin = parseInt(poinBadge.getAttribute('data-poin'));
 
-  function updatePoin(index) {
-  const poinBadge = document.getElementById(`badge-poin-${index}`);
-  const poinValueSpan = document.getElementById(`poin-value-${index}`);
-  const initialPoin = parseInt(poinBadge.getAttribute('data-poin'));
+    const checkbox = document.getElementById(`treatment1_${nisn}`);
+    const isChecked = checkbox.checked;
 
-  let totalChecked = 0;
-  for (let i = 1; i <= 3; i++) {
-    const checkbox = document.getElementById(`treatment${i}_${index}`);
-    if (checkbox && checkbox.checked) {
-      totalChecked++;
+    const newPoin = initialPoin - (isChecked ? 30 : 0);
+    const finalPoin = newPoin < 0 ? 0 : newPoin;
+    poinValueSpan.textContent = finalPoin;
+
+    const poinHidden = document.getElementById(`poin_akhir_${index}`);
+    poinHidden.value = finalPoin;
+
+    const tindakLanjutText = getTindakLanjut(finalPoin);
+    document.getElementById(`tindak-lanjut-${index}`).innerHTML = `<strong>Tindak Lanjut:</strong> ${tindakLanjutText}`;
+
+    const badge = document.getElementById(`badge-poin-${index}`);
+    badge.classList.remove('badge-poin-hijau', 'badge-poin-kuning', 'badge-poin-merah');
+    if (finalPoin <= 55) {
+      badge.classList.add('badge-poin-hijau');
+    } else if (finalPoin <= 150) {
+      badge.classList.add('badge-poin-kuning');
+    } else {
+      badge.classList.add('badge-poin-merah');
+    }
+
+    saveCheckboxState(index);
+  }
+
+  function saveCheckboxState(index) {
+    const checkbox = document.getElementById(`treatment1_${index}`);
+    const state = {
+      checked: checkbox.checked
+    };
+    localStorage.setItem(`treatment_state_${index}`, JSON.stringify(state));
+  }
+
+  function loadCheckboxState(index) {
+    const saved = localStorage.getItem(`treatment_state_${index}`);
+    if (saved) {
+      const state = JSON.parse(saved);
+      const checkbox = document.getElementById(`treatment1_${index}`);
+      checkbox.checked = state.checked;
+      updatePoin(index); 
     }
   }
 
-  const newPoin = initialPoin - (30 * totalChecked);
-  poinValueSpan.textContent = newPoin < 0 ? 0 : newPoin;
-
-  const tindakLanjutText = getTindakLanjut(newPoin < 0 ? 0 : newPoin);
-  document.getElementById(`tindak-lanjut-${index}`).innerHTML = `<strong>Tindak Lanjut:</strong> ${tindakLanjutText}`;
-
-  saveCheckboxState(index);
-}
-
-function saveCheckboxState(index) {
-  let state = {};
-  for (let i = 1; i <= 3; i++) {
-    const checkbox = document.getElementById(`treatment${i}_${index}`);
-    state[`treatment${i}`] = checkbox.checked;
-  }
-  localStorage.setItem(`treatment_state_${index}`, JSON.stringify(state));
-}
-
-function loadCheckboxState(index) {
-  const saved = localStorage.getItem(`treatment_state_${index}`);
-  if (saved) {
-    const state = JSON.parse(saved);
-    for (let i = 1; i <= 3; i++) {
-      const checkbox = document.getElementById(`treatment${i}_${index}`);
-      checkbox.checked = !!state[`treatment${i}`];
-    }
-    updatePoin(index);
-  }
-}
-
-  // Saat halaman load, muat semua state checklist
   window.onload = function() {
-    const totalSiswa = <?= count($revisi); ?>;
-    for (let i = 0; i < totalSiswa; i++) {
-      loadCheckboxState(i);
-    }
+    <?php foreach ($revisi as $index => $item): ?>
 
-      filterTindakLanjut();
+    <?php endforeach; ?>
+    filterTindakLanjut();
   };
-
 
   const pelanggaranDetail = <?= json_encode(array_map(function ($item) {
                               return $item['pelanggaran'];
@@ -420,7 +460,7 @@ function loadCheckboxState(index) {
     if (data.pelanggaran.length > 0) {
       listHTML += '<strong>Pelanggaran:</strong><ul>';
       data.pelanggaran.forEach(p => {
-        listHTML += `<li>${p.jenis} — ${p.poin} poin</li>`; 
+        listHTML += `<li>${p.jenis} — ${p.poin} poin</li>`;
       });
       listHTML += '</ul>';
     }
@@ -442,17 +482,16 @@ function loadCheckboxState(index) {
   }
 
   function filterTindakLanjut() {
-  const selected = document.getElementById('filter-tindak-lanjut').value;
-  const items = document.querySelectorAll('.timeline-item');
+    const selected = document.getElementById('filter-tindak-lanjut').value;
+    const items = document.querySelectorAll('.timeline-item');
 
-  items.forEach(item => {
-    const tindak = item.getAttribute('data-tindak');
-    if (selected === 'semua' || tindak === selected) {
-      item.style.display = 'block';
-    } else {
-      item.style.display = 'none';
-    }
-  });
-}
-
+    items.forEach(item => {
+      const tindak = item.getAttribute('data-tindak');
+      if (selected === 'semua' || tindak === selected) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
 </script>

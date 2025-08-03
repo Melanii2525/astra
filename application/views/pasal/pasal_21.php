@@ -55,7 +55,6 @@
     <div class="col-12">
       <div class="card h-100 w-100">
         <div class="card-body p-3">
-          <!-- Tambahkan table-responsive agar tidak overflow -->
           <div class="table-responsive">
             <table class="table table-bordered table-sm text-dark text-sm align-middle" style="font-size: 13px;">
               <thead class="table-light text-center">
@@ -135,7 +134,6 @@
             </table>
           </div>
 
-          <!-- Catatan -->
           <div class="mt-4 text-sm">
             <strong>Catatan:</strong>
             <ol class="mb-0">

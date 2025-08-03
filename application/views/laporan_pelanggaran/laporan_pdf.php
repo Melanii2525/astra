@@ -59,10 +59,8 @@
     </style>
 </head>
 <body>
-
     <div class="judul">Laporan Pelanggaran Siswa</div>
     <hr class="custom-line">
-
     <table>
         <thead>
             <tr>

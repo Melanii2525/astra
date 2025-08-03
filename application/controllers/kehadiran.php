@@ -2,15 +2,16 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
+ * Model
  * @property m_kehadiran $m
- * @property m_kehadiran $m_kehadiran
  * @property m_siswa $m_siswa
  * @property CI_Input $input
+ * @property CI_Session $session
  * @property CI_Upload $upload
  * @property CI_Output $output
- * @property Dompdf_gen $dompdf_gen
  * @property CI_DB_query_builder $db
- */
+ * @property Dompdf_gen $dompdf_gen
+*/
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -24,21 +25,23 @@ class Kehadiran extends CI_Controller
         $this->load->helper(['form', 'url']);
     }
 
-    public function index(){
+    public function index()
+    {
         $this->load->model('m_siswa'); 
     
         $data['title'] = "Data Kehadiran";
         $data['siswa'] = $this->m_siswa->get_all_ordered(); 
+        $data['siswa_kosong'] = empty($data['siswa']); 
     
-        $this->load->view('templates/header');
+        $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
         $this->load->view('kehadiran', $data); 
         $this->load->view('templates/footer');
-    }    
+    }      
 
     public function ambildata()
     {
-        $data = $this->m->ambildata()->result(); // ambil dari model yang JOIN
+        $data = $this->m->ambildata()->result(); 
         echo json_encode($data);
     }       
 
@@ -68,7 +71,6 @@ class Kehadiran extends CI_Controller
             $tanggal = $this->input->post('tanggal');
             $keterangan = strtoupper($this->input->post('keterangan'));
 
-            // Validasi: hanya boleh huruf A
             if ($keterangan !== 'A') {
                 $this->session->set_flashdata('error', 'Keterangan hanya boleh huruf A.');
                 redirect('kehadiran/tambah');
@@ -83,7 +85,7 @@ class Kehadiran extends CI_Controller
                 'poin' => $poin
             ];
 
-            $this->m_kehadiran->insert($data_insert);
+            $this->m->insert($data_insert);
             $this->session->set_flashdata('success', 'Data kehadiran berhasil disimpan.');
             redirect('kehadiran');
         }
@@ -107,7 +109,7 @@ class Kehadiran extends CI_Controller
         $where = ['id' => $id];
     
         $this->load->model('m_kehadiran');
-        $hapus = $this->m_kehadiran->hapusdata('kehadiran', $where);
+        $hapus = $this->m->hapusdata('kehadiran', $where);
     
         if ($hapus) {
             echo json_encode(['status' => true]);
@@ -148,7 +150,7 @@ class Kehadiran extends CI_Controller
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('kehadiran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
+        $this->db->order_by('k.tanggal', 'ASC'); 
         $data['kehadiran'] = $this->db->get()->result();
 
         $this->load->view('laporan_kehadiran/laporan_pdf', $data);
@@ -169,13 +171,12 @@ class Kehadiran extends CI_Controller
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('kehadiran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); // tambahkan baris ini
+        $this->db->order_by('k.tanggal', 'ASC');
         $data['kehadiran'] = $this->db->get()->result();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // header kolom
         $sheet->setCellValue('A1', 'NO');
         $sheet->setCellValue('B1', 'NISN');
         $sheet->setCellValue('C1', 'TANGGAL');

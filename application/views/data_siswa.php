@@ -195,6 +195,7 @@
   </div>
 
   <div class="table-responsive">
+  <div id="paginationSiswa" class="mt-3"></div>
     <table class="table table-bordered table-striped">
       <thead class="thead-custom">
         <tr>
@@ -217,11 +218,9 @@
   $(document).ready(function () {
     ambilData();
 
-    // 1. Inisialisasi toast dengan config
     $('#toastSukses').toast({ autohide: true, delay: 1500 });
     $('#toastError').toast({ autohide: true, delay: 2000 });
 
-    // 2. Jika ada flashdata dari PHP
     if ($("#toastFlashSukses").length) {
       $("#toastFlashSukses").toast({ autohide: true, delay: 1500 }).toast('show');
     }
@@ -230,25 +229,38 @@
       $("#toastFlashError").toast({ autohide: true, delay: 2000 }).toast('show');
     }
 
-    // 3. Tombol close manual
     $('.btn-close-toast').on('click', function () {
       $(this).closest('.toast').toast('hide');
     });
   });
 
-  function ambilData() {
+  let currentPage = 1;
+
+  function ambilData(page = 1) {
     $.ajax({
       type: "GET",
       url: "<?= base_url('data_siswa/ambildata') ?>",
+      data: { page: page },
       dataType: "json",
       success: function (res) {
-        console.log(res); // Debug: Lihat di console
-        renderTable(res.siswa); // Pastikan fungsi ini ada
+        renderTable(res.siswa);
+        renderPagination(res.page, res.total_page);
       },
       error: function () {
         alert("Gagal ambil data");
       }
     });
+  }
+
+  function renderPagination(current, totalPages) {
+    let html = '<nav><ul class="pagination justify-content-center">';
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<li class="page-item ${i === current ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="ambilData(${i})">${i}</a>
+              </li>`;
+    }
+    html += '</ul></nav>';
+    $("#paginationSiswa").html(html);
   }
 
   function hapusSemuaSiswa() {

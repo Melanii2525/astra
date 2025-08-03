@@ -9,7 +9,8 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
  * @property m $m
  * @property CI_DB_query_builder $db 
  * @property CI_Input $input
- */
+ * @property CI_Session $session
+*/
 
 class Data_siswa extends CI_Controller
 {
@@ -33,9 +34,22 @@ class Data_siswa extends CI_Controller
 
     public function ambildata()
     {
-        $data = $this->m->get_all_ordered();
-        echo json_encode(['siswa' => $data]);
-    }         
+        $page = $this->input->get('page') ?? 1; // Ambil page dari query string, default 1
+        $limit = 35;
+        $offset = ($page - 1) * $limit;
+    
+        $this->load->model('M_siswa');
+        $total = $this->db->count_all('data_siswa'); // total semua data
+        $data = $this->M_siswa->get_siswa_paginated($limit, $offset);
+    
+        echo json_encode([
+            'siswa' => $data,
+            'total' => $total,
+            'page' => (int)$page,
+            'limit' => $limit,
+            'total_page' => ceil($total / $limit)
+        ]);
+    }      
 
     public function tambahdata()
     {
@@ -120,7 +134,6 @@ class Data_siswa extends CI_Controller
         $kelas = $this->input->post('kelas');
 
         if ($kelas === '') {
-            // Semua data
             $data = $this->db->get('data_siswa')->result();
         } else {
             $this->db->where('kelas', $kelas);
@@ -147,7 +160,7 @@ class Data_siswa extends CI_Controller
 
     public function hapus_semua()
     {
-        $hapus = $this->db->empty_table('data_siswa'); // Kosongkan seluruh isi tabel
+        $hapus = $this->db->empty_table('data_siswa');
     
         if ($hapus) {
             echo json_encode(['status' => 'success']);
@@ -176,11 +189,10 @@ class Data_siswa extends CI_Controller
             $jk   = $sheet->getCell('E' . $row)->getValue();
     
             if ($nisn && $nipd && $nama && $jk) {
-                // Cek apakah NISN sudah ada di database
                 $cek = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
     
                 if ($cek) {
-                    $duplikat[] = $nisn; // Simpan NISN yang sudah ada
+                    $duplikat[] = $nisn; 
                 } else {
                     $data[] = [
                         'nisn' => $nisn,
@@ -197,8 +209,7 @@ class Data_siswa extends CI_Controller
         if (!empty($data)) {
             $this->db->insert_batch('data_siswa', $data);
         }
-    
-        // Set flashdata sesuai kondisi
+
         if (!empty($data) && empty($duplikat)) {
             $this->session->set_flashdata('sukses', 'Semua data berhasil diimport.');
         } elseif (!empty($data) && !empty($duplikat)) {

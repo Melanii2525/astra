@@ -117,11 +117,6 @@
         <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="../pages/profile.html">
-            <i class="material-symbols-rounded opacity-5">person</i>
-            <span class="nav-link-text ms-1">Profile</span>
-          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-dark" href="<?= base_url('auth/login') ?>">
@@ -133,6 +128,12 @@
           <a class="nav-link text-dark" href="<?= base_url('auth/sign_up') ?>">
             <i class="material-symbols-rounded opacity-5">assignment</i>
             <span class="nav-link-text ms-1">Sign Up</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="<?= base_url('auth/logout') ?>">
+            <i class="material-symbols-rounded opacity-5">logout</i>
+            <span class="nav-link-text ms-1">Logout</span>
           </a>
         </li>
       </ul>

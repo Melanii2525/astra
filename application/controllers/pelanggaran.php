@@ -10,7 +10,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Output $output
  * @property Dompdf_gen $dompdf_gen
  * @property CI_DB_query_builder $db
- */
+*/
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -28,12 +28,13 @@ class Pelanggaran extends CI_Controller
         $this->load->model('m_siswa'); 
         $data['title'] = "Data Pelanggaran";
         $data['siswa'] = $this->m_siswa->ambildata('data_siswa')->result(); 
+        $data['siswa_kosong'] = empty($data['siswa']); 
     
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
         $this->load->view('pelanggaran', $data);
         $this->load->view('templates/footer');
-    }    
+    }        
 
     public function ambildata()
     {
@@ -51,7 +52,6 @@ class Pelanggaran extends CI_Controller
     {
         $nisn = $this->input->post('nisn');
 
-        // Ambil data siswa berdasarkan nisn
         $siswa = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row_array();
 
         if (!$siswa) {
@@ -229,5 +229,4 @@ class Pelanggaran extends CI_Controller
 
         echo json_encode($result);
     }
-
 }

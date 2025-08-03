@@ -250,7 +250,6 @@ ul#kategoriTab {
                 <tr><td class="text-center">14</td><td class="long-text">Seragam atribut tidak lengkap</td><td class="text-center">4</td></tr>
                 <tr><td class="text-center">15</td><td class="long-text">Tidak memakai sepatu hitam polos</td><td class="text-center">4</td></tr>
               </tbody>
-
             </table>
           </div>
         </div>

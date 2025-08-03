@@ -4,35 +4,32 @@
 <head>
     <base href="<?= base_url(); ?>">
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/img/apple-icon.png'); ?>">
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon.png'); ?>">
-    <title>Material Dashboard 3 - Sign Up</title>
+    <title>ASTRA Selapan - Sign Up</title>
 
-    <!-- Fonts and icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
     <link href="<?= base_url('assets/css/nucleo-icons.css'); ?>" rel="stylesheet" />
     <link href="<?= base_url('assets/css/nucleo-svg.css'); ?>" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Material CSS -->
     <link id="pagestyle" href="<?= base_url('assets/css/material-dashboard.css?v=3.2.0'); ?>" rel="stylesheet" />
 </head>
 
-
-
 <body class="bg-gray-200">
-    <!-- Navbar -->
     <div class="container position-sticky z-index-sticky top-0">
         <div class="row">
             <div class="col-12">
-                <nav class="navbar navbar-expand-lg blur border-radius-xl top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
+                <nav
+                    class="navbar navbar-expand-lg blur border-radius-xl top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
                     <div class="container-fluid ps-2 pe-0">
                         <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3" href="#">
-                            Material Dashboard 3
+                            ASTRA Selapan
                         </a>
-                        <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation">
+                        <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navigation">
                             <span class="navbar-toggler-icon mt-2">
                                 <span class="navbar-toggler-bar bar1"></span>
                                 <span class="navbar-toggler-bar bar2"></span>
@@ -40,10 +37,7 @@
                             </span>
                         </button>
                         <div class="collapse navbar-collapse" id="navigation">
-                            <ul class="navbar-nav mx-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link me-2" href="#">Dashboard</a>
-                                </li>
+                            <ul class="navbar-nav ms-auto">
                                 <li class="nav-item">
                                     <a class="nav-link me-2 active" href="<?= base_url('auth/sign_up'); ?>">Sign Up</a>
                                 </li>
@@ -57,9 +51,7 @@
             </div>
         </div>
     </div>
-    <!-- End Navbar -->
 
-    <!-- Sign Up content -->
     <main class="main-content mt-0">
         <section>
             <div class="page-header align-items-start min-vh-100" style="background-color: #AEE3E0;">
@@ -133,32 +125,45 @@
                                         .text-sm {
                                             font-size: 13px;
                                         }
+
+                                        .toggle-password {
+                                            position: absolute;
+                                            right: 12px;
+                                            top: 36px;
+                                            cursor: pointer;
+                                            color: #2C6A74;
+                                        }
                                     </style>
 
-                                    
+                                    <form role="form" method="post" action="<?= base_url('auth/register') ?>"
 
-                                    <form role="form" method="post" action="<?= base_url('registrasi/index') ?>" class="text-start">
-
+                                        class="text-start">
                                         <div class="mb-2">
                                             <label class="form-label-custom">Name</label>
-                                            <input type="text" name="name" class="form-control-custom" value="<?= set_value('name') ?>">
+                                            <input type="text" name="name" class="form-control-custom"
+                                                value="<?= set_value('name') ?>">
                                             <?= form_error('name', '<small class="text-danger">', '</small>') ?>
                                         </div>
 
                                         <div class="mb-2">
                                             <label class="form-label-custom">Email</label>
-                                            <input type="text" name="email" class="form-control-custom" value="<?= set_value('email') ?>">
+                                            <input type="text" name="email" class="form-control-custom"
+                                                value="<?= set_value('email') ?>">
                                             <?= form_error('email', '<small class="text-danger">', '</small>') ?>
                                         </div>
 
-                                        <div class="mb-2">
+                                        <div class="mb-2 position-relative">
                                             <label class="form-label-custom">Password</label>
-                                            <input type="password" name="password" class="form-control-custom">
+                                            <input type="password" name="password" class="form-control-custom" id="passwordInput">
+                                            <span class="toggle-password" onclick="togglePassword()">
+                                                <i class="fas fa-eye" id="eyeIcon"></i>
+                                            </span>
                                             <?= form_error('password', '<small class="text-danger">', '</small>') ?>
                                         </div>
 
                                         <div class="form-check d-flex align-items-center mb-2">
-                                            <input class="form-check-input-custom me-2" type="checkbox" id="termsCheck" checked>
+                                            <input class="form-check-input-custom me-2" type="checkbox"
+                                                id="termsCheck" checked>
                                             <label class="form-check-label text-sm" for="termsCheck">
                                                 I agree to the <a href="#" class="text-link-custom">Terms and Conditions</a>
                                             </label>
@@ -178,16 +183,15 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     </main>
 
-    <!-- JS Files -->
     <script src="<?= base_url('assets/js/core/popper.min.js'); ?>"></script>
     <script src="<?= base_url('assets/js/core/bootstrap.min.js'); ?>"></script>
     <script src="<?= base_url('assets/js/plugins/perfect-scrollbar.min.js'); ?>"></script>
     <script src="<?= base_url('assets/js/plugins/smooth-scrollbar.min.js'); ?>"></script>
+
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -196,7 +200,23 @@
             });
         }
     </script>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+
     <script src="<?= base_url('assets/js/material-dashboard.min.js?v=3.2.0'); ?>"></script>
 </body>
-
 </html>
