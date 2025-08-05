@@ -258,7 +258,7 @@
                     <h4 class="text-danger">Data Siswa Kosong</h4>
                     <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data pelanggaran.</p>
                     <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
-                        <i class="fas fa-user-plus"></i> Ke Halaman Data Siswa
+                        <i class="fas fa-user-plus"></i> Input Data Siswa
                     </a>
                 </div>
             <?php else: ?>

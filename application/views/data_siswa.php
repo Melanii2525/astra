@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap & Icons -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
@@ -59,10 +59,7 @@
 <div class="container py-5">
   <h3 class="text-center mb-4 font-weight-bold text-dark">Manajemen Data Siswa</h3>
 
-  <!-- Accordion Input -->
   <div class="accordion mb-4" id="inputAccordion">
-    
-    <!-- Input Manual -->
     <div class="card shadow-sm">
       <div class="card-header" id="headingManual">
         <h5 class="mb-0">

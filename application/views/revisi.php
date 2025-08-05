@@ -2,6 +2,12 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
+
+  .main-content {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
   .timeline {
     position: relative;
     padding-left: 40px;
@@ -210,7 +216,7 @@
           <h4 class="text-danger">Data Siswa Kosong</h4>
           <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data revisi.</p>
           <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
-            <i class="fas fa-user-plus"></i> Ke Halaman Data Siswa
+            <i class="fas fa-user-plus"></i> Input Data Siswa
           </a>
         </div>
       <?php else: ?>

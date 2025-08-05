@@ -1,6 +1,5 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/nucleo/2.0.6/css/nucleo-icons.min.css" rel="stylesheet">
 
-
 <style>
 .bg-dashboard {
   background: linear-gradient(135deg, #2C6A74, #5DA9B0) !important;
@@ -16,6 +15,90 @@
     margin-left: 270px;
     padding-right: 0.5rem;
   }
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  border: none;
+}
+
+.modal-body i {
+  font-size: 3rem;
+  color: #FFA726;
+}
+
+.modal-body h5 {
+  font-weight: 600;
+  color: #2C6A74; 
+}
+
+.modal-body .btn-outline-secondary {
+  border-color: #2C6A74;
+  color: #2C6A74;
+}
+
+.modal-body .btn-outline-secondary:hover {
+  background-color: #2C6A74;
+  color: white;
+}
+
+.modal-body .btn-danger {
+  background-color: #FF5C5C;
+  border-color: #FF5C5C;
+}
+
+.modal-body .btn-danger:hover {
+  background-color: #e04b4b;
+}
+
+.sidebar-floating {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 250px;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  background-color: white; 
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  overflow-y: auto;
+  padding-top: 20px;
+}
+
+.main-content {
+  margin-left: 270px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1199px) {
+  .sidebar-floating {
+    position: relative;
+    top: 0;
+    left: 0;
+    height: auto;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1199px) {
+  .main-content {
+    margin-left: 0 !important;  
+    padding-right: 0.5rem;
+  }
+}
+
+body, html {
+  overflow-x: hidden;
 }
 </style>
 
@@ -33,11 +116,11 @@
   ?>
   
   <aside id="sidebarToggle"
-  class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg bg-white my-2 offcanvas-xl offcanvas-start d-xl-block"
+  class="sidenav navbar navbar-vertical sidebar-floating navbar-expand-xs border-radius-lg bg-white my-2 offcanvas-xl offcanvas-start d-xl-block"
   tabindex="-1">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand px-4 py-3 m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
+      <a class="navbar-brand px-4 py-3 m-0">
         <img src="<?php echo base_url() ?>assets/img/maskot.png" class="navbar-brand-img" width="30" height="30" alt="main_logo">
         <span class="ms-1 text-sm text-dark">ASTRA Selapan</span>
       </a>
@@ -113,10 +196,8 @@
           <span class="nav-link-text ms-1">Revisi Poin</span>
         </a>
         </li>
-
         <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
-        </li>
         </li>
         <li class="nav-item">
           <a class="nav-link text-dark" href="<?= base_url('auth/login') ?>">
@@ -131,7 +212,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-danger" href="<?= base_url('auth/logout') ?>">
+          <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
             <i class="material-symbols-rounded opacity-5">logout</i>
             <span class="nav-link-text ms-1">Logout</span>
           </a>
@@ -140,7 +221,27 @@
     </div>
   </aside>
 
-    <!-- Tombol toggle sidebar di layar kecil -->
+  <!-- Modal Konfirmasi Logout -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center border-0 shadow-lg p-4">
+        <div class="modal-body">
+          <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+          <h5 class="modal-title mb-3" id="logoutModalLabel">Apakah Anda yakin ingin logout?</h5>
+          <div class="d-flex justify-content-center gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Batal
+            </button>
+            <a href="<?= base_url('auth/logout') ?>" class="btn btn-danger">
+              Ya, Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tombol toggle sidebar di layar kecil -->
   <div class="d-xl-none bg-white px-3 py-2 shadow-sm sticky-top zindex-sticky">
     <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarToggle" aria-controls="sidebarToggle">
       <i class="fas fa-bars"></i>
@@ -180,7 +281,6 @@
       </div>
     </nav>    
 
-
 <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
