@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Kehadiran Per Siswa</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        h3 { text-align: center; margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #000; padding: 6px; }
+        th { background-color: #2C6A74; color: white; text-align: center; }
+        td { vertical-align: top; text-align: center; }
+        .total-poin {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: right;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 10px;
+            text-align: right;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<h3>Laporan Kehadiran Siswa</h3>
+<p>Nama: <?= isset($siswa->nama_siswa) ? $siswa->nama_siswa : '-' ?></p>
+<p>NISN: <?= isset($siswa->nisn) ? $siswa->nisn : '-' ?></p>
+<p>Kelas: <?= isset($siswa->kelas) ? $siswa->kelas : '-' ?></p>
+
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Keterangan</th>
+            <th>Poin</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        $total_poin = 0;
+        if (!empty($kehadiran)): 
+            $no = 1; 
+            foreach ($kehadiran as $k): 
+                $poin = isset($k->poin) ? (int)$k->poin : 0;
+                $total_poin += $poin;
+        ?>
+            <tr>
+                <td><?= $no++ ?></td>
+                <td><?= isset($k->tanggal) ? date('d-m-Y', strtotime($k->tanggal)) : '-' ?></td>
+                <td><?= isset($k->keterangan) ? $k->keterangan : '-' ?></td>
+                <td><?= $poin > 0 ? $poin : '-' ?></td>
+            </tr>
+        <?php 
+            endforeach; 
+        else: 
+        ?>
+            <tr>
+                <td colspan="4" style="text-align:center;">Tidak ada data kehadiran</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
+<?php if (!empty($kehadiran)): ?>
+    <div class="total-poin">
+        Total Poin: <?= $total_poin ?>
+    </div>
+<?php endif; ?>
+
+<div class="footer">
+    Dicetak pada: <?= date('d-m-Y H:i:s') ?>
+</div>
+
+</body>
+</html>

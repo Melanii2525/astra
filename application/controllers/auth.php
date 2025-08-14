@@ -55,35 +55,35 @@ class Auth extends CI_Controller
         }
     }
 
-    public function sign_up()
-    {
-        $this->load->view('auth/sign_up');
-    }
+    // public function sign_up()
+    // {
+    //     $this->load->view('auth/sign_up');
+    // }
 
-    public function register()
-    {
-        $this->form_validation->set_rules('name', 'Nama', 'required');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+    // public function register()
+    // {
+    //     $this->form_validation->set_rules('name', 'Nama', 'required');
+    //     $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+    //     $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
     
-        if ($this->form_validation->run() == FALSE) {
-            $this->load->view('auth/sign_up');
-        } else {
-            $data = [
-                'name'     => $this->input->post('name'),
-                'email'    => $this->input->post('email'),
-                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT)
-            ];
+    //     if ($this->form_validation->run() == FALSE) {
+    //         $this->load->view('auth/sign_up');
+    //     } else {
+    //         $data = [
+    //             'name'     => $this->input->post('name'),
+    //             'email'    => $this->input->post('email'),
+    //             'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT)
+    //         ];
     
-            $this->M_auth->register($data);
-            $this->session->set_flashdata('success', 'Pendaftaran berhasil! Silakan login.');
-            redirect('auth/login');
-        }
-    }    
+    //         $this->M_auth->register($data);
+    //         $this->session->set_flashdata('success', 'Pendaftaran berhasil! Silakan login.');
+    //         redirect('auth/login');
+    //     }
+    // }    
 
     public function logout()
     {
         $this->session->sess_destroy();
-        redirect('auth/login');
+        redirect('landingpage');
     }
 }

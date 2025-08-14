@@ -6,7 +6,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Input $input
  * @property CI_Session $session
  * @property M_revisi $M_revisi
-*/
+ */
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Revisi extends CI_Controller
 {
@@ -101,10 +104,6 @@ class Revisi extends CI_Controller
             }
         }
 
-        // echo '<pre>';
-        // print_r($data['revisi']);  // pastikan poin pelanggaran dan kehadiran sudah terisi
-        // exit;
-
         $nisns = array_column($data['revisi'], 'nisn');
         $ketMap = [];
 
@@ -114,15 +113,13 @@ class Revisi extends CI_Controller
 
         foreach ($data['revisi'] as &$row) {
             if (isset($ketMap[$row['nisn']])) {
-                if (isset($ketMap[$row['nisn']]['keterangan'])) {
-                    $row['keterangan'] = $ketMap[$row['nisn']]['keterangan'];
-                }
-                if (isset($ketMap[$row['nisn']]['poin'])) {
-                    $row['poin'] = $ketMap[$row['nisn']]['poin'];
-                }
+                $row['treatment_count'] = $ketMap[$row['nisn']]['treatment_count'];
+                $row['poin'] = $ketMap[$row['nisn']]['poin']; // ✅ update poin dari revisi terakhir
+            } else {
+                $row['treatment_count'] = 0;
             }
         }
-        unset($row);   
+        unset($row);
 
         $this->load->view('templates/header');
         $this->load->view('templates/sidebar');
@@ -130,57 +127,100 @@ class Revisi extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+    //	Digunakan saat form revisi disubmit.
     public function simpan()
-    {
-        $revisi = $this->input->post('revisi');
+{
+    $revisi = $this->input->post('revisi');
+    $treatment_checked = $this->input->post('treatment_checked'); // ✅ array NISN
 
-        if ($revisi) {
-            foreach ($revisi as $r) {
-                log_message('debug', 'REVISI POSTED: ' . json_encode($r));
-                $this->M_revisi->simpan_revisi([
-                    'nisn'       => $r['nisn'],
-                    'nama_siswa' => $r['nama_siswa'],
-                    'kelas'      => $r['kelas'],
-                    'wali_kelas' => $r['wali_kelas'],
-                    'tanggal'    => $r['tanggal'],
-                    'jenis'      => $r['jenis_data'],
-                    'keterangan' => $r['keterangan'],
-                    'poin'       => $r['poin'], 
-                ]);
+    if ($revisi) {
+        foreach ($revisi as $r) {
+            $treatment_count = 0;
+
+            // Cek apakah siswa ini di-ceklist treatment
+            if (!empty($treatment_checked) && in_array($r['nisn'], $treatment_checked)) {
+                $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
+                $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count + 1 : 1;
+            } else {
+                // Ambil treatment_count lama jika ada
+                $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
+                if ($cek && isset($cek->treatment_count)) {
+                    $treatment_count = $cek->treatment_count;
+                }
             }
-            $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');
+
+            // Hitung tindak lanjut berdasarkan poin
+            $tindak_lanjut = '';
+            if ($r['poin'] >= 0 && $r['poin'] <= 10) $tindak_lanjut = 'Pengarahan Tim Tatib';
+            elseif ($r['poin'] >= 11 && $r['poin'] <= 35) $tindak_lanjut = 'Peringatan ke I (Petugas Ketertiban)';
+            elseif ($r['poin'] >= 36 && $r['poin'] <= 55) $tindak_lanjut = 'Peringatan ke II (Koordinator Ketertiban)';
+            elseif ($r['poin'] >= 56 && $r['poin'] <= 75) $tindak_lanjut = 'Panggilan Orang Tua ke I + Form Treatment';
+            elseif ($r['poin'] >= 76 && $r['poin'] <= 100) $tindak_lanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+            elseif ($r['poin'] >= 101 && $r['poin'] <= 150) $tindak_lanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+            elseif ($r['poin'] >= 151 && $r['poin'] <= 200) $tindak_lanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+            elseif ($r['poin'] >= 201 && $r['poin'] <= 249) $tindak_lanjut = 'Skorsing (Waka Kesiswaan)';
+            else $tindak_lanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
+
+            // Simpan ke database
+            $this->M_revisi->simpan_revisi([
+                'nisn'            => $r['nisn'],
+                'nama_siswa'      => $r['nama_siswa'],
+                'kelas'           => $r['kelas'],
+                'wali_kelas'      => $r['wali_kelas'],
+                'tanggal'         => $r['tanggal'],
+                'jenis'           => $r['jenis_data'],
+                'keterangan'      => $r['keterangan'],
+                'poin'            => $r['poin'],
+                'treatment_count' => $treatment_count,
+                'tindak_lanjut'   => $tindak_lanjut // ✅ tambahkan kolom ini
+            ]);
         }
 
-        redirect('revisi');
+        $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');
     }
 
-    public function update()
-    {
-        $nisn       = $this->input->post('nisn');
-        $keterangan = $this->input->post('keterangan');
-        $poin       = $this->input->post('poin');
+    redirect('revisi');
+}
 
-        $cek = $this->db->get_where('revisi', ['nisn' => $nisn])->row();
+    public function export_pdf()
+{
+    $filter = $this->input->get('tindak_lanjut');
+    $data['revisi'] = $this->M_revisi->getLaporanRevisi($filter);
+    $data['filter_tindak_lanjut'] = $filter;
 
-        $data = [
-            'keterangan' => $keterangan,
-            'poin'       => $poin,
-            'nama_siswa'       => $this->input->post('nama_siswa'),
-            'kelas'      => $this->input->post('kelas'),
-            'wali_kelas' => $this->input->post('wali_kelas'),
-            'tanggal'    => date('Y-m-d'),
-            'jenis'      => 'manual'
-        ];
+    $html = $this->load->view('laporan_revisi/laporan_revisi_filter', $data, true);
 
-        if ($cek) {
-            $this->db->where('nisn', $nisn)->update('revisi', $data);
-            $msg = 'Data berhasil diperbarui.';
-        } else {
-            $this->db->insert('revisi', $data);
-            $msg = 'Data baru berhasil disimpan.';
-        }
+    require_once FCPATH . 'vendor/autoload.php';
+    $options = new Options();
+    $options->set('isRemoteEnabled', true); 
+    $options->set('defaultFont', 'Helvetica');
 
-        $this->session->set_flashdata('success', $msg);
-        redirect('revisi');
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    $dompdf->stream("laporan_revisi.pdf", ["Attachment" => 0]);
+}
+
+public function laporan_revisi_filter()
+{
+    $filter = $this->input->get('tindak_lanjut');
+    $data['revisi'] = $this->M_revisi->getLaporanRevisi($filter);
+    $data['filter_tindak_lanjut'] = $filter;
+    $this->load->view('laporan_revisi/laporan_revisi_filter', $data);
+}
+
+public function getLaporanRevisi($filter = null)
+{
+    $this->db->select('nisn, nama_siswa, kelas, wali_kelas, tanggal, jenis, keterangan, poin, treatment_count, tindak_lanjut');
+    $this->db->from('revisi');
+    
+    if (!empty($filter)) {
+        $this->db->where('tindak_lanjut', $filter);
     }
+    
+    $this->db->order_by('kelas', 'ASC');
+    return $this->db->get()->result();
+}
+
 }

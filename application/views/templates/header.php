@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/maskot.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/maskot.png'); ?>">
+  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/logo1.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/logo1.png'); ?>">
   <title>
     ASTRA Selapan
   </title>

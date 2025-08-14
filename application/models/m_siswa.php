@@ -6,10 +6,10 @@ class M_siswa extends CI_Model
     public function get_siswa_paginated($limit, $offset)
     {
         return $this->db->order_by('id', 'ASC')
-                        ->limit($limit, $offset)
-                        ->get('data_siswa')
-                        ->result();
-    }    
+            ->limit($limit, $offset)
+            ->get('data_siswa')
+            ->result();
+    }
 
     public function ambildata($table)
     {
@@ -35,11 +35,24 @@ class M_siswa extends CI_Model
     public function get_all_ordered()
     {
         return $this->db->order_by('id', 'ASC')->get('data_siswa')->result();
-    }        
+    }
 
-    public function cari_siswa($keyword)
+    public function search_siswa($keyword, $limit = null, $offset = null)
     {
-        $this->db->like('nama_siswa', $keyword);
-        return $this->db->get('data_siswa')->result_array();
+        $this->db->from('data_siswa');
+        $this->db->group_start();
+        $this->db->like('nisn', $keyword);
+        $this->db->or_like('nipd', $keyword);
+        $this->db->or_like('nama_siswa', $keyword);
+        $this->db->or_like('kelas', $keyword);
+        $this->db->or_like('wali_kelas', $keyword);
+        $this->db->or_like('jenis_kelamin', $keyword);
+        $this->db->group_end();
+
+        if ($limit !== null && $offset !== null) {
+            $this->db->limit($limit, $offset);
+        }
+
+        return $this->db->get()->result();
     }
 }

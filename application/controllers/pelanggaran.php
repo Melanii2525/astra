@@ -14,6 +14,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Pelanggaran extends CI_Controller
 {
@@ -37,16 +39,31 @@ class Pelanggaran extends CI_Controller
     }        
 
     public function ambildata()
-    {
-        $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
-        $this->db->from('pelanggaran p');
-        $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
-        $this->db->order_by('p.tanggal', 'DESC');
-        $this->db->order_by('s.kelas', 'ASC');
-        $data = $this->db->get()->result();
-    
-        echo json_encode($data);
-    }    
+{
+    $search = $this->input->post('search');
+
+    $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
+    $this->db->from('pelanggaran p');
+    $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
+
+    if (!empty($search)) {
+        $this->db->group_start();
+        $this->db->like('s.nama_siswa', $search);
+        $this->db->or_like('s.kelas', $search);
+        $this->db->or_like('s.wali_kelas', $search);
+        $this->db->or_like('p.kode', $search);
+        $this->db->or_like('p.keterangan', $search);
+        $this->db->or_like('p.tanggal', $search);
+        $this->db->or_like('p.nisn', $search);
+        $this->db->group_end();
+    }
+
+    $this->db->order_by('p.tanggal', 'DESC');
+    $this->db->order_by('s.kelas', 'ASC');
+    $data = $this->db->get()->result();
+
+    echo json_encode($data);
+}   
 
     public function tambahdata()
     {
@@ -127,24 +144,35 @@ class Pelanggaran extends CI_Controller
 
     public function export_pdf()
     {
-        $this->load->library('dompdf_gen');
+        // Ambil data dari database
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
         $this->db->order_by('k.tanggal', 'ASC'); 
         $this->db->order_by('s.kelas', 'ASC');
         $data['pelanggaran'] = $this->db->get()->result();
+    
+        // Load view jadi HTML string
+        $html = $this->load->view('laporan_pelanggaran/laporan_pdf', $data, true);
+    
+        // Load Dompdf dari Composer
+        require_once FCPATH . 'vendor/autoload.php';
 
-        $this->load->view('laporan_pelanggaran/laporan_pdf', $data);
-
-        $paper_size = 'A4';
-        $orientation = 'landscape';
-        $html = $this->output->get_output();
-
-        $this->dompdf_gen->dompdf->setPaper($paper_size, $orientation);
-        $this->dompdf_gen->dompdf->loadHtml($html);
-        $this->dompdf_gen->dompdf->render();
-        $this->dompdf_gen->dompdf->stream("laporan_pelanggaran.pdf", array("Attachment" => 0));
+        $options = new Options();
+        $options->set('isRemoteEnabled', true); // aktifkan jika ada gambar eksternal
+        $dompdf = new Dompdf($options);
+    
+        // Load HTML ke Dompdf
+        $dompdf->loadHtml($html);
+    
+        // Set ukuran kertas & orientasi
+        $dompdf->setPaper('A4', 'landscape');
+    
+        // Render PDF
+        $dompdf->render();
+    
+        // Tampilkan di browser
+        $dompdf->stream("laporan_pelanggaran.pdf", ["Attachment" => 0]);
     }
 
     public function excel()
@@ -229,4 +257,74 @@ class Pelanggaran extends CI_Controller
 
         echo json_encode($result);
     }
+    public function laporan_persiswa($nisn)
+    {
+        $siswa = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
+        if (!$siswa) {
+            show_error("Siswa tidak ditemukan.");
+        }
+
+        $pelanggaran = $this->db->get_where('pelanggaran', ['nisn' => $nisn])->result();
+
+        $data = [
+            'siswa'       => $siswa,
+            'pelanggaran' => $pelanggaran
+        ];
+
+        $html = $this->load->view('laporan_pelanggaran/laporan_persiswa', $data, true);
+
+        require_once FCPATH . 'vendor/autoload.php';
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $dompdf->stream('Laporan_Pelanggaran_' . $siswa->nama_siswa . '.pdf', [
+            "Attachment" => 0
+        ]);
+    }   
+
+    public function export_laporan_persiswa_pdf()
+    {
+        $this->load->model('m_pelanggaran');
+        $data['laporan'] = $this->m_pelanggaran->get_laporan_persiswa();
+
+        $html = $this->load->view('laporan_persiswa_pdf', $data, true);
+
+        require_once FCPATH . 'vendor/autoload.php';
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $dompdf->stream("Laporan_Pelanggaran_Per_Siswa.pdf", [
+            "Attachment" => 0
+        ]);
+    }
+
+    public function get_autocomplete_siswa()
+    {
+        $term = $this->input->get('term');
+        $this->db->like('nama_siswa', $term);
+        $result = $this->db->get('data_siswa')->result();
+    
+        $data = [];
+        foreach ($result as $row) {
+            $data[] = [
+                'nama_siswa' => $row->nama_siswa,
+                'kelas'      => $row->kelas,
+                'nisn'       => $row->nisn
+            ];
+        }
+    
+        echo json_encode($data);
+    }    
 }

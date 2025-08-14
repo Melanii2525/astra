@@ -1,8 +1,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const revisiData = <?= json_encode($revisi); ?>;
+</script>
 
 <style>
-
   .main-content {
     max-height: 100vh;
     overflow-y: auto;
@@ -101,7 +103,7 @@
   }
 
   .text-danger {
-    color: #dc3545 !important; 
+    color: #dc3545 !important;
   }
 
   .btn-primary {
@@ -115,7 +117,7 @@
     border-color: #0062cc !important;
   }
 
-  .btn-primary:focus, 
+  .btn-primary:focus,
   .btn-primary:active {
     background-color: #005cbf !important;
     border-color: #0056b3 !important;
@@ -211,6 +213,8 @@
         </select>
       </div>
 
+      <button class="btn btn-primary" onclick="exportPDF()">Export PDF</button>
+
       <?php if (empty($revisi)): ?>
         <div class="text-center p-5">
           <h4 class="text-danger">Data Siswa Kosong</h4>
@@ -221,109 +225,113 @@
         </div>
       <?php else: ?>
 
-      <form action="<?= base_url('revisi/simpan') ?>" method="post">
-        <div class="timeline">
-          <?php foreach ($revisi as $index => $item): ?>
-            <input type="hidden" name="revisi[<?= $index ?>][nisn]" value="<?= $item['nisn'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][nama_siswa]" value="<?= $item['nama_siswa'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][kelas]" value="<?= $item['kelas'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][wali_kelas]" value="<?= $item['wali_kelas'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][tanggal]" value="<?= $item['tanggal'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][jenis_data]" value="<?= $item['jenis_data'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][keterangan]" value="<?= $item['keterangan'] ?>">
-            <input type="hidden" name="revisi[<?= $index ?>][poin]" id="poin_akhir_<?= $index ?>" value="<?= $item['poin'] ?>">
+        <form action="<?= base_url('revisi/simpan') ?>" method="post">
+          <div class="timeline">
+            <?php foreach ($revisi as $index => $item): ?>
+              <input type="hidden" name="revisi[<?= $index ?>][nisn]" value="<?= $item['nisn'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][nama_siswa]" value="<?= $item['nama_siswa'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][kelas]" value="<?= $item['kelas'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][wali_kelas]" value="<?= $item['wali_kelas'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][tanggal]" value="<?= $item['tanggal'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][jenis_data]" value="<?= $item['jenis_data'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][keterangan]" value="<?= $item['keterangan'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][poin]" id="poin_akhir_<?= $index ?>" value="<?= $item['poin'] ?>">
 
-            <?php
-            $badgeClass = '';
-            if ($item['poin'] <= 55) {
-              $badgeClass = 'badge-poin-hijau';
-            } elseif ($item['poin'] <= 150) {
-              $badgeClass = 'badge-poin-kuning';
-            } else {
-              $badgeClass = 'badge-poin-merah';
-            }
+              <?php
+              $badgeClass = '';
+              if ($item['poin'] <= 55) {
+                $badgeClass = 'badge-poin-hijau';
+              } elseif ($item['poin'] <= 150) {
+                $badgeClass = 'badge-poin-kuning';
+              } else {
+                $badgeClass = 'badge-poin-merah';
+              }
 
-            // Keterangan Tindak Lanjut
-            $poin = $item['poin'];
-            $tindakLanjut = '';
-            if ($poin >= 0 && $poin <= 10) {
-              $tindakLanjut = 'Pengarahan Tim Tatib';
-            } elseif ($poin >= 11 && $poin <= 35) {
-              $tindakLanjut = 'Peringatan ke I (Petugas Ketertiban)';
-            } elseif ($poin >= 36 && $poin <= 55) {
-              $tindakLanjut = 'Peringatan ke II (Koordinator Ketertiban)';
-            } elseif ($poin >= 56 && $poin <= 75) {
-              $tindakLanjut = 'Panggilan Orang Tua ke I + Form Treatment';
-            } elseif ($poin >= 76 && $poin <= 100) {
-              $tindakLanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
-            } elseif ($poin >= 101 && $poin <= 150) {
-              $tindakLanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
-            } elseif ($poin >= 151 && $poin <= 200) {
-              $tindakLanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
-            } elseif ($poin >= 201 && $poin <= 249) {
-              $tindakLanjut = 'Skorsing (Waka Kesiswaan)';
-            } else { // 250 ke atas
-              $tindakLanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
-            }
+              // Keterangan Tindak Lanjut
+              $poin = $item['poin'];
+              $tindakLanjut = '';
+              if ($poin >= 0 && $poin <= 10) {
+                $tindakLanjut = 'Pengarahan Tim Tatib';
+              } elseif ($poin >= 11 && $poin <= 35) {
+                $tindakLanjut = 'Peringatan ke I (Petugas Ketertiban)';
+              } elseif ($poin >= 36 && $poin <= 55) {
+                $tindakLanjut = 'Peringatan ke II (Koordinator Ketertiban)';
+              } elseif ($poin >= 56 && $poin <= 75) {
+                $tindakLanjut = 'Panggilan Orang Tua ke I + Form Treatment';
+              } elseif ($poin >= 76 && $poin <= 100) {
+                $tindakLanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+              } elseif ($poin >= 101 && $poin <= 150) {
+                $tindakLanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+              } elseif ($poin >= 151 && $poin <= 200) {
+                $tindakLanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+              } elseif ($poin >= 201 && $poin <= 249) {
+                $tindakLanjut = 'Skorsing (Waka Kesiswaan)';
+              } else { // 250 ke atas
+                $tindakLanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
+              }
 
-            // Kategori Pelanggaran
-            // $kategori = '';
-            // if ($poin >= 0 && $poin <= 10) {
-            //   $kategori = 'Pelanggaran Sangat Ringan';
-            // } elseif ($poin >= 11 && $poin <= 55) {
-            //   $kategori = 'Pelanggaran Ringan';
-            // } elseif ($poin >= 56 && $poin <= 150) {
-            //   $kategori = 'Pelanggaran Sedang';
-            // } else {
-            //   $kategori = 'Pelanggaran Berat';
-            // }
+              // Kategori Pelanggaran
+              // $kategori = '';
+              // if ($poin >= 0 && $poin <= 10) {
+              //   $kategori = 'Pelanggaran Sangat Ringan';
+              // } elseif ($poin >= 11 && $poin <= 55) {
+              //   $kategori = 'Pelanggaran Ringan';
+              // } elseif ($poin >= 56 && $poin <= 150) {
+              //   $kategori = 'Pelanggaran Sedang';
+              // } else {
+              //   $kategori = 'Pelanggaran Berat';
+              // }
 
-            ?>
-            <div class="timeline-item" data-tindak="<?= $tindakLanjut ?>">
-              <div class="timeline-line"></div>
-              <div class="card course-card">
-                <div class="card-body">
-                  <h6 class="course-title"><?= $item['nama_siswa'] ?> — <?= $item['kelas'] ?></h6>
-                  <p class="course-desc">NISN: <?= $item['nisn'] ?></p>
-                  <p class="course-info">Wali Kelas: <?= $item['wali_kelas'] ?></p>
-                  <?php if (!empty($item['catatan'])): ?>
-                    <p class="course-info">Catatan: <?= $item['catatan'] ?></p>
-                  <?php endif; ?>
+              ?>
+              <div class="timeline-item" data-tindak="<?= $tindakLanjut ?>">
+                <div class="timeline-line"></div>
+                <div class="card course-card">
+                  <div class="card-body">
+                    <h6 class="course-title"><?= $item['nama_siswa'] ?> — <?= $item['kelas'] ?></h6>
+                    <p class="course-desc">NISN: <?= $item['nisn'] ?></p>
+                    <p class="course-info">Wali Kelas: <?= $item['wali_kelas'] ?></p>
+                    <?php if (!empty($item['catatan'])): ?>
+                      <p class="course-info">Catatan: <?= $item['catatan'] ?></p>
+                    <?php endif; ?>
 
-                  <span class="badge <?= $badgeClass ?>" id="badge-poin-<?= $index ?>" data-poin="<?= $item['poin'] ?>">
-                    POIN: <span id="poin-value-<?= $index ?>"><?= $item['poin'] ?></span>
-                  </span>
+                    <span class="badge <?= $badgeClass ?>" id="badge-poin-<?= $index ?>" data-poin="<?= $item['poin'] ?>">
+                      POIN: <span id="poin-value-<?= $index ?>"><?= $item['poin'] ?></span>
+                    </span>
 
-                  <button type="button" class="btn custom-btn btn-sm" onclick="showDetailPelanggaran(<?= $index ?>)">
-                    Detail
-                  </button>
+                    <button type="button" class="btn custom-btn btn-sm" onclick="showDetailPelanggaran(<?= $index ?>)">
+                      Detail
+                    </button>
 
-                  <p class="tindak-lanjut-info" id="tindak-lanjut-<?= $index ?>">
-                    <strong>Tindak Lanjut:</strong> <?= $tindakLanjut ?>
-                  </p>
+                    <p class="tindak-lanjut-info" id="tindak-lanjut-<?= $index ?>">
+                      <strong>Tindak Lanjut:</strong> <?= $tindakLanjut ?>
+                    </p>
 
-                  <div class="mt-3">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="treatment1_<?= $item['nisn'] ?>" onchange="updatePoin(<?= $index ?>, '<?= $item['nisn'] ?>')">
-                      <label class="form-check-label" for="treatment1_<?= $index ?>">
-                        Telah menyelesaikan treatment
-                      </label>
+                    <div class="mt-3">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          name="treatment_checked[]"
+                          value="<?= $item['nisn'] ?>"
+                          id="treatment1_<?= $item['nisn'] ?>"
+                          onchange="updatePoin(<?= $index ?>, '<?= $item['nisn'] ?>')">
+                        <label class="form-check-label" for="treatment1_<?= $index ?>">
+                          Telah menyelesaikan treatment
+                        </label>
+                      </div>
                     </div>
-                  </div>
 
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <input type="hidden" name="nisn[]" value="<?= $item['nisn'] ?>">
+              <input type="hidden" name="nisn[]" value="<?= $item['nisn'] ?>">
 
-          <?php endforeach; ?>
-        </div>
+            <?php endforeach; ?>
+          </div>
 
-        <button type="submit" class="btn btn-success mt-3">Simpan Revisi</button>
+          <button type="submit" class="btn btn-success mt-3">Simpan Revisi</button>
 
-      </form>
-    <?php endif; ?>
+        </form>
+      <?php endif; ?>
 
       <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success mt-3">
@@ -350,26 +358,34 @@
 </div>
 
 <script>
-  if (document.querySelector('.input-group input')) {
-    var inputs = document.querySelectorAll('.input-group input');
-    inputs.forEach(input => {
-      if (input.value != "") {
-        input.parentElement.classList.add("is-filled");
-      }
+function exportPDF() {
+    const selected = document.getElementById('filter-tindak-lanjut').value;
+    window.open('<?= base_url("revisi/export_pdf") ?>?tindak=' + encodeURIComponent(selected), '_blank');
+}
+</script>
 
-      input.addEventListener("focus", function() {
-        input.parentElement.classList.add("is-focused");
-      });
+<script>
+  // if (document.querySelector('.input-group input')) {
+  //   var inputs = document.querySelectorAll('.input-group input');
+  //   inputs.forEach(input => {
+  //     if (input.value != "") {
+  //       input.parentElement.classList.add("is-filled");
+  //     }
 
-      input.addEventListener("blur", function() {
-        if (input.value == "") {
-          input.parentElement.classList.remove("is-filled");
-        }
-        input.parentElement.classList.remove("is-focused");
-      });
-    });
-  }
+  //     input.addEventListener("focus", function() {
+  //       input.parentElement.classList.add("is-focused");
+  //     });
 
+  //     input.addEventListener("blur", function() {
+  //       if (input.value == "") {
+  //         input.parentElement.classList.remove("is-filled");
+  //       }
+  //       input.parentElement.classList.remove("is-focused");
+  //     });
+  //   });
+  // }
+
+  //Menentukan teks tindak lanjut berdasarkan poin siswa.
   function getTindakLanjut(poin) {
     if (poin >= 0 && poin <= 10) {
       return 'Pengarahan Tim Tatib';
@@ -392,6 +408,7 @@
     }
   }
 
+  //Mengurangi poin jika treatment dicentang, update badge dan teks.
   function updatePoin(index, nisn) {
     const poinBadge = document.getElementById(`badge-poin-${index}`);
     const poinValueSpan = document.getElementById(`poin-value-${index}`);
@@ -423,6 +440,7 @@
     saveCheckboxState(index);
   }
 
+  //Menyimpan status checkbox ke localStorage.
   function saveCheckboxState(index) {
     const checkbox = document.getElementById(`treatment1_${index}`);
     const state = {
@@ -431,20 +449,20 @@
     localStorage.setItem(`treatment_state_${index}`, JSON.stringify(state));
   }
 
-  function loadCheckboxState(index) {
-    const saved = localStorage.getItem(`treatment_state_${index}`);
-    if (saved) {
-      const state = JSON.parse(saved);
-      const checkbox = document.getElementById(`treatment1_${index}`);
-      checkbox.checked = state.checked;
-      updatePoin(index); 
-    }
-  }
+  // function loadCheckboxState(index) {
+  //   const saved = localStorage.getItem(`treatment_state_${index}`);
+  //   if (saved) {
+  //     const state = JSON.parse(saved);
+  //     const checkbox = document.getElementById(`treatment1_${index}`);
+  //     checkbox.checked = state.checked;
+  //     updatePoin(index); 
+  //   }
+  // }
 
   window.onload = function() {
-    <?php foreach ($revisi as $index => $item): ?>
+    // <?php foreach ($revisi as $index => $item): ?>
 
-    <?php endforeach; ?>
+    // <?php endforeach; ?>
     filterTindakLanjut();
   };
 
@@ -459,7 +477,7 @@
                         ];
                       }, $revisi)); ?>;
 
-  function showDetailPelanggaran(index) {
+function showDetailPelanggaran(index) {
     const data = detailData[index];
     let listHTML = '';
 

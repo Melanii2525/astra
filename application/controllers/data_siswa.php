@@ -37,11 +37,11 @@ class Data_siswa extends CI_Controller
         $page = $this->input->get('page') ?? 1; // Ambil page dari query string, default 1
         $limit = 35;
         $offset = ($page - 1) * $limit;
-    
+
         $this->load->model('M_siswa');
         $total = $this->db->count_all('data_siswa'); // total semua data
-        $data = $this->M_siswa->get_siswa_paginated($limit, $offset);
-    
+        $data = $this->m->get_siswa_paginated($limit, $offset);
+
         echo json_encode([
             'siswa' => $data,
             'total' => $total,
@@ -49,7 +49,7 @@ class Data_siswa extends CI_Controller
             'limit' => $limit,
             'total_page' => ceil($total / $limit)
         ]);
-    }      
+    }    
 
     public function tambahdata()
     {
@@ -221,6 +221,35 @@ class Data_siswa extends CI_Controller
         }
     
         redirect('data_siswa');
-    }    
+    }   
+    
+    public function cari_data()
+    {
+        $keyword = $this->input->get('keyword');
+        $page = $this->input->get('page') ?? 1;
+        $limit = 35;
+        $offset = ($page - 1) * $limit;
 
+        $data = $this->m->search_siswa($keyword, $limit, $offset);
+
+        // Hitung total hasil
+        $this->db->from('data_siswa');
+        $this->db->group_start();
+        $this->db->like('nisn', $keyword);
+        $this->db->or_like('nipd', $keyword);
+        $this->db->or_like('nama_siswa', $keyword);
+        $this->db->or_like('kelas', $keyword);
+        $this->db->or_like('wali_kelas', $keyword);
+        $this->db->or_like('jenis_kelamin', $keyword);
+        $this->db->group_end();
+        $total = $this->db->count_all_results();
+
+        echo json_encode([
+            'siswa' => $data,
+            'total' => $total,
+            'page' => (int)$page,
+            'limit' => $limit,
+            'total_page' => ceil($total / $limit)
+        ]);
+    }
 }
