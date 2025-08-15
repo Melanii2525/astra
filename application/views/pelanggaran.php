@@ -408,7 +408,7 @@
             <?php else: ?>
             <div class="table-responsive">
             <div class="mb-3">
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari data..." oninput="this.value = this.value.toUpperCase();">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari data pelanggaran..." oninput="this.value = this.value.toUpperCase();">
             </div>
             <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
                 <thead class="table-light">

@@ -197,9 +197,10 @@
   <div class="card">
     <div class="card-body">
 
-      <div class="form-group mb-3">
+    <div class="row mb-3">
+      <div class="col-md-6">
         <label for="filter-tindak-lanjut"><strong>Filter Tindak Lanjut:</strong></label>
-        <select id="filter-tindak-lanjut" class="form-control " onchange="filterTindakLanjut()">
+        <select id="filter-tindak-lanjut" class="form-control" onchange="filterTindakLanjut()">
           <option value="semua">Semua</option>
           <option value="Pengarahan Tim Tatib">Pengarahan Tim Tatib</option>
           <option value="Peringatan ke I (Petugas Ketertiban)">Peringatan ke I (Petugas Ketertiban)</option>
@@ -213,7 +214,17 @@
         </select>
       </div>
 
-      <button class="btn btn-primary" onclick="exportPDF()">Export PDF</button>
+      <div class="col-md-6">
+        <label><strong>Pencarian:</strong></label>
+        <input type="text" id="search-global" class="form-control" 
+          placeholder="Cari nama, kelas, wali kelas, NISN, keterangan..." 
+          oninput="this.value = this.value.toUpperCase();">
+      </div>
+    </div>
+
+      <button class="btn btn-primary" onclick="exportPDF()">
+        <i class="fas fa-file-pdf"></i> Export PDF sesuai Filter
+      </button>
 
       <?php if (empty($revisi)): ?>
         <div class="text-center p-5">
@@ -497,6 +508,10 @@ function showDetailPelanggaran(index) {
       listHTML += '</ul>';
     }
 
+    // Tambah info treatment
+    const treatmentCount = revisiData[index].treatment_count || 0;
+    listHTML += `<p><strong>Jumlah Treatment Selesai:</strong> ${treatmentCount} kali</p>`;
+
     document.getElementById('detail-list').innerHTML = listHTML;
     document.getElementById('modal-detail').style.display = 'block';
   }
@@ -505,17 +520,28 @@ function showDetailPelanggaran(index) {
     document.getElementById('modal-detail').style.display = 'none';
   }
 
+  document.getElementById('search-global').addEventListener('keyup', function () {
+    filterTindakLanjut(); // panggil ulang filter supaya gabung dengan pencarian
+  });
+
   function filterTindakLanjut() {
-    const selected = document.getElementById('filter-tindak-lanjut').value;
+    const selected = document.getElementById('filter-tindak-lanjut').value.toLowerCase();
+    const searchTerm = document.getElementById('search-global').value.toLowerCase();
     const items = document.querySelectorAll('.timeline-item');
 
     items.forEach(item => {
-      const tindak = item.getAttribute('data-tindak');
-      if (selected === 'semua' || tindak === selected) {
-        item.style.display = 'block';
-      } else {
-        item.style.display = 'none';
-      }
+        const tindak = item.getAttribute('data-tindak').toLowerCase();
+        const textContent = item.textContent.toLowerCase();
+
+        // Cek dua kondisi: filter tindak lanjut & pencarian
+        const matchFilter = (selected === 'semua' || tindak === selected);
+        const matchSearch = textContent.includes(searchTerm);
+
+        if (matchFilter && matchSearch) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
     });
   }
 </script>

@@ -70,28 +70,28 @@ class M_revisi extends CI_Model
     }
 
     public function getAll() {
-        $revisi = $this->db->select('r.*, s.nama_siswa, s.kelas, s.nisn, s.wali_kelas')
-                           ->from('revisi r')
-                           ->join('data_siswa s', 's.nisn = r.nisn', 'left')
-                           ->get()
-                           ->result_array();
-    
-        // Tambahkan kolom tindak_lanjut hasil perhitungan
-        foreach ($revisi as &$item) {
-            $poin = $item['poin'];
-            if ($poin >= 0 && $poin <= 10) $item['tindak_lanjut'] = 'Pengarahan Tim Tatib';
-            elseif ($poin >= 11 && $poin <= 35) $item['tindak_lanjut'] = 'Peringatan ke I (Petugas Ketertiban)';
-            elseif ($poin >= 36 && $poin <= 55) $item['tindak_lanjut'] = 'Peringatan ke II (Koordinator Ketertiban)';
-            elseif ($poin >= 56 && $poin <= 75) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke I + Form Treatment';
-            elseif ($poin >= 76 && $poin <= 100) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke II + Surat Peringatan I';
-            elseif ($poin >= 101 && $poin <= 150) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke III + Surat Peringatan II';
-            elseif ($poin >= 151 && $poin <= 200) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
-            elseif ($poin >= 201 && $poin <= 249) $item['tindak_lanjut'] = 'Skorsing (Waka Kesiswaan)';
-            else $item['tindak_lanjut'] = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
-        }
-    
-        return $revisi;
-    }      
+    $revisi = $this->db->select('r.*, s.nama_siswa, s.kelas, s.nisn, s.wali_kelas')
+                       ->from('revisi r')
+                       ->join('data_siswa s', 's.nisn = r.nisn', 'left')
+                       ->get()
+                       ->result_array();
+
+    // Tambahkan kolom tindak_lanjut hasil perhitungan
+    foreach ($revisi as &$item) {
+        $poin = $item['poin'];
+        if ($poin >= 0 && $poin <= 10) $item['tindak_lanjut'] = 'Pengarahan Tim Tatib';
+        elseif ($poin >= 11 && $poin <= 35) $item['tindak_lanjut'] = 'Peringatan ke I (Petugas Ketertiban)';
+        elseif ($poin >= 36 && $poin <= 55) $item['tindak_lanjut'] = 'Peringatan ke II (Koordinator Ketertiban)';
+        elseif ($poin >= 56 && $poin <= 75) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke I + Form Treatment';
+        elseif ($poin >= 76 && $poin <= 100) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+        elseif ($poin >= 101 && $poin <= 150) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+        elseif ($poin >= 151 && $poin <= 200) $item['tindak_lanjut'] = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+        elseif ($poin >= 201 && $poin <= 249) $item['tindak_lanjut'] = 'Skorsing (Waka Kesiswaan)';
+        else $item['tindak_lanjut'] = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
+    }
+
+    return $revisi;
+}  
 
     // Ambil data berdasarkan tindak lanjut
     public function getByTindakLanjut($tindak) {
@@ -120,21 +120,18 @@ class M_revisi extends CI_Model
         }
     
         return $filtered;
-    }  
-    
-    // M_revisi.php
-public function getLaporanRevisi($filter = null)
-{
-    $this->db->select('r.*, s.nama_siswa, s.kelas, s.nisn, s.wali_kelas');
-    $this->db->from('revisi r');
-    $this->db->join('data_siswa s', 's.nisn = r.nisn', 'left');
+    }    
 
-    if (!empty($filter) && $filter != 'all') {
-        $this->db->where('r.tindak_lanjut', $filter);
+    public function getLaporanRevisi($filter = [])
+{
+    $this->db->select('r.*, s.nama_siswa, s.kelas, s.nisn, s.wali_kelas')
+             ->from('revisi r')
+             ->join('data_siswa s', 's.nisn = r.nisn', 'left');
+
+    if (!empty($filter['tindak_lanjut'])) {
+        $this->db->where('r.tindak_lanjut', $filter['tindak_lanjut']);
     }
 
-    $this->db->order_by('s.kelas', 'ASC');
     return $this->db->get()->result_array();
 }
-
 }

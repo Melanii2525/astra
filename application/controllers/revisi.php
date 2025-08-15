@@ -172,7 +172,7 @@ class Revisi extends CI_Controller
                 'keterangan'      => $r['keterangan'],
                 'poin'            => $r['poin'],
                 'treatment_count' => $treatment_count,
-                'tindak_lanjut'   => $tindak_lanjut // ✅ tambahkan kolom ini
+                'tindak_lanjut'   => $tindak_lanjut 
             ]);
         }
 
@@ -182,24 +182,23 @@ class Revisi extends CI_Controller
     redirect('revisi');
 }
 
-    public function export_pdf()
+public function export_pdf()
 {
-    $filter = $this->input->get('tindak_lanjut');
-    $data['revisi'] = $this->M_revisi->getLaporanRevisi($filter);
+    $tindak = $this->input->get('tindak'); // ambil filter
+    $filter = ($tindak && $tindak != 'semua') ? $tindak : null;
+
+    $data['revisi'] = $this->M_revisi->getLaporanRevisi(['tindak_lanjut' => $filter]);
     $data['filter_tindak_lanjut'] = $filter;
 
+    $this->load->view('laporan_revisi/laporan_revisi_filter', $data);
+    
+    // atau pakai Dompdf
+    $dompdf = new Dompdf();
     $html = $this->load->view('laporan_revisi/laporan_revisi_filter', $data, true);
-
-    require_once FCPATH . 'vendor/autoload.php';
-    $options = new Options();
-    $options->set('isRemoteEnabled', true); 
-    $options->set('defaultFont', 'Helvetica');
-
-    $dompdf = new Dompdf($options);
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
-    $dompdf->stream("laporan_revisi.pdf", ["Attachment" => 0]);
+    $dompdf->stream('laporan_revisi.pdf', ["Attachment" => false]); // false = tampil di browser
 }
 
 public function laporan_revisi_filter()

@@ -26,23 +26,22 @@
 <body>
     <h4>
         Laporan Revisi Poin Siswa
-        <?php if (!empty($filter_tindak_lanjut) && $filter_tindak_lanjut != 'all'): ?>
-            - Tindak Lanjut: <?= htmlspecialchars($filter_tindak_lanjut) ?>
-        <?php endif; ?>
+        <?= !empty($filter_tindak_lanjut) && $filter_tindak_lanjut != 'all' ? " - Tindak Lanjut: " . htmlspecialchars($filter_tindak_lanjut) : "" ?>
     </h4>
 
     <?php foreach ($revisi as $item): ?>
         <?php
-            if ($item['poin'] <= 55) $badgeClass = 'badge-hijau';
-            elseif ($item['poin'] <= 150) $badgeClass = 'badge-kuning';
+            $poin = isset($item['poin']) ? (int)$item['poin'] : 0;
+            if ($poin <= 55) $badgeClass = 'badge-hijau';
+            elseif ($poin <= 150) $badgeClass = 'badge-kuning';
             else $badgeClass = 'badge-merah';
         ?>
         <div class="item">
-            <div><span class="label">Nama</span>: <?= $item['nama_siswa'] ?> (<?= $item['kelas'] ?>)</div>
-            <div><span class="label">NISN</span>: <?= $item['nisn'] ?></div>
-            <div><span class="label">Wali Kelas</span>: <?= $item['wali_kelas'] ?></div>
-            <div><span class="label">Poin</span>: <span class="badge <?= $badgeClass ?>"><?= $item['poin'] ?></span></div>
-            <div><span class="label">Tindak Lanjut</span>: <?= $item['tindak_lanjut'] ?? '-' ?></div>
+            <div><span class="label">Nama</span>: <?= htmlspecialchars($item['nama_siswa']) ?> (<?= htmlspecialchars($item['kelas']) ?>)</div>
+            <div><span class="label">NISN</span>: <?= htmlspecialchars($item['nisn']) ?></div>
+            <div><span class="label">Wali Kelas</span>: <?= htmlspecialchars($item['wali_kelas']) ?></div>
+            <div><span class="label">Poin</span>: <span class="badge <?= $badgeClass ?>"><?= $poin ?></span></div>
+            <div><span class="label">Tindak Lanjut</span>: <?= htmlspecialchars($item['tindak_lanjut'] ?? '-') ?></div>
         </div>
     <?php endforeach; ?>
 </body>
