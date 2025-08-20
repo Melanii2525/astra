@@ -6,6 +6,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Input $input
  * @property CI_Session $session
  * @property M_revisi $M_revisi
+ * @property M_siswa $m_siswa
  */
 
 use Dompdf\Dompdf;
@@ -220,6 +221,86 @@ public function getLaporanRevisi($filter = null)
     
     $this->db->order_by('kelas', 'ASC');
     return $this->db->get()->result();
+}
+
+public function search_siswa()
+{
+    $keyword = $this->input->get('term'); // jQuery UI Autocomplete pakai 'term'
+    $result = $this->M_revisi->cari_siswa($keyword);
+
+    $data = [];
+    foreach ($result as $row) {
+        $data[] = [
+            'label' => $row['nama_siswa'] . " — " . $row['kelas'], // yang ditampilkan di dropdown
+            'value' => $row['nama_siswa'], // yang masuk ke input
+            'nisn'  => $row['nisn']
+        ];
+    }
+
+    echo json_encode($data);
+}
+
+public function export_pdf_per_siswa()
+{
+    $nisn = $this->input->get('nisn');
+
+    // Ambil data dari model
+    $siswa       = $this->m_siswa->get_by_nisn($nisn);
+    $pelanggaran = $this->M_revisi->get_pelanggaran($nisn);
+    $kehadiran   = $this->M_revisi->get_kehadiran($nisn);
+    $treatment   = $this->M_revisi->get_treatment($nisn);
+    $total_poin  = $this->M_revisi->get_total_poin($nisn);
+
+    // Urutkan berdasarkan tanggal
+    $sortByDate = function($data){
+        usort($data, function($a, $b){
+            return strtotime($a['tanggal']) - strtotime($b['tanggal']);
+        });
+        return $data;
+    };
+
+    $pelanggaran = $sortByDate($pelanggaran);
+    $kehadiran   = $sortByDate($kehadiran);
+    $treatment   = $sortByDate($treatment);
+
+    // Format tanggal menjadi dd-mm-yyyy
+    $formatTanggal = function($data){
+        foreach($data as &$item){
+            if(isset($item['tanggal'])){
+                $item['tanggal'] = date('d-m-Y', strtotime($item['tanggal']));
+            }
+        }
+        return $data;
+    };
+
+    $pelanggaran = $formatTanggal($pelanggaran);
+    $kehadiran   = $formatTanggal($kehadiran);
+    $treatment   = $formatTanggal($treatment);
+
+    // Generate HTML dari view
+    $data = [
+        'siswa'       => $siswa,
+        'pelanggaran' => $pelanggaran,
+        'kehadiran'   => $kehadiran,
+        'treatment'   => $treatment,
+        'total_poin'  => $total_poin
+    ];
+
+    $html = $this->load->view('laporan_revisi/laporan_persiswa', $data, true);
+
+    // Konfigurasi Dompdf
+    $options = new \Dompdf\Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', true);
+
+    $dompdf = new \Dompdf\Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Tampilkan PDF di browser
+    $filename = 'Laporan_Revisi_'.$siswa['nama_siswa'].'.pdf';
+    $dompdf->stream($filename, ["Attachment" => false]);
 }
 
 }

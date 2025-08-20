@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
 <script>
   const revisiData = <?= json_encode($revisi); ?>;
 </script>
@@ -189,6 +192,116 @@
   .p-5 {
     padding: 3rem !important;
   }
+
+  /* Modal Container */
+.custom-modal {
+    background-color:  #2c6a74;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(44, 106, 116, 0.3);
+    border: none;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal Header */
+.custom-modal-header {
+    background: linear-gradient(135deg, #2c6a74, #5da9b0);
+    color: #d0efef;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    align-items: center;
+}
+
+/* Close button in header */
+.custom-modal-header .btn-close {
+    filter: brightness(0) invert(1); /* Biar putih */
+    opacity: 0.85;
+    transition: opacity 0.2s ease-in-out;
+}
+.custom-modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* Modal Body */
+.custom-modal-body {
+    padding: 1.5rem;
+    background-color: #d0efef;
+    color: #2c6a74;
+}
+
+/* Label */
+.custom-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #2c6a74;
+}
+
+/* Input */
+.custom-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #5da9b0;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    color: #2c6a74;
+    background-color: #aee3e0;
+}
+.custom-input::placeholder {
+    color: #2c6a74aa;
+}
+.custom-input:focus {
+    border-color: #2c6a74;
+    outline: none;
+    box-shadow: 0 0 8px rgba(44, 106, 116, 0.4);
+    background-color: #d0efef;
+}
+
+/* Modal Footer */
+.custom-modal-footer {
+    background-color: #aee3e0;
+    border-top: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+}
+
+/* Tombol Umum */
+.btn-cancel,
+.btn-export {
+    border-radius: 12px;
+    padding: 0.5rem 1.4rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Tombol Batal */
+.btn-cancel {
+    background-color: #5da9b0;
+    color: #d0efef;
+}
+.btn-cancel:hover {
+    background-color: #2c6a74;
+    color: #aee3e0;
+}
+
+/* Tombol Export PDF */
+.btn-export {
+    background: linear-gradient(135deg, #2c6a74, #5da9b0);
+    box-shadow: 0 4px 12px rgba(44, 106, 116, 0.4);
+}
+.btn-export:hover {
+    background: linear-gradient(135deg, #5da9b0, #2c6a74);
+    box-shadow: 0 6px 16px rgba(44, 106, 116, 0.6);
+}
+
 </style>
 
 <div class="container-fluid py-4">
@@ -197,34 +310,81 @@
   <div class="card">
     <div class="card-body">
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="filter-tindak-lanjut"><strong>Filter Tindak Lanjut:</strong></label>
-        <select id="filter-tindak-lanjut" class="form-control" onchange="filterTindakLanjut()">
-          <option value="semua">Semua</option>
-          <option value="Pengarahan Tim Tatib">Pengarahan Tim Tatib</option>
-          <option value="Peringatan ke I (Petugas Ketertiban)">Peringatan ke I (Petugas Ketertiban)</option>
-          <option value="Peringatan ke II (Koordinator Ketertiban)">Peringatan ke II (Koordinator Ketertiban)</option>
-          <option value="Panggilan Orang Tua ke I + Form Treatment">Panggilan Orang Tua ke I + Form Treatment</option>
-          <option value="Panggilan Orang Tua ke II + Surat Peringatan I">Panggilan Orang Tua ke II + Surat Peringatan I</option>
-          <option value="Panggilan Orang Tua ke III + Surat Peringatan II">Panggilan Orang Tua ke III + Surat Peringatan II</option>
-          <option value="Panggilan Orang Tua ke IV + Surat Peringatan III">Panggilan Orang Tua ke IV + Surat Peringatan III</option>
-          <option value="Skorsing (Waka Kesiswaan)">Skorsing (Waka Kesiswaan)</option>
-          <option value="Dikembalikan ke Orang Tua (Kepala Sekolah)">Dikembalikan ke Orang Tua (Kepala Sekolah)</option>
-        </select>
-      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="filter-tindak-lanjut"><strong>Filter Tindak Lanjut:</strong></label>
+          <select id="filter-tindak-lanjut" class="form-control" onchange="filterTindakLanjut()">
+            <option value="semua">Semua</option>
+            <option value="Pengarahan Tim Tatib">Pengarahan Tim Tatib</option>
+            <option value="Peringatan ke I (Petugas Ketertiban)">Peringatan ke I (Petugas Ketertiban)</option>
+            <option value="Peringatan ke II (Koordinator Ketertiban)">Peringatan ke II (Koordinator Ketertiban)</option>
+            <option value="Panggilan Orang Tua ke I + Form Treatment">Panggilan Orang Tua ke I + Form Treatment</option>
+            <option value="Panggilan Orang Tua ke II + Surat Peringatan I">Panggilan Orang Tua ke II + Surat Peringatan I</option>
+            <option value="Panggilan Orang Tua ke III + Surat Peringatan II">Panggilan Orang Tua ke III + Surat Peringatan II</option>
+            <option value="Panggilan Orang Tua ke IV + Surat Peringatan III">Panggilan Orang Tua ke IV + Surat Peringatan III</option>
+            <option value="Skorsing (Waka Kesiswaan)">Skorsing (Waka Kesiswaan)</option>
+            <option value="Dikembalikan ke Orang Tua (Kepala Sekolah)">Dikembalikan ke Orang Tua (Kepala Sekolah)</option>
+          </select>
+        </div>
 
-      <div class="col-md-6">
-        <label><strong>Pencarian:</strong></label>
-        <input type="text" id="search-global" class="form-control" 
-          placeholder="Cari nama, kelas, wali kelas, NISN, keterangan..." 
-          oninput="this.value = this.value.toUpperCase();">
+        <div class="col-md-6">
+          <label><strong>Pencarian:</strong></label>
+          <input type="text" id="search-global" class="form-control" 
+            placeholder="Cari nama, kelas, wali kelas, NISN, keterangan..." 
+            oninput="this.value = this.value.toUpperCase();">
+        </div>
       </div>
-    </div>
 
       <button class="btn btn-primary" onclick="exportPDF()">
         <i class="fas fa-file-pdf"></i> Export PDF sesuai Filter
       </button>
+
+      <!-- Tombol untuk memicu modal -->
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exportModal">
+    <i class="fas fa-file-pdf"></i> Export PDF Per Siswa
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content custom-modal">
+      
+      <!-- Header -->
+      <div class="modal-header custom-modal-header">
+        <h5 class="modal-title" id="exportModalLabel">Laporan Revisi Per Siswa</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body custom-modal-body">
+        <label for="namaSiswa" class="form-label custom-label">Cari Siswa</label>
+        
+        <!-- Input pakai datalist -->
+        <input list="siswaList" id="namaSiswa" class="form-control custom-input"
+               placeholder="Ketik nama siswa..." oninput="this.value = this.value.toUpperCase();">
+        
+               <datalist id="siswaList">
+  <?php foreach($revisi as $item): ?>
+    <option value="<?= $item['nama_siswa'] ?>" 
+            data-nisn="<?= $item['nisn'] ?>">
+      <?= $item['nama_siswa'] ?> (<?= $item['kelas'] ?>) - <?= $item['nisn'] ?>
+    </option>
+  <?php endforeach; ?>
+</datalist>
+
+        <!-- Hidden untuk simpan NISN -->
+        <input type="hidden" id="nisnSiswa">
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer custom-modal-footer">
+        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-export" onclick="goExportPDF()">Export PDF</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
       <?php if (empty($revisi)): ?>
         <div class="text-center p-5">
@@ -369,6 +529,42 @@
 </div>
 
 <script>
+  const siswaData = <?= json_encode($revisi); ?>; 
+
+  document.getElementById("namaSiswa").addEventListener("input", function() {
+  const inputVal = this.value.trim();
+  const options = document.querySelectorAll("#siswaList option");
+  let nisn = "";
+
+  options.forEach(opt => {
+    if (opt.value.toUpperCase() === inputVal.toUpperCase()) {
+      nisn = opt.dataset.nisn; // ambil nisn dari data attribute
+    }
+  });
+
+  document.getElementById("nisnSiswa").value = nisn;
+});
+
+function goExportPDF() {
+    const nisnInput = document.getElementById("nisnSiswa");
+    const namaInput = document.getElementById("namaSiswa");
+    const nisn = nisnInput.value;
+
+    if(nisn === "") {
+      alert("Harap pilih siswa dari daftar!");
+      return;
+    }
+
+    // Buka export PDF
+    window.open("<?= base_url('revisi/export_pdf_per_siswa') ?>?nisn=" + encodeURIComponent(nisn), "_blank");
+
+    // Reset input setelah klik export
+    namaInput.value = "";
+    nisnInput.value = "";
+}
+</script>
+
+<script>
 function exportPDF() {
     const selected = document.getElementById('filter-tindak-lanjut').value;
     window.open('<?= base_url("revisi/export_pdf") ?>?tindak=' + encodeURIComponent(selected), '_blank');
@@ -376,6 +572,18 @@ function exportPDF() {
 </script>
 
 <script>
+  $(function() {
+    $("#namaSiswa").autocomplete({
+        source: "<?= base_url('revisi/search_siswa') ?>",
+        minLength: 2, // mulai cari kalau sudah ketik 2 huruf
+        select: function(event, ui) {
+            $("#namaSiswa").val(ui.item.value); 
+            $("#namaSiswa").data("nisn", ui.item.nisn); // simpan NISN
+            return false;
+        }
+    });
+});
+
   // if (document.querySelector('.input-group input')) {
   //   var inputs = document.querySelectorAll('.input-group input');
   //   inputs.forEach(input => {

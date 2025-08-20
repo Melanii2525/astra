@@ -134,4 +134,44 @@ class M_revisi extends CI_Model
 
     return $this->db->get()->result_array();
 }
+
+public function cari_siswa($keyword)
+{
+    return $this->db->select('nisn, nama_siswa, kelas')
+        ->from('siswa')
+        ->like('nama_siswa', $keyword)
+        ->limit(10)
+        ->get()
+        ->result_array();
+}
+
+public function get_treatment($nisn)
+{
+    return $this->db->select('tanggal, tindak_lanjut')
+                    ->from('revisi')
+                    ->where('nisn', $nisn)
+                    ->get()
+                    ->result_array();
+}
+
+    public function get_pelanggaran_siswa($nisn)
+    {
+        return $this->db->get_where('data_pelanggaran', ['nisn' => $nisn])->result_array();
+    }
+
+    // Ambil kehadiran per siswa
+    public function get_kehadiran_siswa($nisn)
+    {
+        return $this->db->get_where('data_kehadiran', ['nisn' => $nisn])->result_array();
+    }
+
+    public function get_total_poin($nisn)
+{
+    $this->db->select_sum('poin'); // jumlahkan kolom poin
+    $this->db->from('revisi');
+    $this->db->where('nisn', $nisn);
+    $query = $this->db->get();
+    return $query->row()->poin ?? 0; // kembalikan 0 jika tidak ada
+}
+
 }

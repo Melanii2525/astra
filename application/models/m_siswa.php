@@ -55,4 +55,10 @@ class M_siswa extends CI_Model
 
         return $this->db->get()->result();
     }
+
+    public function get_by_nisn($nisn)
+    {
+        // pakai tabel data_siswa
+        return $this->db->get_where('data_siswa', ['nisn' => $nisn])->row_array();
+    }
 }

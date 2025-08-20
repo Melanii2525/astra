@@ -52,8 +52,8 @@
             <p>Catat dan pantau pelanggaran siswa dengan cepat dan efisien melalui sistem tata tertib digital sekolah.</p>
             <button class="btn px-4 py-2 text-white mt-2"
               style="background-color: #2C6A74; border-radius: 30px;"
-              onclick="window.location.href='<?= base_url('pelanggaran'); ?>'">
-              Input Pelanggaran
+              onclick="window.location.href='<?= base_url('data_siswa'); ?>'">
+              Input Data Siswa
             </button>
           </div>
           <div class="col-md-5 col-12 text-center">

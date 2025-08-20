@@ -257,6 +257,7 @@ class Pelanggaran extends CI_Controller
 
         echo json_encode($result);
     }
+    
     public function laporan_persiswa($nisn)
     {
         $siswa = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();

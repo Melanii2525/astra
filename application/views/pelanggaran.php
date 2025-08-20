@@ -510,7 +510,7 @@
         }
 
         function ambilData() {
-    var keyword = $('#searchInput').val();
+        var keyword = $('#searchInput').val();
 
     $.ajax({
         type: 'POST',

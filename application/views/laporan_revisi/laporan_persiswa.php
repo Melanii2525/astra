@@ -1,47 +1,117 @@
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <title>Laporan Revisi <?= $siswa['nama_siswa']; ?></title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        h3 { margin-bottom: 10px; }
-        .siswa { margin-bottom: 20px; }
-        .label { font-weight: bold; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        h2, h3 { margin: 0; padding: 4px 0; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <h3>Laporan Pelanggaran & Kehadiran Per Siswa</h3>
 
-    <?php if (!empty($siswa)): ?>
-        <?php $no = 1; foreach ($siswa as $row): ?>
-            <div class="siswa">
-                <div class="label">Siswa <?= $no++ ?>:</div>
-                <div><span class="label">Nama:</span> <?= $row['nama_siswa'] ?></div>
-                <div><span class="label">Kelas:</span> <?= $row['kelas'] ?></div>
+    <h2 style="text-align:center;">LAPORAN REVISI <?= $siswa['nama_siswa']; ?></h2>
+    <br>
 
-                <div><span class="label">Jenis Pelanggaran:</span>
-                    <?php 
-                        if (!empty($row['pelanggaran'])) {
-                            echo implode(', ', array_column($row['pelanggaran'], 'keterangan'));
-                        } else {
-                            echo '-';
-                        }
-                    ?>
-                </div>
+    <!-- Biodata Siswa -->
+    <table>
+        <tr><th width="25%">NISN</th><td><?= $siswa['nisn']; ?></td></tr>
+        <tr><th>Nama</th><td><?= $siswa['nama_siswa']; ?></td></tr>
+        <tr><th>Kelas</th><td><?= $siswa['kelas']; ?></td></tr>
+        <tr><th>Wali Kelas</th><td><?= $siswa['wali_kelas']; ?></td></tr>
+    </table>
 
-                <div><span class="label">Kehadiran:</span>
-                    <?php 
-                        if (!empty($row['kehadiran'])) {
-                            echo implode(', ', array_column($row['kehadiran'], 'keterangan'));
-                        } else {
-                            echo '-';
-                        }
-                    ?>
-                </div>
+    <!-- Pelanggaran -->
+    <h3>Pelanggaran</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Keterangan</th>
+                <th>Poin</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($pelanggaran)): ?>
+                <?php foreach($pelanggaran as $p): ?>
+                <tr>
+                    <td><?= $p['tanggal']; ?></td>
+                    <td><?= $p['keterangan']; ?></td>
+                    <td><?= $p['poin']; ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="3" style="text-align:center;">Tidak ada data pelanggaran</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 
-                <div><span class="label">Total Treatment:</span> <?= $row['treatment_count'] ?> kali</div>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>Tidak ada data siswa.</p>
-    <?php endif; ?>
+    <!-- Kehadiran -->
+    <h3>Kehadiran</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Poin</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($kehadiran)): ?>
+                <?php foreach($kehadiran as $k): ?>
+                <tr>
+                    <td><?= $k['tanggal']; ?></td>
+                    <td><?= $k['keterangan']; ?></td>
+                    <td><?= $k['poin']; ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="3" style="text-align:center;">Tidak ada data kehadiran</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+
+   <!-- Treatment -->
+<h3>Treatment</h3>
+<table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Tanggal Treatment</th>
+            <th>Poin Treatment</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $total_treatment_poin = 0;
+        if(!empty($treatment)):
+            $no = 1;
+            foreach($treatment as $t):
+                $poin_t = isset($t['poin']) ? $t['poin'] : 30;
+                $total_treatment_poin += $poin_t;
+        ?>
+        <tr>
+            <td><?= $no++; ?></td>
+            <td><?= $t['tanggal']; ?></td>
+            <td><?= $poin_t; ?></td>
+        </tr>
+        <?php
+            endforeach;
+        else: ?>
+        <tr><td colspan="3" style="text-align:center;">Belum ada treatment</td></tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
+<!-- Rekap -->
+<h3>Rekap Akhir</h3>
+<table>
+    <tr><th>Total Poin Terakhir</th><td><?= $total_poin; ?></td></tr>
+    <tr><th>Jumlah Treatment</th><td><?= count($treatment); ?> kali</td></tr>
+</table>
+
 </body>
 </html>
