@@ -162,26 +162,23 @@
                   <?php endif; ?>
 
                   <form action="<?= base_url('auth/login'); ?>" method="post" class="text-start">
-                    <div class="mb-3">
-                      <label class="form-label-custom">Email</label>
-                      <input type="email" name="email" class="form-control-custom" required>
-                      <?= form_error('email', '<div class="text-danger small">', '</div>'); ?>
-                    </div>
-                    <div class="mb-3 position-relative">
-                      <label class="form-label-custom">Password</label>
-                      <input type="password" name="password" class="form-control-custom" id="passwordInput">
-                      <span class="toggle-password" onclick="togglePassword()">
-                        <i class="fas fa-eye" id="eyeIcon"></i>
-                      </span>
-                      <?= form_error('password', '<small class="text-danger">', '</small>') ?>
-                    </div>
-                    <div class="text-center">
-                      <button type="submit" class="btn-custom">Login</button>
-                    </div>
-                    <!-- <p class="mt-3 text-sm text-center">
-                    Belum memiliki akun? <a href="<?= base_url('auth/sign_up'); ?>" class="text-link-custom">Daftar</a>
-                    </p> -->
-                  </form>
+  <div class="mb-3">
+    <label class="form-label-custom">Email</label>
+    <input type="email" name="email" class="form-control-custom" required>
+    <?= form_error('email', '<div class="text-danger small">', '</div>'); ?>
+  </div>
+  <div class="mb-3 position-relative">
+    <label class="form-label-custom">Password</label>
+    <input type="password" name="password" class="form-control-custom" id="passwordInput" required>
+    <span class="toggle-password" onclick="togglePassword()">
+      <i class="fas fa-eye" id="eyeIcon"></i>
+    </span>
+    <?= form_error('password', '<small class="text-danger">', '</small>') ?>
+  </div>
+  <div class="text-center">
+    <button type="submit" class="btn-custom">Login</button>
+  </div>
+</form>
                 </div>
               </div>
             </div>

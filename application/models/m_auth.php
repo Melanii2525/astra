@@ -3,27 +3,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_auth extends CI_Model
 {
-    public function get_user_by_email($email)
+    // cari user berdasarkan email ATAU username
+    public function get_user($username_or_email)
     {
-        return $this->db->get_where('users', ['email' => $email])->row();
+        $this->db->where('email', $username_or_email);
+        $this->db->or_where('username', $username_or_email);
+        return $this->db->get('users')->row();
     }
 
-    public function register($data)
-    {
-        return $this->db->insert('users', $data);
-    }
-
+    // fungsi login
     public function login($email, $password)
-    {
-        $this->db->where('email', $email);
-        $user = $this->db->get('users')->row();
+{
+    $this->db->where('email', $email);
+    $this->db->where('password', $password); // langsung cek tanpa hash
+    return $this->db->get('users')->row();
+}   
 
-        if ($user) {
-            if (password_verify($password, $user->password)) {
-                return $user;
-            }
-        }
-
-        return false;
-    }
 }
