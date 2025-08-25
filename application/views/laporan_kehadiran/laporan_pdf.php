@@ -7,7 +7,7 @@
         body {
             background-color: #f3f7f8;
             font-family: 'Poppins', sans-serif;
-            margin: 40px;
+            margin: 10px;
         }
 
         .judul {

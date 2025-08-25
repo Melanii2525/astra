@@ -302,6 +302,10 @@
     box-shadow: 0 6px 16px rgba(44, 106, 116, 0.6);
 }
 
+.ui-autocomplete {
+  z-index: 2000 !important; /* lebih tinggi dari modal (1050) */
+}
+
 </style>
 
 <div class="container-fluid py-4">
@@ -360,8 +364,11 @@
         <label for="namaSiswa" class="form-label custom-label">Cari Siswa</label>
         
         <!-- Input pakai datalist -->
-        <input list="siswaList" id="namaSiswa" class="form-control custom-input"
-               placeholder="Ketik nama siswa..." oninput="this.value = this.value.toUpperCase();">
+        <input type="text" id="namaSiswa" 
+       class="form-control custom-input"
+       placeholder="Ketik nama siswa..."
+       autocomplete="off"
+       oninput="this.value = this.value.toUpperCase();">
         
                <datalist id="siswaList">
   <?php foreach($revisi as $item): ?>
@@ -546,21 +553,18 @@
 });
 
 function goExportPDF() {
-    const nisnInput = document.getElementById("nisnSiswa");
-    const namaInput = document.getElementById("namaSiswa");
-    const nisn = nisnInput.value;
+    const nisn = $("#nisnSiswa").val();
 
-    if(nisn === "") {
-      alert("Harap pilih siswa dari daftar!");
-      return;
+    if (nisn === "") {
+        alert("Harap pilih siswa dari daftar!");
+        return;
     }
 
-    // Buka export PDF
     window.open("<?= base_url('revisi/export_pdf_per_siswa') ?>?nisn=" + encodeURIComponent(nisn), "_blank");
 
-    // Reset input setelah klik export
-    namaInput.value = "";
-    nisnInput.value = "";
+    // reset
+    $("#namaSiswa").val("");
+    $("#nisnSiswa").val("");
 }
 </script>
 
@@ -572,16 +576,18 @@ function exportPDF() {
 </script>
 
 <script>
-  $(function() {
-    $("#namaSiswa").autocomplete({
-        source: "<?= base_url('revisi/search_siswa') ?>",
-        minLength: 2, // mulai cari kalau sudah ketik 2 huruf
-        select: function(event, ui) {
-            $("#namaSiswa").val(ui.item.value); 
-            $("#namaSiswa").data("nisn", ui.item.nisn); // simpan NISN
-            return false;
-        }
-    });
+$(function() {
+  $("#namaSiswa").autocomplete({
+      source: "<?= base_url('revisi/search_siswa') ?>",
+      minLength: 2,
+      select: function(event, ui) {
+          // isi input nama
+          $("#namaSiswa").val(ui.item.value); 
+          // simpan NISN ke hidden field (biar validasi lolos)
+          $("#nisnSiswa").val(ui.item.nisn);
+          return false;
+      }
+  });
 });
 
   // if (document.querySelector('.input-group input')) {

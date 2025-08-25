@@ -15,6 +15,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
         body {
             background-color: #f1fbfb;
             font-family: 'Poppins', sans-serif;
@@ -28,15 +33,15 @@
         .navbar-brand,
         .nav-link,
         .btn-outline-light {
-        color: white !important;
+            color: white !important;
         }
 
         .custom-text-primary,
         .custom-text-accent {
             color: #2c6a74;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
-        
+
         .hero {
             display: flex;
             align-items: center;
@@ -46,6 +51,7 @@
             color: white;
             text-align: center;
             padding: 60px 20px;
+                overflow-x: hidden;
         }
 
         .hero h1 {
@@ -154,14 +160,16 @@
                 max-width: 240px;
             }
         }
+
+
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container">
-        <a class="navbar-brand fw-bold" href="#">ASTRA Selapan</a>
-        <!-- <div class="d-flex gap-2">
+            <a class="navbar-brand fw-bold" href="#">ASTRA Selapan</a>
+            <!-- <div class="d-flex gap-2">
             <a href="<?= base_url('auth/login') ?>" class="btn btn-outline-light">Login</a>
             <a href="<?= base_url('auth/sign_up') ?>" class="btn btn-outline-light">Daftar</a>
         </div> -->
@@ -170,81 +178,81 @@
 
     <section class="hero">
         <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6 text-center text-md-start" data-aos="fade-right">
-            <h1 class="fw-bold">
-                Selamat datang di <span class="custom-text-primary">ASTRA</span> <span class="custom-text-accent">Selapan</span>
-            </h1>
-            <p class="lead mb-4">Pantau data siswa, kehadiran, dan poin pelanggaran secara mudah dan efisien.</p>
-            <a href="<?= base_url('auth/login') ?>" class="btn btn-light btn-lg">Login Sekarang</a>
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start" data-aos="fade-right">
+                    <h1 class="fw-bold">
+                        Selamat datang di <span class="custom-text-primary">ASTRA</span> <span class="custom-text-accent">Selapan</span>
+                    </h1>
+                    <p class="lead mb-4">Pantau data siswa, kehadiran, dan poin pelanggaran secara mudah dan efisien.</p>
+                    <a href="<?= base_url('auth/login') ?>" class="btn btn-light btn-lg">Login Sekarang</a>
+                </div>
+                <div class="col-md-6" data-aos="fade-left">
+                    <div class="maskot-wrapper mx-auto mx-md-0">
+                        <img src="<?= base_url('assets/img/gambar1.png') ?>" class="fade-img active">
+                        <img src="<?= base_url('assets/img/gambar2.png') ?>" class="fade-img">
+                        <img src="<?= base_url('assets/img/gambar3.png') ?>" class="fade-img">
+                        <img src="<?= base_url('assets/img/gambar4.png') ?>" class="fade-img">
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6" data-aos="fade-left">
-            <div class="maskot-wrapper mx-auto mx-md-0">
-                <img src="<?= base_url('assets/img/gambar1.png') ?>" class="fade-img active">
-                <img src="<?= base_url('assets/img/gambar2.png') ?>" class="fade-img">
-                <img src="<?= base_url('assets/img/gambar3.png') ?>" class="fade-img">
-                <img src="<?= base_url('assets/img/gambar4.png') ?>" class="fade-img">
-            </div>
-            </div>
-        </div>
         </div>
     </section>
 
     <section class="feature-section">
-    <div class="container">
-        <h2 class="mb-5 fw-bold" data-aos="fade-up">Fitur Unggulan</h2>
-        <div class="row g-5">
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
-            <div class="feature-icon"><i class="bi bi-person-lines-fill"></i></div>
-            <h5 class="fw-semibold">Data Siswa</h5>
-            <p>Kelola data siswa secara efisien.</p>
+        <div class="container">
+            <h2 class="mb-5 fw-bold" data-aos="fade-up">Fitur Unggulan</h2>
+            <div class="row g-5">
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon"><i class="bi bi-person-lines-fill"></i></div>
+                    <h5 class="fw-semibold">Data Siswa</h5>
+                    <p>Kelola data siswa secara efisien.</p>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                    <h5 class="fw-semibold">Pelanggaran</h5>
+                    <p>Catat pelanggaran siswa dan secara otomatis.</p>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon"><i class="bi bi-calendar-check"></i></div>
+                    <h5 class="fw-semibold">Keterangan</h5>
+                    <p>Input kehadiran dengan keterangan alpha yang dapat memengaruhi poin siswa.</p>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon"><i class="bi bi-pencil-square"></i></div>
+                    <h5 class="fw-semibold">Revisi Poin</h5>
+                    <p>Revisi poin pelanggaran & kehadiran secara manual jika terjadi kesalahan input atau perubahan keputusan.</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-            <div class="feature-icon"><i class="bi bi-exclamation-triangle"></i></div>
-            <h5 class="fw-semibold">Pelanggaran</h5>
-            <p>Catat pelanggaran siswa dan secara otomatis.</p>
-        </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
-            <div class="feature-icon"><i class="bi bi-calendar-check"></i></div>
-            <h5 class="fw-semibold">Keterangan</h5>
-            <p>Input kehadiran dengan keterangan alpha yang dapat memengaruhi poin siswa.</p>
-        </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
-            <div class="feature-icon"><i class="bi bi-pencil-square"></i></div>
-            <h5 class="fw-semibold">Revisi Poin</h5>
-            <p>Revisi poin pelanggaran & kehadiran secara manual jika terjadi kesalahan input atau perubahan keputusan.</p>
-        </div>
-        </div>
-    </div>
     </section>
 
     <section class="cta-modern">
         <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-7 text-center text-md-start mb-4 mb-md-0" data-aos="fade-right">
-            <h2 class="display-5 fw-bold mb-3 text-white">Transformasi Data Sekolah Jadi Lebih Mudah</h2>
-            <p class="lead text-white mb-4">
-                Mulai gunakan <strong>ASTRA Selapan</strong> untuk mengelola kehadiran, pelanggaran, dan informasi siswa secara efisien dan terstruktur.
-            </p>
-            <div class="d-flex flex-column flex-sm-row gap-3">
-                <!-- <a href="<?= base_url('auth/login') ?>" class="btn btn-light btn-lg">
+            <div class="row align-items-center">
+                <div class="col-md-7 text-center text-md-start mb-4 mb-md-0" data-aos="fade-right">
+                    <h2 class="display-5 fw-bold mb-3 text-white">Transformasi Data Sekolah Jadi Lebih Mudah</h2>
+                    <p class="lead text-white mb-4">
+                        Mulai gunakan <strong>ASTRA Selapan</strong> untuk mengelola kehadiran, pelanggaran, dan informasi siswa secara efisien dan terstruktur.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <!-- <a href="<?= base_url('auth/login') ?>" class="btn btn-light btn-lg">
                 <i class="bi bi-box-arrow-in-right me-2"></i> Login Sekarang
                 </a> -->
-                <a href="<?= base_url('auth/login') ?>" class="btn btn-outline-light btn-lg">
-                <i class="bi bi-pencil-square me-2"></i> Login Sekarang
-                </a>
+                        <a href="<?= base_url('auth/login') ?>" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-pencil-square me-2"></i> Login Sekarang
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-5 text-center" data-aos="fade-left">
+                    <img src="<?= base_url('assets/img/gambar1.png') ?>" alt="Ilustrasi" class="img-fluid">
+                </div>
             </div>
-            </div>
-            <div class="col-md-5 text-center" data-aos="fade-left">
-            <img src="<?= base_url('assets/img/gambar1.png') ?>" alt="Ilustrasi" class="img-fluid">
-            </div>
-        </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-        <small>&copy; <?= date('Y') ?> ASTRA Selapan. Dibuat dengan ❤ oleh Meyna.</small>
+            <small>&copy; <?= date('Y') ?> ASTRA Selapan. Dibuat dengan ❤ oleh Meyna.</small>
         </div>
     </footer>
 
@@ -255,10 +263,11 @@
         const images = document.querySelectorAll('.fade-img');
         let current = 0;
         setInterval(() => {
-        images[current].classList.remove('active');
-        current = (current + 1) % images.length;
-        images[current].classList.add('active');
+            images[current].classList.remove('active');
+            current = (current + 1) % images.length;
+            images[current].classList.add('active');
         }, 2000);
     </script>
 </body>
+
 </html>

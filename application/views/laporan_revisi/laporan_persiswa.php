@@ -109,8 +109,8 @@
 <!-- Rekap -->
 <h3>Rekap Akhir</h3>
 <table>
-    <tr><th>Total Poin Terakhir</th><td><?= $total_poin; ?></td></tr>
-    <tr><th>Jumlah Treatment</th><td><?= count($treatment); ?> kali</td></tr>
+<tr><th>Total Poin Terakhir</th><td><?= max(0, $total_poin); ?></td></tr>
+<tr><th>Jumlah Treatment</th><td><?= $treatment_count; ?> kali</td></tr>
 </table>
 
 </body>

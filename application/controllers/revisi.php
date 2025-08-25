@@ -31,7 +31,7 @@ class Revisi extends CI_Controller
 
         // Proses pelanggaran
         foreach ($pelanggaran as $p) {
-            $nisn = $p['nisn'];
+            $nisn = trim((string)$p['nisn']);
             if (!isset($siswa[$nisn])) {
                 $siswa[$nisn] = [
                     'nisn' => $p['nisn'],
@@ -60,7 +60,7 @@ class Revisi extends CI_Controller
 
         // Proses kehadiran
         foreach ($kehadiran as $k) {
-            $nisn = $k['nisn'];
+            $nisn = trim((string)$k['nisn']);
             if (!isset($siswa[$nisn])) {
                 $siswa[$nisn] = [
                     'nisn' => $k['nisn'],
@@ -83,8 +83,8 @@ class Revisi extends CI_Controller
 
             $siswa[$nisn]['kehadiran'][] = [
                 'jenis' => $k['keterangan'] ?? 'Alpha',
-                'poin' => 7
-            ];
+                'poin'  => (int)$k['poin'] // gunakan nilai poin dari DB
+            ];            
         }
 
         $data['revisi'] = [];
@@ -132,34 +132,42 @@ class Revisi extends CI_Controller
     public function simpan()
 {
     $revisi = $this->input->post('revisi');
-    $treatment_checked = $this->input->post('treatment_checked'); // ✅ array NISN
+    $treatment_checked = $this->input->post('treatment_checked'); // array NISN
 
     if ($revisi) {
         foreach ($revisi as $r) {
             $treatment_count = 0;
 
             // Cek apakah siswa ini di-ceklist treatment
+            $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
             if (!empty($treatment_checked) && in_array($r['nisn'], $treatment_checked)) {
-                $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
                 $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count + 1 : 1;
             } else {
-                // Ambil treatment_count lama jika ada
-                $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
                 if ($cek && isset($cek->treatment_count)) {
                     $treatment_count = $cek->treatment_count;
                 }
             }
 
-            // Hitung tindak lanjut berdasarkan poin
+            // 🔥 Hitung total poin (pelanggaran + kehadiran)
+            $total_poin = $this->M_revisi->get_total_poin($r['nisn']);
+
+            // 🔥 Kurangi poin berdasarkan treatment
+            if ($treatment_count > 0) {
+                $total_poin -= ($treatment_count * 30);
+            }
+
+            if ($total_poin < 0) $total_poin = 0;
+
+            // Tentukan tindak lanjut
             $tindak_lanjut = '';
-            if ($r['poin'] >= 0 && $r['poin'] <= 10) $tindak_lanjut = 'Pengarahan Tim Tatib';
-            elseif ($r['poin'] >= 11 && $r['poin'] <= 35) $tindak_lanjut = 'Peringatan ke I (Petugas Ketertiban)';
-            elseif ($r['poin'] >= 36 && $r['poin'] <= 55) $tindak_lanjut = 'Peringatan ke II (Koordinator Ketertiban)';
-            elseif ($r['poin'] >= 56 && $r['poin'] <= 75) $tindak_lanjut = 'Panggilan Orang Tua ke I + Form Treatment';
-            elseif ($r['poin'] >= 76 && $r['poin'] <= 100) $tindak_lanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
-            elseif ($r['poin'] >= 101 && $r['poin'] <= 150) $tindak_lanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
-            elseif ($r['poin'] >= 151 && $r['poin'] <= 200) $tindak_lanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
-            elseif ($r['poin'] >= 201 && $r['poin'] <= 249) $tindak_lanjut = 'Skorsing (Waka Kesiswaan)';
+            if ($total_poin >= 0 && $total_poin <= 10) $tindak_lanjut = 'Pengarahan Tim Tatib';
+            elseif ($total_poin >= 11 && $total_poin <= 35) $tindak_lanjut = 'Peringatan ke I (Petugas Ketertiban)';
+            elseif ($total_poin >= 36 && $total_poin <= 55) $tindak_lanjut = 'Peringatan ke II (Koordinator Ketertiban)';
+            elseif ($total_poin >= 56 && $total_poin <= 75) $tindak_lanjut = 'Panggilan Orang Tua ke I + Form Treatment';
+            elseif ($total_poin >= 76 && $total_poin <= 100) $tindak_lanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+            elseif ($total_poin >= 101 && $total_poin <= 150) $tindak_lanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+            elseif ($total_poin >= 151 && $total_poin <= 200) $tindak_lanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+            elseif ($total_poin >= 201 && $total_poin <= 249) $tindak_lanjut = 'Skorsing (Waka Kesiswaan)';
             else $tindak_lanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
 
             // Simpan ke database
@@ -171,7 +179,7 @@ class Revisi extends CI_Controller
                 'tanggal'         => $r['tanggal'],
                 'jenis'           => $r['jenis_data'],
                 'keterangan'      => $r['keterangan'],
-                'poin'            => $r['poin'],
+                'poin'            => $total_poin, // ✅ sudah hasil akumulasi
                 'treatment_count' => $treatment_count,
                 'tindak_lanjut'   => $tindak_lanjut 
             ]);
@@ -249,7 +257,10 @@ public function export_pdf_per_siswa()
     $pelanggaran = $this->M_revisi->get_pelanggaran($nisn);
     $kehadiran   = $this->M_revisi->get_kehadiran($nisn);
     $treatment   = $this->M_revisi->get_treatment($nisn);
-    $total_poin  = $this->M_revisi->get_total_poin($nisn);
+    $lastRevisi = $this->M_revisi->get_last_revisi_poin($nisn);
+
+    $total_poin      = $lastRevisi['poin'] ?? 0;
+    $treatment_count = $lastRevisi['treatment_count'] ?? 0;
 
     // Urutkan berdasarkan tanggal
     $sortByDate = function($data){
@@ -283,7 +294,8 @@ public function export_pdf_per_siswa()
         'pelanggaran' => $pelanggaran,
         'kehadiran'   => $kehadiran,
         'treatment'   => $treatment,
-        'total_poin'  => $total_poin
+        'total_poin'  => $total_poin,
+        'treatment_count' => $treatment_count
     ];
 
     $html = $this->load->view('laporan_revisi/laporan_persiswa', $data, true);
@@ -302,5 +314,64 @@ public function export_pdf_per_siswa()
     $filename = 'Laporan_Revisi_'.$siswa['nama_siswa'].'.pdf';
     $dompdf->stream($filename, ["Attachment" => false]);
 }
+
+public function get_pelanggaran($nisn = null)
+    {
+        $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
+        $this->db->from('pelanggaran p');
+        $this->db->join('siswa s', 's.nisn = p.nisn', 'left');
+        
+        if ($nisn) {
+            $this->db->where('p.nisn', $nisn); // ✅ filter per siswa
+        }
+        
+        return $this->db->get()->result_array();
+    }
+
+    public function get_kehadiran($nisn = null)
+    {
+        $this->db->select('k.*, s.nama_siswa, s.kelas, s.wali_kelas');
+        $this->db->from('kehadiran k');
+        $this->db->join('siswa s', 's.nisn = k.nisn', 'left');
+        
+        if ($nisn) {
+            $this->db->where('k.nisn', $nisn); // ✅ filter per siswa
+        }
+        
+        return $this->db->get()->result_array();
+    }
+
+    public function get_treatment($nisn = null)
+    {
+        $this->db->from('treatment');
+        if ($nisn) {
+            $this->db->where('nisn', $nisn); // ✅ filter per siswa
+        }
+        return $this->db->get()->result_array();
+    }
+
+    public function get_total_poin($nisn)
+    {
+        // Pelanggaran
+        $pelanggaran = $this->db->select_sum('poin')
+        ->where('nisn', $nisn)
+        ->get('pelanggaran')
+        ->row()->poin ?? 0;
+
+        // Kehadiran
+        $kehadiran = $this->db->select_sum('poin')
+        ->where('nisn', $nisn)
+        ->get('kehadiran')
+        ->row()->poin ?? 0;
+    
+        // Hitung total poin treatment
+        $this->db->select_sum('poin', 'total_poin');
+        $this->db->from('treatment');
+        $this->db->where('nisn', $nisn);
+        $treatment_poin = $this->db->get()->row()->total_poin ?? 0;
+    
+        // Total akhir
+        return (int)$pelanggaran + (int)$kehadiran - (int)$treatment_poin;
+    }       
 
 }

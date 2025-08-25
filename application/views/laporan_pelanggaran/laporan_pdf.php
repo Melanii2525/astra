@@ -8,7 +8,7 @@
         body {
             background-color: #f3f7f8;
             font-family: 'Poppins', sans-serif;
-            padding: 40px;
+            padding: 10px;
         }
 
         .judul {
@@ -38,7 +38,7 @@
             border: 1px solid #2C6A74;
             padding: 10px;
             text-align: center;
-            font-size: 13px;
+            font-size: 10px;
         }
 
         th {
