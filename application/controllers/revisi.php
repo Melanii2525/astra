@@ -256,7 +256,7 @@ public function export_pdf_per_siswa()
     $siswa       = $this->m_siswa->get_by_nisn($nisn);
     $pelanggaran = $this->M_revisi->get_pelanggaran($nisn);
     $kehadiran   = $this->M_revisi->get_kehadiran($nisn);
-    $treatment   = $this->M_revisi->get_treatment($nisn);
+    $treatment = $this->M_revisi->get_treatment($nisn);
     $lastRevisi = $this->M_revisi->get_last_revisi_poin($nisn);
 
     $total_poin      = $lastRevisi['poin'] ?? 0;
@@ -351,27 +351,25 @@ public function get_pelanggaran($nisn = null)
     }
 
     public function get_total_poin($nisn)
-    {
-        // Pelanggaran
-        $pelanggaran = $this->db->select_sum('poin')
+{
+    // Pelanggaran
+    $pelanggaran = $this->db->select_sum('poin')
         ->where('nisn', $nisn)
         ->get('pelanggaran')
         ->row()->poin ?? 0;
 
-        // Kehadiran
-        $kehadiran = $this->db->select_sum('poin')
+    // Kehadiran
+    $kehadiran = $this->db->select_sum('poin')
         ->where('nisn', $nisn)
         ->get('kehadiran')
         ->row()->poin ?? 0;
-    
-        // Hitung total poin treatment
-        $this->db->select_sum('poin', 'total_poin');
-        $this->db->from('treatment');
-        $this->db->where('nisn', $nisn);
-        $treatment_poin = $this->db->get()->row()->total_poin ?? 0;
-    
-        // Total akhir
-        return (int)$pelanggaran + (int)$kehadiran - (int)$treatment_poin;
-    }       
+
+    // Treatment (hitung jumlah baris * 30)
+    $treatment_count = $this->db->where('nisn', $nisn)->count_all_results('treatment');
+    $treatment_poin = $treatment_count * 30;
+
+    // Total akhir
+    return (int)$pelanggaran + (int)$kehadiran - (int)$treatment_poin;
+}
 
 }

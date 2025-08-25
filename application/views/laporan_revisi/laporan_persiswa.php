@@ -74,7 +74,7 @@
         </tbody>
     </table>
 
-   <!-- Treatment -->
+  <!-- Treatment -->
 <h3>Treatment</h3>
 <table>
     <thead>
@@ -89,17 +89,22 @@
         $total_treatment_poin = 0;
         if(!empty($treatment)):
             $no = 1;
-            foreach($treatment as $t):
-                $poin_t = isset($t['poin']) ? $t['poin'] : 30;
+
+            // ambil tanggal terakhir dari treatment
+            $last_date = $treatment[0]['tanggal'];
+
+            // tampilkan sebanyak jumlah treatment_count
+            for($i=1; $i <= $treatment_count; $i++):
+                $poin_t = 30;
                 $total_treatment_poin += $poin_t;
         ?>
         <tr>
             <td><?= $no++; ?></td>
-            <td><?= $t['tanggal']; ?></td>
+            <td><?= $last_date; ?></td>
             <td><?= $poin_t; ?></td>
         </tr>
         <?php
-            endforeach;
+            endfor;
         else: ?>
         <tr><td colspan="3" style="text-align:center;">Belum ada treatment</td></tr>
         <?php endif; ?>

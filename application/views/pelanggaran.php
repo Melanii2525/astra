@@ -74,7 +74,7 @@
     }
 
     .card.h-100.w-100 {
-        margin-top: 10px; 
+        margin-top: 10px;
     }
 
     .modal-header {
@@ -140,7 +140,7 @@
         text-align: center;
     }
 
-    .group{
+    .group {
         color: white;
     }
 
@@ -210,134 +210,174 @@
         padding: 5px;
         max-height: 200px;
         overflow-y: auto;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         font-size: 14px;
     }
 
     .modal,
     .modal-dialog,
     .modal-content {
-    overflow: visible !important;
+        overflow: visible !important;
     }
 
     /* Styling modern untuk modal */
     .modern-modal {
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(44, 106, 116, 0.3);
-    border: none;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(44, 106, 116, 0.3);
+        border: none;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-/* Header */
-.modern-modal .modal-header {
-    background: linear-gradient(135deg, #2c6a74, #5da9b0);
-    color: #d0efef;
-    border-bottom: none;
-    padding: 1.25rem 1.5rem;
-    font-weight: 700;
-    font-size: 1.25rem;
-    align-items: center;
-}
+    /* Header */
+    .modern-modal .modal-header {
+        background: linear-gradient(135deg, #2c6a74, #5da9b0);
+        color: #d0efef;
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        align-items: center;
+    }
 
-/* Close button style */
-.modern-modal .modal-header .close {
-    color: #d0efef;
-    opacity: 0.85;
-    font-size: 1.5rem;
-    font-weight: 700;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    transition: opacity 0.2s ease-in-out;
-}
+    /* Close button style */
+    .modern-modal .modal-header .close {
+        color: #d0efef;
+        opacity: 0.85;
+        font-size: 1.5rem;
+        font-weight: 700;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        transition: opacity 0.2s ease-in-out;
+    }
 
-.modern-modal .modal-header .close:hover {
-    opacity: 1;
-}
+    .modern-modal .modal-header .close:hover {
+        opacity: 1;
+    }
 
-/* Body */
-.modern-modal .modal-body {
-    padding: 1.5rem;
-    background-color: #d0efef;
-    color: #2c6a74;
-}
+    /* Body */
+    .modern-modal .modal-body {
+        padding: 1.5rem;
+        background-color: #d0efef;
+        color: #2c6a74;
+    }
 
-/* Label */
-.modern-modal .label-input {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-    color: #2c6a74;
-}
+    /* Label */
+    .modern-modal .label-input {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        color: #2c6a74;
+    }
 
-/* Input */
-.modern-modal .form-control {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    border-radius: 12px;
-    border: 2px solid #5da9b0;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-    box-shadow: none;
-    color: #2c6a74;
-    background-color: #aee3e0;
-}
+    /* Input */
+    .modern-modal .form-control {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        border: 2px solid #5da9b0;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        box-shadow: none;
+        color: #2c6a74;
+        background-color: #aee3e0;
+    }
 
-.modern-modal .form-control::placeholder {
-    color: #2c6a74aa;
-}
+    .modern-modal .form-control::placeholder {
+        color: #2c6a74aa;
+    }
 
-.modern-modal .form-control:focus {
-    border-color: #2c6a74;
-    outline: none;
-    box-shadow: 0 0 8px rgba(44, 106, 116, 0.4);
-    background-color: #d0efef;
-}
+    .modern-modal .form-control:focus {
+        border-color: #2c6a74;
+        outline: none;
+        box-shadow: 0 0 8px rgba(44, 106, 116, 0.4);
+        background-color: #d0efef;
+    }
 
-/* Footer */
-.modern-modal .modal-footer {
-    background-color: #aee3e0;
-    border-top: none;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.8rem;
-}
+    /* Footer */
+    .modern-modal .modal-footer {
+        background-color: #aee3e0;
+        border-top: none;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+    }
 
-/* Buttons */
-.modern-modal .btn {
-    border-radius: 12px;
-    padding: 0.5rem 1.4rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: none;
-    color: #fff;
-}
+    /* Buttons */
+    .modern-modal .btn {
+        border-radius: 12px;
+        padding: 0.5rem 1.4rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border: none;
+        color: #fff;
+    }
 
-/* Cancel button */
-.modern-modal .btn-cancel {
-    background-color: #5da9b0;
-    color: #d0efef;
-}
+    /* Cancel button */
+    .modern-modal .btn-cancel {
+        background-color: #5da9b0;
+        color: #d0efef;
+    }
 
-.modern-modal .btn-cancel:hover {
-    background-color: #2c6a74;
-    color: #aee3e0;
-}
+    .modern-modal .btn-cancel:hover {
+        background-color: #2c6a74;
+        color: #aee3e0;
+    }
 
-/* Export PDF button */
-.modern-modal .btn-export {
-    background: linear-gradient(135deg, #2c6a74, #5da9b0);
-    box-shadow: 0 4px 12px rgba(44, 106, 116, 0.4);
-}
+    /* Export PDF button */
+    .modern-modal .btn-export {
+        background: linear-gradient(135deg, #2c6a74, #5da9b0);
+        box-shadow: 0 4px 12px rgba(44, 106, 116, 0.4);
+    }
 
-.modern-modal .btn-export:hover {
-    background: linear-gradient(135deg, #5da9b0, #2c6a74);
-    box-shadow: 0 6px 16px rgba(44, 106, 116, 0.6);
-}
+    .modern-modal .btn-export:hover {
+        background: linear-gradient(135deg, #5da9b0, #2c6a74);
+        box-shadow: 0 6px 16px rgba(44, 106, 116, 0.6);
+    }
+
+    .search-box {
+        position: relative;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 15px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border-radius: 30px;
+        border: 2px solid #2c6a74;
+        outline: none;
+        font-size: 14px;
+        color: #2c6a74;
+        background-color: #f9fdfd;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .search-box input::placeholder {
+        color: #5da9b0;
+        font-style: italic;
+    }
+
+    .search-box input:focus {
+        border-color: #5da9b0;
+        box-shadow: 0 0 8px rgba(45, 120, 128, 0.3);
+        background-color: #ffffff;
+    }
+
+    /* Ikon kaca pembesar */
+    .search-box .fa-search {
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        color: #5da9b0;
+        font-size: 14px;
+    }
 </style>
 
 <body>
@@ -394,40 +434,44 @@
 </div>
 
 <div class="row">
-    <div class="col-12">
-      <div class="card h-100 w-100">
-        <div class="card-body p-3">
-            <?php if ($siswa_kosong): ?>
-                <div class="text-center p-5">
-                    <h4 class="text-danger">Data Siswa Kosong</h4>
-                    <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data pelanggaran.</p>
-                    <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
-                        <i class="fas fa-user-plus"></i> Input Data Siswa
-                    </a>
-                </div>
-            <?php else: ?>
-            <div class="table-responsive">
-            <div class="mb-3">
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari data pelanggaran..." oninput="this.value = this.value.toUpperCase();">
-            </div>
-            <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
-                <thead class="table-light">
-                    <tr>
-                    <th class="text-center" style="width: 5%;">NO.</th>
-                    <th class="text-center" style="width: 15%;">NISN</th>
-                    <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
-                    <th class="text-center" style="width: 25%;">NAMA SISWA</th>
-                    <th class="text-center" style="width: 15%;">KELAS</th>
-                    <th class="text-center" style="width: 15%;">KODE</th>
-                    <th class="text-center" style="width: 20%;">AKSI</th>
-                    </tr>
-                </thead>
-                <tbody id="target">
-                    <!-- Data akan diisi melalui JavaScript -->
-                </tbody>
-                </table>
-            </div>
-            <?php endif; ?>
+        <div class="col-12">
+            <div class="card h-100 w-100">
+                <div class="card-body p-3">
+                    <?php if ($siswa_kosong): ?>
+                        <div class="text-center p-5">
+                            <h4 class="text-danger">Data Siswa Kosong</h4>
+                            <p>Masukkan Data Siswa terlebih dahulu untuk mengelola data pelanggaran.</p>
+                            <a href="<?= base_url('data_siswa') ?>" class="btn btn-primary mt-3">
+                                <i class="fas fa-user-plus"></i> Input Data Siswa
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput"
+                                    class="form-control"
+                                    placeholder="Cari data pelanggaran..."
+                                    oninput="this.value = this.value.toUpperCase();">
+                            </div>
+                            <table class="table table-bordered text-dark text-sm w-100 align-middle text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 5%;">NO.</th>
+                                        <th class="text-center" style="width: 15%;">NISN</th>
+                                        <th class="text-center" style="width: 20%;">TANGGAL/BULAN</th>
+                                        <th class="text-center" style="width: 25%;">NAMA SISWA</th>
+                                        <th class="text-center" style="width: 15%;">KELAS</th>
+                                        <th class="text-center" style="width: 15%;">KODE</th>
+                                        <th class="text-center" style="width: 20%;">AKSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="target">
+                                    <!-- Data akan diisi melalui JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
 
             <!-- Modal Form Pelanggaran -->
             <div id="form-pelanggaran">
