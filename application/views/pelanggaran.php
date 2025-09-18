@@ -7,7 +7,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="assets/js/material-dashboard.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -220,7 +221,6 @@
         overflow: visible !important;
     }
 
-    /* Styling modern untuk modal */
     .modern-modal {
         border-radius: 20px;
         box-shadow: 0 8px 24px rgba(44, 106, 116, 0.3);
@@ -229,7 +229,6 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Header */
     .modern-modal .modal-header {
         background: linear-gradient(135deg, #2c6a74, #5da9b0);
         color: #d0efef;
@@ -240,7 +239,6 @@
         align-items: center;
     }
 
-    /* Close button style */
     .modern-modal .modal-header .close {
         color: #d0efef;
         opacity: 0.85;
@@ -256,14 +254,12 @@
         opacity: 1;
     }
 
-    /* Body */
     .modern-modal .modal-body {
         padding: 1.5rem;
         background-color: #d0efef;
         color: #2c6a74;
     }
 
-    /* Label */
     .modern-modal .label-input {
         display: block;
         font-weight: 600;
@@ -271,7 +267,6 @@
         color: #2c6a74;
     }
 
-    /* Input */
     .modern-modal .form-control {
         width: 100%;
         padding: 0.6rem 1rem;
@@ -295,7 +290,6 @@
         background-color: #d0efef;
     }
 
-    /* Footer */
     .modern-modal .modal-footer {
         background-color: #aee3e0;
         border-top: none;
@@ -305,7 +299,6 @@
         gap: 0.8rem;
     }
 
-    /* Buttons */
     .modern-modal .btn {
         border-radius: 12px;
         padding: 0.5rem 1.4rem;
@@ -317,7 +310,6 @@
         color: #fff;
     }
 
-    /* Cancel button */
     .modern-modal .btn-cancel {
         background-color: #5da9b0;
         color: #d0efef;
@@ -328,7 +320,6 @@
         color: #aee3e0;
     }
 
-    /* Export PDF button */
     .modern-modal .btn-export {
         background: linear-gradient(135deg, #2c6a74, #5da9b0);
         box-shadow: 0 4px 12px rgba(44, 106, 116, 0.4);
@@ -369,7 +360,6 @@
         background-color: #ffffff;
     }
 
-    /* Ikon kaca pembesar */
     .search-box .fa-search {
         position: absolute;
         top: 50%;
@@ -381,59 +371,56 @@
 </style>
 
 <body>
-<div class="container-fluid py-2">
-<div class="row align-items-center mb-2">
-  <!-- Judul -->
-  <div class="col-md-6 col-12">
-    <h3 class="mb-2 h4 fw-bold">Data Pelanggaran</h3>
-  </div>
+    <div class="container-fluid py-2">
+        <div class="row align-items-center mb-2">
+        <div class="col-md-6 col-12">
+            <h3 class="mb-2 h4 fw-bold">Data Pelanggaran</h3>
+        </div>
 
-  <!-- Tombol-tombol -->
-  <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
-    <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-    <?php if (!$siswa_kosong): ?>
-        <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
-        <i class="fas fa-plus"></i> Tambah
-        </a>
-    <?php endif; ?>
-        <a href="<?= base_url('index.php/pelanggaran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
-            <i class="fas fa-file-pdf"></i> Export PDF
-        </a>
-        <a href="<?= base_url('index.php/pelanggaran/excel') ?>" class="btn tab-kategori">
-            <i class="fas fa-file-excel"></i> Export Excel
-        </a>
-        <a href="javascript:void(0);" class="btn tab-kategori" data-toggle="modal" data-target="#modalLaporanPerSiswa">
-            <i class="fas fa-file-pdf"></i> Laporan Per Siswa (PDF)
-        </a>
+        <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
+            <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
+            <?php if (!$siswa_kosong): ?>
+                <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
+                <i class="fas fa-plus"></i> Tambah
+                </a>
+            <?php endif; ?>
+                <a href="<?= base_url('index.php/pelanggaran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
+                <a href="<?= base_url('index.php/pelanggaran/excel') ?>" class="btn tab-kategori">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+                <a href="javascript:void(0);" class="btn tab-kategori" data-toggle="modal" data-target="#modalLaporanPerSiswa">
+                    <i class="fas fa-file-pdf"></i> Laporan Per Siswa (PDF)
+                </a>
+            </div>
+        </div>
+        </div>
     </div>
-  </div>
-</div>
-</div>
 
-<!-- Modal Laporan Per Siswa -->
-<div class="modal fade" id="modalLaporanPerSiswa" tabindex="-1" role="dialog" aria-labelledby="modalLabelSiswa" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content modern-modal">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalLabelSiswa">Laporan Pelanggaran Per Siswa</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <label for="input-siswa-pdf" class="label-input">Cari Siswa</label>
-                <input type="text" id="input-siswa-pdf" class="form-control" placeholder="Ketik nama siswa..." oninput="this.value = this.value.toUpperCase();">
-                <input type="hidden" id="nisn-siswa-pdf">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-cancel" data-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-export" onclick="exportPerSiswa();">Export PDF</button>
+    <div class="modal fade" id="modalLaporanPerSiswa" tabindex="-1" role="dialog" aria-labelledby="modalLabelSiswa" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content modern-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabelSiswa">Laporan Pelanggaran Per Siswa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="input-siswa-pdf" class="label-input">Cari Siswa</label>
+                    <input type="text" id="input-siswa-pdf" class="form-control" placeholder="Ketik nama siswa..." oninput="this.value = this.value.toUpperCase();">
+                    <input type="hidden" id="nisn-siswa-pdf">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-export" onclick="exportPerSiswa();">Export PDF</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
+    <div class="row">
         <div class="col-12">
             <div class="card h-100 w-100">
                 <div class="card-body p-3">
@@ -467,77 +454,74 @@
                                     </tr>
                                 </thead>
                                 <tbody id="target">
-                                    <!-- Data akan diisi melalui JavaScript -->
                                 </tbody>
-                            </table>
+                                </table>
                         </div>
                     <?php endif; ?>
 
-            <!-- Modal Form Pelanggaran -->
-            <div id="form-pelanggaran">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="mb-4 text-center">FORM INPUT PELANGGARAN</h5>
-                        <p id="pesan" class="text-danger text-center"></p>
-                        <form id="pelanggaran-form">
-                            <input type="hidden" name="id">
-                            <div class="form-group">
-                                <label class="group">Tanggal:</label>
-                                <input type="date" name="tanggal" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Nama:</label>
-                                <input type="text" name="nama_siswa" id="nama_input" class="form-control" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
-                                <datalist id="list-nama_siswa">
-                                    <?php foreach ($siswa as $row): ?>
-                                        <option value="<?= $row->nama_siswa ?>"></option>
-                                    <?php endforeach; ?>
-                                </datalist>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">NISN:</label>
-                                <input type="text" class="form-control" name="nisn" id="nisn" placeholder="NISN" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Kelas:</label>
-                                <input type="text" class="form-control" name="kelas" id="kelas" placeholder="Kelas" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Wali Kelas:</label>
-                                <input type="text" class="form-control" name="wali_kelas" id="wali_kelas" placeholder="Wali Kelas" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="group">Jenis Pelanggaran:</label>
-                                <input type="text" name="deskripsi" id="deskripsi" class="form-control" placeholder="Cari jenis pelanggaran...">
-                            </div>
+                    <div id="form-pelanggaran">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="mb-4 text-center">FORM INPUT PELANGGARAN</h5>
+                                <p id="pesan" class="text-danger text-center"></p>
+                                <form id="pelanggaran-form">
+                                    <input type="hidden" name="id">
+                                    <div class="form-group">
+                                        <label class="group">Tanggal:</label>
+                                        <input type="date" name="tanggal" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="group">Nama:</label>
+                                        <input type="text" name="nama_siswa" id="nama_input" class="form-control" list="list-nama_siswa" placeholder="Nama Siswa" oninput="this.value = this.value.toUpperCase();">
+                                        <datalist id="list-nama_siswa">
+                                            <?php foreach ($siswa as $row): ?>
+                                                <option value="<?= $row->nama_siswa ?>"></option>
+                                            <?php endforeach; ?>
+                                        </datalist>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="group">NISN:</label>
+                                        <input type="text" class="form-control" name="nisn" id="nisn" placeholder="NISN" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="group">Kelas:</label>
+                                        <input type="text" class="form-control" name="kelas" id="kelas" placeholder="Kelas" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="group">Wali Kelas:</label>
+                                        <input type="text" class="form-control" name="wali_kelas" id="wali_kelas" placeholder="Wali Kelas" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="group">Jenis Pelanggaran:</label>
+                                        <input type="text" name="deskripsi" id="deskripsi" class="form-control" placeholder="Cari jenis pelanggaran...">
+                                    </div>
 
-                            <div class="form-group">
-                                <label class="group">Kode & Kategori:</label>
-                                <input type="text" name="kode" id="kode" class="form-control" placeholder="Kode pelanggaran" readonly>
-                            </div>
+                                    <div class="form-group">
+                                        <label class="group">Kode & Kategori:</label>
+                                        <input type="text" name="kode" id="kode" class="form-control" placeholder="Kode pelanggaran" readonly>
+                                    </div>
 
-                            <div class="form-group">
-                                <label class="group">Poin:</label>
-                                <input type="text" name="poin" id="poin" class="form-control" placeholder="Poin" readonly>
+                                    <div class="form-group">
+                                        <label class="group">Poin:</label>
+                                        <input type="text" name="poin" id="poin" class="form-control" placeholder="Poin" readonly>
+                                    </div>
+                                    <div class="text-end d-flex flex-wrap justify-content-end gap-2 mt-4">
+                                        <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
+                                        <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
+                                        <button type="button" id="btn-ubah" onclick="ubahdata()" class="btn btn-custom-submit ml-2" style="display:none;">Ubah</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="text-end d-flex flex-wrap justify-content-end gap-2 mt-4">
-                                <button type="button" onclick="sembunyikanForm()" class="btn btn-custom-submit">Batal</button>
-                                <button type="button" onclick="tambahdata()" class="btn btn-custom-submit ml-2">Tambah</button>
-                                <button type="button" id="btn-ubah" onclick="ubahdata()" class="btn btn-custom-submit ml-2" style="display:none;">Ubah</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- End Modal Form -->
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
+    </div>
+    </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
         ambilData();
 
         function exportPerSiswa() {
@@ -548,43 +532,41 @@
             }
             window.open("<?= base_url('index.php/pelanggaran/laporan_persiswa/') ?>" + nisn, "_blank");
 
-            // Reset input setelah export
             document.getElementById('input-siswa-pdf').value = '';
             document.getElementById('nisn-siswa-pdf').value = '';
         }
 
         function ambilData() {
-        var keyword = $('#searchInput').val();
+            var keyword = $('#searchInput').val();
 
-    $.ajax({
-        type: 'POST',
-        url: '<?php echo base_url("index.php/pelanggaran/ambildata") ?>',
-        data: { search: keyword }, // kirim parameter "search"
-        dataType: 'json',
-        success: function(hasil) {
-            var baris = '';
-            for (var i = 0; i < hasil.length; i++) {
-                baris += '<tr>' +
-                    '<td>' + (i + 1) + '</td>' +
-                    '<td>' + hasil[i].nisn + '</td>' +
-                    '<td>' + formatTanggal(hasil[i].tanggal) + '</td>' +
-                    '<td>' + hasil[i].nama_siswa + '</td>' +
-                    '<td>' + hasil[i].kelas + '</td>' +
-                    '<td>' + hasil[i].kode + '</td>' +
-                    '<td class="td-aksi">' +
-                        '<a href="javascript:void(0);" class="btn custom-btn btn-sm" onclick="editData(' + hasil[i].id + ')">' +
-                            '<i class="fas fa-edit"></i> Edit</a>' +
-                        '<a href="<?= base_url("index.php/pelanggaran/detail/") ?>' + hasil[i].id + '" class="btn custom-btn btn-sm">' +
-                            '<i class="fas fa-eye"></i> Detail</a>' +
-                    '</td>' +
-                '</tr>';
-            }
-            $('#target').html(baris);
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url("index.php/pelanggaran/ambildata") ?>',
+                data: { search: keyword }, 
+                dataType: 'json',
+                success: function(hasil) {
+                    var baris = '';
+                    for (var i = 0; i < hasil.length; i++) {
+                        baris += '<tr>' +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td>' + hasil[i].nisn + '</td>' +
+                            '<td>' + formatTanggal(hasil[i].tanggal) + '</td>' +
+                            '<td>' + hasil[i].nama_siswa + '</td>' +
+                            '<td>' + hasil[i].kelas + '</td>' +
+                            '<td>' + hasil[i].kode + '</td>' +
+                            '<td class="td-aksi">' +
+                                '<a href="javascript:void(0);" class="btn custom-btn btn-sm" onclick="editData(' + hasil[i].id + ')">' +
+                                    '<i class="fas fa-edit"></i> Edit</a>' +
+                                '<a href="<?= base_url("index.php/pelanggaran/detail/") ?>' + hasil[i].id + '" class="btn custom-btn btn-sm">' +
+                                    '<i class="fas fa-eye"></i> Detail</a>' +
+                            '</td>' +
+                        '</tr>';
+                    }
+                    $('#target').html(baris);
+                }
+            });
         }
-    });
-}
 
-        // Trigger pencarian saat mengetik
         $('#searchInput').on('input', function() {
             ambilData();
         });
@@ -600,7 +582,6 @@
             $('#pesan').html('');
             $('[name="id"]').val('');
 
-            // Set tanggal otomatis ke hari ini
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -699,8 +680,6 @@
                 $('#btn-tambah').show();
                 $('#btn-ubah').hide();
             } else {
-
-
                 $.ajax({
                     type: 'POST',
                     url: '<?php echo base_url("index.php/pelanggaran/ambilId") ?>',
@@ -719,147 +698,144 @@
                 });
             }
         }
-</script>
+    </script>
 
-<script>
-    $(function() {
-        $("#deskripsi").autocomplete({
-            source: function(request, response) {
-            $.ajax({
-                url: "<?= base_url('index.php/pelanggaran/get_autocomplete_jenis') ?>",
-                dataType: "json",
-                data: {
-                term: request.term
-                },
-                success: function(data) {
-                response(data);
-                }
-            });
-            },
-            select: function(event, ui) {
-            $("#deskripsi").val(ui.item.value); 
-            $("#kode").val(ui.item.kode);       
-            $("#poin").val(ui.item.poin);      
-            return false;
-            },
-            appendTo: "body" 
-        });
-    });
-</script>
-
-<script>
-    $(function () {
-        $("#input-siswa-pdf").autocomplete({
-            source: function (request, response) {
+    <script>
+        $(function() {
+            $("#deskripsi").autocomplete({
+                source: function(request, response) {
                 $.ajax({
-                    url: "<?= base_url('pelanggaran/get_autocomplete_siswa') ?>",
+                    url: "<?= base_url('index.php/pelanggaran/get_autocomplete_jenis') ?>",
                     dataType: "json",
-                    data: { term: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.nama_siswa + " (" + item.kelas + ")",
-                                value: item.nama_siswa,
-                                nisn: item.nisn
-                            };
-                        }));
+                    data: {
+                    term: request.term
+                    },
+                    success: function(data) {
+                    response(data);
                     }
                 });
-            },
-            minLength: 1,
-            select: function (event, ui) {
-                $("#input-siswa-pdf").val(ui.item.value);
-                $("#nisn-siswa-pdf").val(ui.item.nisn);
+                },
+                select: function(event, ui) {
+                $("#deskripsi").val(ui.item.value); 
+                $("#kode").val(ui.item.kode);       
+                $("#poin").val(ui.item.poin);      
                 return false;
-            },
-            appendTo: "#modalLaporanPerSiswa"
+                },
+                appendTo: "body" 
+            });
         });
-    });
+    </script>
 
-    function exportPerSiswa() {
-        var nisn = $("#nisn-siswa-pdf").val();
-        if (!nisn) {
-            alert("Silakan pilih siswa dari daftar!");
-            return;
-        }
+    <script>
+        $(function () {
+            $("#input-siswa-pdf").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "<?= base_url('pelanggaran/get_autocomplete_siswa') ?>",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.nama_siswa + " (" + item.kelas + ")",
+                                    value: item.nama_siswa,
+                                    nisn: item.nisn
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, ui) {
+                    $("#input-siswa-pdf").val(ui.item.value);
+                    $("#nisn-siswa-pdf").val(ui.item.nisn);
+                    return false;
+                },
+                appendTo: "#modalLaporanPerSiswa"
+            });
+        });
 
-        // Buka PDF
-        window.open("<?= base_url('pelanggaran/laporan_persiswa/') ?>" + nisn, "_blank");
-
-        // Reset form setelah export
-        resetFormSiswa();
-    }
-
-    function resetFormSiswa() {
-        $("#input-siswa-pdf").val('');
-        $("#nisn-siswa-pdf").val('');
-    }
-</script>
-
-<script>
-    if (document.querySelector('.input-group input')) {
-        var inputs = document.querySelectorAll('.input-group input');
-        inputs.forEach(input => {
-            if (input.value != "") {
-                input.parentElement.classList.add("is-filled");
+        function exportPerSiswa() {
+            var nisn = $("#nisn-siswa-pdf").val();
+            if (!nisn) {
+                alert("Silakan pilih siswa dari daftar!");
+                return;
             }
 
-            input.addEventListener("focus", function () {
-                input.parentElement.classList.add("is-focused");
-            });
-
-            input.addEventListener("blur", function () {
-                if (input.value == "") {
-                    input.parentElement.classList.remove("is-filled");
-                }
-                input.parentElement.classList.remove("is-focused");
-            });
-        });
-    }
-</script>
-
-<script>
-    const siswaList = [
-        <?php foreach ($siswa as $row): ?> {
-            nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
-            nisn: "<?= $row->nisn ?>",
-            kelas: "<?= $row->kelas ?>",
-            wali_kelas: "<?= $row->wali_kelas ?>"
-        },
-        <?php endforeach; ?>
-    ];
-</script>
-
-<script>
-    const inputNama = document.getElementById('nama_input');
-
-    function isiOtomatis() {
-        const nama_siswa = inputNama.value.trim();
-        const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
-
-        if (siswa) {
-            document.getElementById('nisn').value = siswa.nisn;
-            document.getElementById('kelas').value = siswa.kelas;
-            document.getElementById('wali_kelas').value = siswa.wali_kelas;
-        } else {
-            document.getElementById('nisn').value = '';
-            document.getElementById('kelas').value = '';
-            document.getElementById('wali_kelas').value = '';
+            window.open("<?= base_url('pelanggaran/laporan_persiswa/') ?>" + nisn, "_blank");
+            resetFormSiswa();
         }
-    }
 
-    inputNama.addEventListener('input', isiOtomatis);
-    inputNama.addEventListener('change', isiOtomatis);
-</script>
+        function resetFormSiswa() {
+            $("#input-siswa-pdf").val('');
+            $("#nisn-siswa-pdf").val('');
+        }
+    </script>
 
-<script>
-    $(document).ready(function () {
-        $("#btn-tambah").click(function () {
-            $("#formTambahData").trigger("reset");
-            $("#modalTambah").modal("show");
+    <script>
+        if (document.querySelector('.input-group input')) {
+            var inputs = document.querySelectorAll('.input-group input');
+            inputs.forEach(input => {
+                if (input.value != "") {
+                    input.parentElement.classList.add("is-filled");
+                }
+
+                input.addEventListener("focus", function () {
+                    input.parentElement.classList.add("is-focused");
+                });
+
+                input.addEventListener("blur", function () {
+                    if (input.value == "") {
+                        input.parentElement.classList.remove("is-filled");
+                    }
+                    input.parentElement.classList.remove("is-focused");
+                });
+            });
+        }
+    </script>
+
+    <script>
+        const siswaList = [
+            <?php foreach ($siswa as $row): ?> {
+                nama_siswa: "<?= addslashes($row->nama_siswa) ?>",
+                nisn: "<?= $row->nisn ?>",
+                kelas: "<?= $row->kelas ?>",
+                wali_kelas: "<?= $row->wali_kelas ?>"
+            },
+            <?php endforeach; ?>
+        ];
+    </script>
+
+    <script>
+        const inputNama = document.getElementById('nama_input');
+
+        function isiOtomatis() {
+            const nama_siswa = inputNama.value.trim();
+            const siswa = siswaList.find(s => s.nama_siswa.toLowerCase().trim() === nama_siswa.toLowerCase().trim());
+
+            if (siswa) {
+                document.getElementById('nisn').value = siswa.nisn;
+                document.getElementById('kelas').value = siswa.kelas;
+                document.getElementById('wali_kelas').value = siswa.wali_kelas;
+            } else {
+                document.getElementById('nisn').value = '';
+                document.getElementById('kelas').value = '';
+                document.getElementById('wali_kelas').value = '';
+            }
+        }
+
+        inputNama.addEventListener('input', isiOtomatis);
+        inputNama.addEventListener('change', isiOtomatis);
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btn-tambah").click(function () {
+                $("#formTambahData").trigger("reset");
+                $("#modalTambah").modal("show");
+            });
         });
-    });
-</script>
+    </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         </div>
         </div>
@@ -869,7 +845,3 @@
 </div>
 </body>
 </html>
-
-<!-- Script Autocomplete -->
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">

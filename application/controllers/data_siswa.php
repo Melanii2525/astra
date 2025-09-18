@@ -1,3 +1,4 @@
+
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -10,7 +11,8 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
  * @property CI_DB_query_builder $db 
  * @property CI_Input $input
  * @property CI_Session $session
-*/
+ * @property CI_Upload $upload
+ */
 
 class Data_siswa extends CI_Controller
 {
@@ -24,22 +26,22 @@ class Data_siswa extends CI_Controller
     public function index()
     {
         $data['title'] = "Data Siswa";
-        $data['siswa'] = $this->m->get_all_ordered(); 
+        $data['siswa'] = $this->m->get_all_ordered();
 
         $this->load->view('templates/header');
         $this->load->view('templates/sidebar');
-        $this->load->view('data_siswa', $data); 
+        $this->load->view('data_siswa', $data);
         $this->load->view('templates/footer');
     }
 
     public function ambildata()
     {
-        $page = $this->input->get('page') ?? 1; // Ambil page dari query string, default 1
+        $page = $this->input->get('page') ?? 1;
         $limit = 35;
         $offset = ($page - 1) * $limit;
 
         $this->load->model('M_siswa');
-        $total = $this->db->count_all('data_siswa'); // total semua data
+        $total = $this->db->count_all('data_siswa'); 
         $data = $this->m->get_siswa_paginated($limit, $offset);
 
         echo json_encode([
@@ -49,7 +51,7 @@ class Data_siswa extends CI_Controller
             'limit' => $limit,
             'total_page' => ceil($total / $limit)
         ]);
-    }    
+    }
 
     public function tambahdata()
     {
@@ -59,9 +61,9 @@ class Data_siswa extends CI_Controller
         $kelas  = $this->input->post('kelas');
         $jenis_kelamin     = $this->input->post('jenis_kelamin');
         $wali_kelas = $this->input->post('wali_kelas');
-    
+
         $result['pesan'] = '';
-    
+
         if ($nisn == '' || $nipd == '' || $nama_siswa == '' || $kelas == '' || $jenis_kelamin == '') {
             $result['pesan'] = 'Semua field wajib diisi.';
         } else {
@@ -80,9 +82,9 @@ class Data_siswa extends CI_Controller
                 $this->m->tambahdata($data, 'data_siswa');
             }
         }
-    
+
         echo json_encode($result);
-    }    
+    }
 
     public function ambilId()
     {
@@ -108,7 +110,7 @@ class Data_siswa extends CI_Controller
         $where = ['id' => $id];
         $this->m->ubahdata('data_siswa', $data, $where);
 
-        echo json_encode(['pesan' => '']); 
+        echo json_encode(['pesan' => '']);
     }
 
     public function get_detail_siswa()
@@ -120,10 +122,10 @@ class Data_siswa extends CI_Controller
 
     public function simpan_wali()
     {
-        $tingkat = $this->input->post('kelas'); 
+        $tingkat = $this->input->post('kelas');
         $wali = $this->input->post('wali');
 
-        $this->db->like('kelas', $tingkat, 'after'); 
+        $this->db->like('kelas', $tingkat, 'after');
         $this->db->update('data_siswa', ['walikelas' => $wali]);
 
         echo json_encode(['status' => 'ok']);
@@ -146,7 +148,7 @@ class Data_siswa extends CI_Controller
     public function search()
     {
         $query = $this->input->post('query');
-        $hasil = $this->m->cari_siswa($query); 
+        $hasil = $this->m->cari_siswa($query);
 
         foreach ($hasil as $siswa) {
             echo '<div class="suggestion-item list-group-item"
@@ -161,38 +163,38 @@ class Data_siswa extends CI_Controller
     public function hapus_semua()
     {
         $hapus = $this->db->empty_table('data_siswa');
-    
+
         if ($hapus) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'failed']);
         }
-    }    
+    }
 
     public function import_excel()
     {
         $file = $_FILES['excel_siswa']['tmp_name'];
-    
+
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         $kelas = $sheet->getCell('B1')->getValue();
         $wali_kelas = $sheet->getCell('B2')->getValue();
-    
+
         $data = [];
         $duplikat = [];
-    
+
         for ($row = 5; $row <= $sheet->getHighestRow(); $row++) {
             $nisn = $sheet->getCell('B' . $row)->getValue();
             $nipd = $sheet->getCell('C' . $row)->getValue();
             $nama = $sheet->getCell('D' . $row)->getValue();
             $jk   = $sheet->getCell('E' . $row)->getValue();
-    
+
             if ($nisn && $nipd && $nama && $jk) {
                 $cek = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
-    
+
                 if ($cek) {
-                    $duplikat[] = $nisn; 
+                    $duplikat[] = $nisn;
                 } else {
                     $data[] = [
                         'nisn' => $nisn,
@@ -205,7 +207,7 @@ class Data_siswa extends CI_Controller
                 }
             }
         }
-    
+
         if (!empty($data)) {
             $this->db->insert_batch('data_siswa', $data);
         }
@@ -219,10 +221,10 @@ class Data_siswa extends CI_Controller
         } else {
             $this->session->set_flashdata('error', 'Tidak ada data valid yang bisa diimport.');
         }
-    
+
         redirect('data_siswa');
-    }   
-    
+    }
+
     public function cari_data()
     {
         $keyword = $this->input->get('keyword');
@@ -232,7 +234,6 @@ class Data_siswa extends CI_Controller
 
         $data = $this->m->search_siswa($keyword, $limit, $offset);
 
-        // Hitung total hasil
         $this->db->from('data_siswa');
         $this->db->group_start();
         $this->db->like('nisn', $keyword);
@@ -251,5 +252,47 @@ class Data_siswa extends CI_Controller
             'limit' => $limit,
             'total_page' => ceil($total / $limit)
         ]);
+    }
+
+    public function upload_foto()
+    {
+        $id = $this->input->post('id_siswa');
+        if (!empty($_FILES['foto_siswa']['name'])) {
+            $config['upload_path']   = './uploads/foto_siswa/';
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['file_name']     = 'siswa_' . $id . '_' . time();
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('foto_siswa')) {
+                $fileData = $this->upload->data();
+                $this->db->where('id', $id)->update('data_siswa', [
+                    'foto' => $fileData['file_name']
+                ]);
+                echo json_encode(['status' => 'sukses']);
+            } else {
+                echo json_encode(['status' => 'gagal', 'error' => $this->upload->display_errors()]);
+            }
+        }
+    }
+
+    public function hapus_foto()
+    {
+        $id = $this->input->post('id');
+        $siswa = $this->db->get_where('data_siswa', ['id' => $id])->row();
+
+        if ($siswa && !empty($siswa->foto)) {
+            $filePath = FCPATH . 'uploads/foto_siswa/' . $siswa->foto;
+
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+
+            $this->db->where('id', $id)->update('data_siswa', ['foto' => NULL]);
+
+            echo json_encode(['status' => 'sukses']);
+        } else {
+            echo json_encode(['status' => 'gagal', 'error' => 'Foto tidak ditemukan']);
+        }
     }
 }

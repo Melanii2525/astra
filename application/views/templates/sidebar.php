@@ -207,21 +207,6 @@
             <span class="nav-link-text ms-1">Revisi Poin</span>
           </a>
         </li>
-        <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
-        </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link text-dark" href="<?= base_url('auth/login') ?>">
-            <i class="material-symbols-rounded opacity-5">login</i>
-            <span class="nav-link-text ms-1">Sign In</span>
-          </a>
-        </li> -->
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="<?= base_url('auth/sign_up') ?>">
-            <i class="material-symbols-rounded opacity-5">assignment</i>
-            <span class="nav-link-text ms-1">Sign Up</span>
-          </a>
-        </li>
         <li class="nav-item">
           <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
             <i class="material-symbols-rounded opacity-5">logout</i>
@@ -269,23 +254,6 @@
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page"><?php echo get_page_title(); ?></li>
           </ol>
         </nav>
-        <!-- <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-          <form id="form-cari-siswa" action="#" method="GET">
-            <div class="input-group input-group-outline mb-0">
-              <label class="form-label">Cari...</label>
-              <input type="search" class="form-control" id="search-siswa" name="keyword" autocomplete="off">
-            </div>
-          </form>
-          </div> -->
-          <!-- <ul class="navbar-nav d-flex align-items-center  justify-content-end">
-            <li class="nav-item d-flex align-items-center">
-              <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
-                <i class="material-symbols-rounded">account_circle</i>
-              </a>
-            </li>
-          </ul> -->
-        <!-- </div> -->
       </div>
     </nav>
 

@@ -3,7 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_revisi extends CI_Model
 {
-    // Ambil data pelanggaran siswa + join data siswa (bisa filter per nisn)
     public function get_pelanggaran($nisn = null)
     {
         $this->db->select('s.nisn, s.nama_siswa, s.kelas, s.wali_kelas, p.tanggal, p.keterangan, p.poin')
@@ -11,14 +10,13 @@ class M_revisi extends CI_Model
             ->join('data_siswa s', 's.nisn = p.nisn');
 
         if ($nisn !== null) {
-            $this->db->where('s.nisn', $nisn); // filter per siswa
+            $this->db->where('s.nisn', $nisn); 
         }
 
         $this->db->order_by('p.tanggal', 'ASC');
         return $this->db->get()->result_array();
     }
 
-    // Ambil data kehadiran siswa + join data siswa (bisa filter per nisn)
     public function get_kehadiran($nisn = null)
     {
         $this->db->select('s.nisn, s.nama_siswa, s.kelas, s.wali_kelas, k.tanggal, k.keterangan, k.poin')
@@ -26,30 +24,27 @@ class M_revisi extends CI_Model
             ->join('data_siswa s', 's.nisn = k.nisn');
 
         if ($nisn !== null) {
-            $this->db->where('s.nisn', $nisn); // filter per siswa
+            $this->db->where('s.nisn', $nisn); 
         }
 
         $this->db->order_by('k.tanggal', 'ASC');
         return $this->db->get()->result_array();
     }
 
-    // Hitung total poin pelanggaran + kehadiran (bukan dari revisi)
     public function get_total_poin($nisn)
-{
-    // total pelanggaran
-    $pelanggaran = $this->db->select_sum('poin')
-        ->where('nisn', $nisn)
-        ->get('pelanggaran')
-        ->row()->poin ?? 0;
+    {
+        $pelanggaran = $this->db->select_sum('poin')
+            ->where('nisn', $nisn)
+            ->get('pelanggaran')
+            ->row()->poin ?? 0;
 
-    // total kehadiran
-    $kehadiran = $this->db->select_sum('poin')
-        ->where('nisn', $nisn)
-        ->get('kehadiran')
-        ->row()->poin ?? 0;
+        $kehadiran = $this->db->select_sum('poin')
+            ->where('nisn', $nisn)
+            ->get('kehadiran')
+            ->row()->poin ?? 0;
 
-    return (int)$pelanggaran + (int)$kehadiran;
-}
+        return (int)$pelanggaran + (int)$kehadiran;
+    }
 
     public function simpan_revisi($data)
     {
@@ -89,7 +84,7 @@ class M_revisi extends CI_Model
     {
         $tahun_ini = date('Y');
         return $this->db->where('YEAR(tanggal)', $tahun_ini)
-            ->where("treatment_count > 0") // ✅ diperbaiki
+            ->where("treatment_count > 0") 
             ->count_all_results('revisi');
     }
 
@@ -171,14 +166,14 @@ class M_revisi extends CI_Model
 
     public function get_treatment($nisn)
     {
-        return $this->db->select('tanggal, tindak_lanjut')
-            ->from('revisi')
+        return $this->db->select('tanggal, poin')
+            ->from('treatment')
             ->where('nisn', $nisn)
+            ->order_by('tanggal', 'ASC')
             ->get()
             ->result_array();
-    }
+    }    
 
-    // Ranking siswa berdasarkan poin di tabel revisi
     public function get_ranking_siswa($limit = 5)
     {
         return $this->db->select('r.nisn, s.nama_siswa, s.kelas, s.wali_kelas, r.poin')
@@ -191,13 +186,12 @@ class M_revisi extends CI_Model
     }
 
     public function get_last_revisi_poin($nisn)
-{
-    $this->db->select('poin, treatment_count');
-    $this->db->from('revisi');
-    $this->db->where('nisn', $nisn);
-    $this->db->order_by('id', 'DESC'); // ambil revisi terakhir
-    $this->db->limit(1);
-    return $this->db->get()->row_array();
-}
-
+    {
+        $this->db->select('poin, treatment_count');
+        $this->db->from('revisi');
+        $this->db->where('nisn', $nisn);
+        $this->db->order_by('id', 'DESC');
+        $this->db->limit(1);
+        return $this->db->get()->row_array();
+    }
 }

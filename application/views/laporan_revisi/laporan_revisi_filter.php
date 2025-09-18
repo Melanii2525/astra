@@ -23,6 +23,7 @@
         .label { font-weight: bold; width: 90px; display: inline-block; }
     </style>
 </head>
+
 <body>
     <h4>
         Laporan Revisi Poin Siswa

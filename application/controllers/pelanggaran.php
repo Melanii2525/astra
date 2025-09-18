@@ -10,7 +10,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Output $output
  * @property Dompdf_gen $dompdf_gen
  * @property CI_DB_query_builder $db
-*/
+ */
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -26,44 +26,45 @@ class Pelanggaran extends CI_Controller
         $this->load->helper(['form', 'url']);
     }
 
-    public function index(){
-        $this->load->model('m_siswa'); 
+    public function index()
+    {
+        $this->load->model('m_siswa');
         $data['title'] = "Data Pelanggaran";
-        $data['siswa'] = $this->m_siswa->ambildata('data_siswa')->result(); 
-        $data['siswa_kosong'] = empty($data['siswa']); 
-    
+        $data['siswa'] = $this->m_siswa->ambildata('data_siswa')->result();
+        $data['siswa_kosong'] = empty($data['siswa']);
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
         $this->load->view('pelanggaran', $data);
         $this->load->view('templates/footer');
-    }        
-
-    public function ambildata()
-{
-    $search = $this->input->post('search');
-
-    $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
-    $this->db->from('pelanggaran p');
-    $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
-
-    if (!empty($search)) {
-        $this->db->group_start();
-        $this->db->like('s.nama_siswa', $search);
-        $this->db->or_like('s.kelas', $search);
-        $this->db->or_like('s.wali_kelas', $search);
-        $this->db->or_like('p.kode', $search);
-        $this->db->or_like('p.keterangan', $search);
-        $this->db->or_like('p.tanggal', $search);
-        $this->db->or_like('p.nisn', $search);
-        $this->db->group_end();
     }
 
-    $this->db->order_by('p.tanggal', 'DESC');
-    $this->db->order_by('s.kelas', 'ASC');
-    $data = $this->db->get()->result();
+    public function ambildata()
+    {
+        $search = $this->input->post('search');
 
-    echo json_encode($data);
-}   
+        $this->db->select('p.*, s.nama_siswa, s.kelas, s.wali_kelas');
+        $this->db->from('pelanggaran p');
+        $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('s.nama_siswa', $search);
+            $this->db->or_like('s.kelas', $search);
+            $this->db->or_like('s.wali_kelas', $search);
+            $this->db->or_like('p.kode', $search);
+            $this->db->or_like('p.keterangan', $search);
+            $this->db->or_like('p.tanggal', $search);
+            $this->db->or_like('p.nisn', $search);
+            $this->db->group_end();
+        }
+
+        $this->db->order_by('p.tanggal', 'DESC');
+        $this->db->order_by('s.kelas', 'ASC');
+        $data = $this->db->get()->result();
+
+        echo json_encode($data);
+    }
 
     public function tambahdata()
     {
@@ -82,7 +83,7 @@ class Pelanggaran extends CI_Controller
             'kode' => $this->input->post('kode'),
             'keterangan' => $this->input->post('keterangan'),
             'poin' => $this->input->post('poin'),
-        ];        
+        ];
 
         $sukses = $this->m->tambahdata($data, 'pelanggaran');
 
@@ -110,15 +111,15 @@ class Pelanggaran extends CI_Controller
         ];
         $where = ['id' => $id];
         $sukses = $this->m->ubahdata('pelanggaran', $data, $where);
-    
+
         echo json_encode([
             'pesan' => $sukses ? '' : 'Gagal mengubah data'
         ]);
-    }    
+    }
 
     public function detail($id)
     {
-        $this->db->select('p.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
+        $this->db->select('p.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas, s.foto');
         $this->db->from('pelanggaran p');
         $this->db->join('data_siswa s', 'p.nisn = s.nisn', 'left');
         $this->db->where('p.id', $id);
@@ -129,7 +130,7 @@ class Pelanggaran extends CI_Controller
         }
 
         $data['title'] = 'Detail Pelanggaran';
-        $data['data'] = $row;
+        $data['data']  = $row;
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
@@ -137,41 +138,29 @@ class Pelanggaran extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    // public function print(){
-    //     $data['kehadiran'] = $this->m_kehadiran->tampil_data("kehadiran")->result();
-    //     $this->load->view('print_kehadiran', $data);
-    // }
-
     public function export_pdf()
     {
-        // Ambil data dari database
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); 
+        $this->db->order_by('k.tanggal', 'ASC');
         $this->db->order_by('s.kelas', 'ASC');
         $data['pelanggaran'] = $this->db->get()->result();
-    
-        // Load view jadi HTML string
+
         $html = $this->load->view('laporan_pelanggaran/laporan_pdf', $data, true);
-    
-        // Load Dompdf dari Composer
+
         require_once FCPATH . 'vendor/autoload.php';
 
         $options = new Options();
-        $options->set('isRemoteEnabled', true); // aktifkan jika ada gambar eksternal
+        $options->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($options);
-    
-        // Load HTML ke Dompdf
+
         $dompdf->loadHtml($html);
-    
-        // Set ukuran kertas & orientasi
+
         $dompdf->setPaper('A4', 'landscape');
-    
-        // Render PDF
+
         $dompdf->render();
-    
-        // Tampilkan di browser
+
         $dompdf->stream("laporan_pelanggaran.pdf", ["Attachment" => 0]);
     }
 
@@ -181,7 +170,7 @@ class Pelanggaran extends CI_Controller
         $this->db->select('k.nisn, k.tanggal, k.kode, k.keterangan, k.poin, s.nama_siswa, s.kelas, s.jenis_kelamin, s.wali_kelas');
         $this->db->from('pelanggaran k');
         $this->db->join('data_siswa s', 'k.nisn = s.nisn', 'left');
-        $this->db->order_by('k.tanggal', 'ASC'); 
+        $this->db->order_by('k.tanggal', 'ASC');
         $this->db->order_by('s.kelas', 'ASC');
         $data['pelanggaran'] = $this->db->get()->result();
 
@@ -202,14 +191,14 @@ class Pelanggaran extends CI_Controller
         $row = 2;
         $no = 1;
         foreach ($data['pelanggaran'] as $k) {
-            $sheet->setCellValue('A'.$row, $no++);
-            $sheet->setCellValue('B'.$row, $k->nisn);
-            $sheet->setCellValue('C'.$row, $k->tanggal);
-            $sheet->setCellValue('D'.$row, $k->nama_siswa);
-            $sheet->setCellValue('E'.$row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
-            $sheet->setCellValue('F'.$row, $k->kelas);
-            $sheet->setCellValue('G'.$row, $k->wali_kelas);
-            $sheet->setCellValue('H'.$row, $k->kode);
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $k->nisn);
+            $sheet->setCellValue('C' . $row, $k->tanggal);
+            $sheet->setCellValue('D' . $row, $k->nama_siswa);
+            $sheet->setCellValue('E' . $row, $k->jenis_kelamin == 'L' ? 'Laki-laki' : ($k->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
+            $sheet->setCellValue('F' . $row, $k->kelas);
+            $sheet->setCellValue('G' . $row, $k->wali_kelas);
+            $sheet->setCellValue('H' . $row, $k->kode);
             $sheet->setCellValue('I' . $row, $k->keterangan);
             $sheet->setCellValue('J' . $row, $k->poin);
             $row++;
@@ -226,12 +215,12 @@ class Pelanggaran extends CI_Controller
     {
         $searchTerm = $this->input->get('term');
         $this->db->like('kode', $searchTerm);
-        $this->db->limit(10); 
+        $this->db->limit(10);
         $result = $this->db->get('pelanggaran')->result();
 
         $data = [];
         foreach ($result as $row) {
-            $data[] = $row->kode; 
+            $data[] = $row->kode;
         }
 
         echo json_encode($data);
@@ -248,8 +237,8 @@ class Pelanggaran extends CI_Controller
         $result = [];
         foreach ($data as $row) {
             $result[] = [
-                'label' => $row->deskripsi, 
-                'value' => $row->deskripsi, 
+                'label' => $row->deskripsi,
+                'value' => $row->deskripsi,
                 'kode'  => $row->kode,
                 'poin'  => $row->poin
             ];
@@ -257,7 +246,7 @@ class Pelanggaran extends CI_Controller
 
         echo json_encode($result);
     }
-    
+
     public function laporan_persiswa($nisn)
     {
         $siswa = $this->db->get_where('data_siswa', ['nisn' => $nisn])->row();
@@ -287,7 +276,7 @@ class Pelanggaran extends CI_Controller
         $dompdf->stream('Laporan_Pelanggaran_' . $siswa->nama_siswa . '.pdf', [
             "Attachment" => 0
         ]);
-    }   
+    }
 
     public function export_laporan_persiswa_pdf()
     {
@@ -316,7 +305,7 @@ class Pelanggaran extends CI_Controller
         $term = $this->input->get('term');
         $this->db->like('nama_siswa', $term);
         $result = $this->db->get('data_siswa')->result();
-    
+
         $data = [];
         foreach ($result as $row) {
             $data[] = [
@@ -325,7 +314,7 @@ class Pelanggaran extends CI_Controller
                 'nisn'       => $row->nisn
             ];
         }
-    
+
         echo json_encode($data);
-    }    
+    }
 }

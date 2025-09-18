@@ -121,9 +121,6 @@
             <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3" href="#">ASTRA Selapan</a>
             <div class="collapse navbar-collapse" id="navigation">
               <ul class="navbar-nav ms-auto">
-                <!-- <li class="nav-item">
-                  <a class="nav-link me-2" href="<?= base_url('auth/sign_up'); ?>">Daftar</a>
-                </li> -->
                 <li class="nav-item">
                   <a class="nav-link me-2 active" href="<?= base_url('auth/login'); ?>">Login</a>
                 </li>
@@ -162,23 +159,23 @@
                   <?php endif; ?>
 
                   <form action="<?= base_url('auth/login'); ?>" method="post" class="text-start">
-  <div class="mb-3">
-    <label class="form-label-custom">Email</label>
-    <input type="email" name="email" class="form-control-custom" required>
-    <?= form_error('email', '<div class="text-danger small">', '</div>'); ?>
-  </div>
-  <div class="mb-3 position-relative">
-    <label class="form-label-custom">Password</label>
-    <input type="password" name="password" class="form-control-custom" id="passwordInput" required>
-    <span class="toggle-password" onclick="togglePassword()">
-      <i class="fas fa-eye" id="eyeIcon"></i>
-    </span>
-    <?= form_error('password', '<small class="text-danger">', '</small>') ?>
-  </div>
-  <div class="text-center">
-    <button type="submit" class="btn-custom">Login</button>
-  </div>
-</form>
+                    <div class="mb-3">
+                      <label class="form-label-custom">Email</label>
+                      <input type="email" name="email" class="form-control-custom" required>
+                      <?= form_error('email', '<div class="text-danger small">', '</div>'); ?>
+                    </div>
+                    <div class="mb-3 position-relative">
+                      <label class="form-label-custom">Password</label>
+                      <input type="password" name="password" class="form-control-custom" id="passwordInput" required>
+                      <span class="toggle-password" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="eyeIcon"></i>
+                      </span>
+                      <?= form_error('password', '<small class="text-danger">', '</small>') ?>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn-custom">Login</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

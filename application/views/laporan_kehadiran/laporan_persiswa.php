@@ -24,57 +24,56 @@
         }
     </style>
 </head>
+
 <body>
+    <h3>Laporan Kehadiran Siswa</h3>
+    <p>Nama: <?= isset($siswa->nama_siswa) ? $siswa->nama_siswa : '-' ?></p>
+    <p>NISN: <?= isset($siswa->nisn) ? $siswa->nisn : '-' ?></p>
+    <p>Kelas: <?= isset($siswa->kelas) ? $siswa->kelas : '-' ?></p>
 
-<h3>Laporan Kehadiran Siswa</h3>
-<p>Nama: <?= isset($siswa->nama_siswa) ? $siswa->nama_siswa : '-' ?></p>
-<p>NISN: <?= isset($siswa->nisn) ? $siswa->nisn : '-' ?></p>
-<p>Kelas: <?= isset($siswa->kelas) ? $siswa->kelas : '-' ?></p>
-
-<table border="1" cellspacing="0" cellpadding="5" width="100%">
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Tanggal</th>
-            <th>Keterangan</th>
-            <th>Poin</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php 
-        $total_poin = 0;
-        if (!empty($kehadiran)): 
-            $no = 1; 
-            foreach ($kehadiran as $k): 
-                $poin = isset($k->poin) ? (int)$k->poin : 0;
-                $total_poin += $poin;
-        ?>
+    <table border="1" cellspacing="0" cellpadding="5" width="100%">
+        <thead>
             <tr>
-                <td><?= $no++ ?></td>
-                <td><?= isset($k->tanggal) ? date('d-m-Y', strtotime($k->tanggal)) : '-' ?></td>
-                <td><?= isset($k->keterangan) ? $k->keterangan : '-' ?></td>
-                <td><?= $poin > 0 ? $poin : '-' ?></td>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Keterangan</th>
+                <th>Poin</th>
             </tr>
-        <?php 
-            endforeach; 
-        else: 
-        ?>
-            <tr>
-                <td colspan="4" style="text-align:center;">Tidak ada data kehadiran</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <?php 
+            $total_poin = 0;
+            if (!empty($kehadiran)): 
+                $no = 1; 
+                foreach ($kehadiran as $k): 
+                    $poin = isset($k->poin) ? (int)$k->poin : 0;
+                    $total_poin += $poin;
+            ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= isset($k->tanggal) ? date('d-m-Y', strtotime($k->tanggal)) : '-' ?></td>
+                    <td><?= isset($k->keterangan) ? $k->keterangan : '-' ?></td>
+                    <td><?= $poin > 0 ? $poin : '-' ?></td>
+                </tr>
+            <?php 
+                endforeach; 
+            else: 
+            ?>
+                <tr>
+                    <td colspan="4" style="text-align:center;">Tidak ada data kehadiran</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 
-<?php if (!empty($kehadiran)): ?>
-    <div class="total-poin">
-        Total Poin: <?= $total_poin ?>
+    <?php if (!empty($kehadiran)): ?>
+        <div class="total-poin">
+            Total Poin: <?= $total_poin ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="footer">
+        Dicetak pada: <?= date('d-m-Y H:i:s') ?>
     </div>
-<?php endif; ?>
-
-<div class="footer">
-    Dicetak pada: <?= date('d-m-Y H:i:s') ?>
-</div>
-
 </body>
 </html>

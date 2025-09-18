@@ -183,7 +183,6 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Header */
     .modern-modal .modal-header {
         background: linear-gradient(135deg, #2c6a74, #5da9b0);
         color: #d0efef;
@@ -194,7 +193,6 @@
         align-items: center;
     }
 
-    /* Close button style */
     .modern-modal .modal-header .close {
         color: #d0efef;
         opacity: 0.85;
@@ -210,14 +208,12 @@
         opacity: 1;
     }
 
-    /* Body */
     .modern-modal .modal-body {
         padding: 1.5rem;
         background-color: #d0efef;
         color: #2c6a74;
     }
 
-    /* Label */
     .modern-modal .label-input {
         display: block;
         font-weight: 600;
@@ -225,7 +221,6 @@
         color: #2c6a74;
     }
 
-    /* Input */
     .modern-modal .form-control {
         width: 100%;
         padding: 0.6rem 1rem;
@@ -249,7 +244,6 @@
         background-color: #d0efef;
     }
 
-    /* Footer */
     .modern-modal .modal-footer {
         background-color: #aee3e0;
         border-top: none;
@@ -259,7 +253,6 @@
         gap: 0.8rem;
     }
 
-    /* Buttons */
     .modern-modal .btn {
         border-radius: 12px;
         padding: 0.5rem 1.4rem;
@@ -271,7 +264,6 @@
         color: #fff;
     }
 
-    /* Cancel button */
     .modern-modal .btn-cancel {
         background-color: #5da9b0;
         color: #d0efef;
@@ -282,7 +274,6 @@
         color: #aee3e0;
     }
 
-    /* Export PDF button */
     .modern-modal .btn-export {
         background: linear-gradient(135deg, #2c6a74, #5da9b0);
         box-shadow: 0 4px 12px rgba(44, 106, 116, 0.4);
@@ -323,7 +314,6 @@
         background-color: #ffffff;
     }
 
-    /* Ikon kaca pembesar */
     .search-box .fa-search {
         position: absolute;
         top: 50%;
@@ -335,36 +325,33 @@
 </style>
 
 <body>
-<div class="container-fluid py-2">
-<div class="row align-items-center mb-2">
-    <!-- Judul -->
-    <div class="col-md-6 col-12">
-        <h3 class="mb-2 h4 fw-bold">Data Kehadiran</h3>
-    </div>
+    <div class="container-fluid py-2">
+    <div class="row align-items-center mb-2">
+        <div class="col-md-6 col-12">
+            <h3 class="mb-2 h4 fw-bold">Data Kehadiran</h3>
+        </div>
 
-    <!-- Tombol-tombol -->
-    <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
-        <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-        <?php if (!$siswa_kosong): ?>
-            <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
-            <i class="fas fa-plus"></i> Tambah
-            </a>
-        <?php endif; ?>
-            <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
-                <i class="fas fa-file-pdf"></i> Export PDF
-            </a>
-            <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </a>
-            <a href="javascript:void(0);" class="btn tab-kategori" data-toggle="modal" data-target="#modalLaporanPerSiswa">
-                <i class="fas fa-file-pdf"></i> Laporan Per Siswa (PDF)
-            </a>
+        <div class="col-md-6 col-12 text-md-end text-start mt-2 mt-md-0">
+            <div class="d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
+            <?php if (!$siswa_kosong): ?>
+                <a href="javascript:void(0);" class="btn tab-kategori" onclick="tampilkanForm()">
+                <i class="fas fa-plus"></i> Tambah
+                </a>
+            <?php endif; ?>
+                <a href="<?= base_url('index.php/kehadiran/export_pdf') ?>" target="_blank" class="btn tab-kategori">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
+                <a href="<?= base_url('index.php/kehadiran/excel') ?>" class="btn tab-kategori">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+                <a href="javascript:void(0);" class="btn tab-kategori" data-toggle="modal" data-target="#modalLaporanPerSiswa">
+                    <i class="fas fa-file-pdf"></i> Laporan Per Siswa (PDF)
+                </a>
+            </div>
         </div>
     </div>
-</div>
-</div>
+    </div>
 
-    <!-- Modal Laporan Per Siswa -->
     <div class="modal fade" id="modalLaporanPerSiswa" tabindex="-1" role="dialog" aria-labelledby="modalLabelSiswa" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content modern-modal">
@@ -422,7 +409,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="target">
-                                    <!-- Data akan diisi melalui JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -491,11 +477,9 @@
         </div>
     </div>
 
-
     <script type="text/javascript">
         ambilData();
 
-        // Fungsi untuk memformat tanggal dari ISO ke format DD-MM-YYYY
         function formatTanggal(isoDate) {
             const date = new Date(isoDate);
             const day = String(date.getDate()).padStart(2, '0');
@@ -512,7 +496,6 @@
             }
             window.open("<?= base_url('index.php/kehadiran/laporan_persiswa/') ?>" + nisn, "_blank");
 
-            // Reset input setelah export
             document.getElementById('input-siswa-pdf').value = '';
             document.getElementById('nisn-siswa-pdf').value = '';
         }
@@ -525,7 +508,6 @@
             return `${day}-${month}-${year}`;
         }
 
-        // Ambil dan tampilkan seluruh data kehadiran dari server via AJAX
         function ambilData() {
             $.ajax({
                 type: 'POST',
@@ -552,13 +534,11 @@
                             '</td>' +
                             '</tr>';
                     }
-                    // Tampilkan hasil ke tabel
                     $('#target').html(baris);
                 }
             });
         }
 
-        // Fungsi cari data kehadiran
         $(document).ready(function () {
             $("#search-input").on("keyup", function () {
                 var value = $(this).val().toUpperCase();
@@ -574,7 +554,6 @@
             $('#pesan').html('');
             $('[name="id"]').val('');
 
-            // Set tanggal otomatis ke hari ini
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -619,31 +598,6 @@
             });
         }
 
-        // function editData(id) {
-        //     $('#form-kehadiran').show();
-        //     $('#kehadiran-form')[0].reset();
-        //     $('#pesan').html('');
-        //     $('#btn-ubah').show();
-        //     $('.btn-custom-submit:contains("Tambah")').hide(); // Sembunyikan tombol Tambah
-
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: '<?php echo base_url("index.php/kehadiran/ambilId") ?>',
-        //         data: { id: id },
-        //         dataType: 'json',
-        //         success: function(hasil) {
-        //             $('[name="id"]').val(hasil[0].id);
-        //             $('[name="nisn"]').val(hasil[0].nisn);
-        //             $('[name="tanggal"]').val(hasil[0].tanggal);
-        //             $('[name="nama_siswa"]').val(hasil[0].nama_siswa);
-        //             $('[name="kelas"]').val(hasil[0].kelas);
-        //             $('[name="wali_kelas"]').val(hasil[0].wali_kelas);
-        //             $('[name="keterangan"]').val(hasil[0].keterangan);
-        //             $('[name="poin"]').val(hasil[0].poin);
-        //         }
-        //     });
-        // }
-
         function hapusData(id) {
             if (confirm("Yakin ingin menghapus data ini?")) {
                 $.ajax({
@@ -653,7 +607,7 @@
                     dataType: 'json',
                     success: function (res) {
                         if (res.status === true) {
-                            ambilData(); // Refresh tabel
+                            ambilData();
                             alert("Data berhasil dihapus.");
                         } else {
                             alert("Gagal menghapus data.");
@@ -665,32 +619,6 @@
                 });
             }
         }
-
-        // function submit(id) {
-        //     if (id === 'tambah') {
-        //         $('#btn-tambah').show();
-        //         $('#btn-ubah').hide();
-        //     } else {
-
-
-        //         $.ajax({
-        //             type: 'POST',
-        //             url: '<?php echo base_url("index.php/kehadiran/ambilId") ?>',
-        //             data: {
-        //                 id: id
-        //             },
-        //             dataType: 'json',
-        //             success: function(hasil) {
-        //                 $('[name="nisn"]').val(hasil[0].nisn);
-        //                 $('[name="tanggal"]').val(hasil[0].tanggal);
-        //                 $('[name="id"]').val(hasil[0].id);
-        //                 $('[name="_siswa"]').val(hasil[0].nama_siswa);
-        //                 $('[name="kelas"]').val(hasil[0].kelas);
-        //                 $('[name="keterangan"]').val(hasil[0].keterangan);
-        //             }
-        //         });
-        //     }
-        // }
     </script>
 
     <script>
@@ -728,11 +656,7 @@
                 alert("Silakan pilih siswa dari daftar!");
                 return;
             }
-
-            // Buka PDF
             window.open("<?= base_url('kehadiran/laporan_persiswa/') ?>" + nisn, "_blank");
-
-            // Reset form setelah export
             resetFormSiswa();
         }
 
@@ -764,43 +688,6 @@
         }
     </script>
 
-    <!-- <script>
-        const keteranganInput = document.getElementById('keterangan_input');
-        const poinInput = document.querySelector('input[name="poin"]');
-
-        keteranganInput.addEventListener('input', function () {
-            const ket = keteranganInput.value.trim().toLowerCase();
-            if (ket === 'alpha') {
-                poinInput.value = 1;
-            }
-        });
-    </script>
-
-    <script>
-    $(document).ready(function() {
-        $('#nisn').change(function() {
-            var nisn = $(this).val();
-            if(nisn != '') {
-                $.ajax({
-                    url: "<?php echo base_url('data_siswa/get_detail_siswa'); ?>",
-                    method: "POST",
-                    data: { nisn: nisn },
-                    dataType: "json",
-                    success: function(data) {
-                        $('#nama_siswa').val(data.nama_siswa);
-                        $('#kelas').val(data.kelas);
-                        $('#wali_kelas').val(data.wali_kelas);
-                    }
-                });
-            } else {
-                $('#nama_siswa').val('');
-                $('#kelas').val('');
-                $('#wali_kelas').val('');
-            }
-        });
-    });
-    </script> -->
-
     <script>
         const siswaList = [
             <?php foreach ($siswa as $row): ?> {
@@ -831,41 +718,40 @@
             }
         }
 
-        // Tangkap baik dari input manual atau memilih dari datalist
         inputNama.addEventListener('input', isiOtomatis);
         inputNama.addEventListener('change', isiOtomatis);
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const inputDisplay = document.getElementById('input_display');
-        const inputHidden = document.getElementById('input_keterangan');
-        const poinInput = document.getElementById('poin');
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputDisplay = document.getElementById('input_display');
+            const inputHidden = document.getElementById('input_keterangan');
+            const poinInput = document.getElementById('poin');
 
-        inputDisplay.addEventListener('input', function () {
-            let val = this.value.trim().toUpperCase();
+            inputDisplay.addEventListener('input', function () {
+                let val = this.value.trim().toUpperCase();
 
-            if (val === 'A' || val.startsWith('A')) {
-                this.value = 'A (10 JAM)';
-                inputHidden.value = 'A'; 
-                poinInput.value = 7;
-            } else {
-                this.value = '';
-                inputHidden.value = '';
-                poinInput.value = '';
-            }
+                if (val === 'A' || val.startsWith('A')) {
+                    this.value = 'A (10 JAM)';
+                    inputHidden.value = 'A'; 
+                    poinInput.value = 7;
+                } else {
+                    this.value = '';
+                    inputHidden.value = '';
+                    poinInput.value = '';
+                }
+            });
         });
-    });
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-        </div>
-        </div>
-      </div>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     </div>
-  </div>
-</div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
 </body>
 </html>

@@ -7,6 +7,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Form_validation $form_validation
  * @property M_auth $M_auth
  */
+
 class Auth extends CI_Controller
 {
     public function __construct()
@@ -19,12 +20,10 @@ class Auth extends CI_Controller
 
     public function login()
     {
-        // Kalau sudah login, langsung lempar ke dashboard
         if ($this->session->userdata('logged_in')) {
             redirect('dashboard');
         }
 
-        // Validasi input
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'required');
 
@@ -34,7 +33,6 @@ class Auth extends CI_Controller
             $email    = $this->input->post('email');
             $password = $this->input->post('password');
 
-            // cek login via model
             $user = $this->M_auth->login($email, $password);
 
             if (!$user) {

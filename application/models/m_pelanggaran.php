@@ -54,8 +54,8 @@ class M_pelanggaran extends CI_Model
 
         return $this->db->select('COUNT(DISTINCT nisn) as total')
             ->from('pelanggaran')
-            ->like('kode', 'B-1', 'after') // cocokkan B-1 di awal
-            ->where('DATE(tanggal)', $today) // ambil hanya tanggal hari ini
+            ->like('kode', 'B-1', 'after') 
+            ->where('DATE(tanggal)', $today) 
             ->get()
             ->row()
             ->total;

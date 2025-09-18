@@ -7,8 +7,6 @@
     <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/img/logo1.png'); ?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/logo1.png'); ?>">
     <title>Selamat Datang | ASTRA</title>
-
-    <!-- Bootstrap, Icons, AOS, Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -160,8 +158,6 @@
                 max-width: 240px;
             }
         }
-
-
     </style>
 </head>
 
@@ -169,10 +165,6 @@
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">ASTRA Selapan</a>
-            <!-- <div class="d-flex gap-2">
-            <a href="<?= base_url('auth/login') ?>" class="btn btn-outline-light">Login</a>
-            <a href="<?= base_url('auth/sign_up') ?>" class="btn btn-outline-light">Daftar</a>
-        </div> -->
         </div>
     </nav>
 
@@ -235,9 +227,6 @@
                         Mulai gunakan <strong>ASTRA Selapan</strong> untuk mengelola kehadiran, pelanggaran, dan informasi siswa secara efisien dan terstruktur.
                     </p>
                     <div class="d-flex flex-column flex-sm-row gap-3">
-                        <!-- <a href="<?= base_url('auth/login') ?>" class="btn btn-light btn-lg">
-                <i class="bi bi-box-arrow-in-right me-2"></i> Login Sekarang
-                </a> -->
                         <a href="<?= base_url('auth/login') ?>" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-pencil-square me-2"></i> Login Sekarang
                         </a>
@@ -269,5 +258,4 @@
         }, 2000);
     </script>
 </body>
-
 </html>

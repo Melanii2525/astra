@@ -3,12 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_kehadiran extends CI_Model
 {
-    // public function tampil_data($table)
-    // {
-    //     return $this->db->get($table);
-    // }
-
-    //Mengambil data kehadiran beserta data siswa terkait (join)
     public function ambildata()
     {
         $this->db->select('k.*, s.nama_siswa, s.kelas, s.wali_kelas');
@@ -26,12 +20,6 @@ class M_kehadiran extends CI_Model
     {
         return $this->db->get_where($table, $where);
     }
-
-    // public function ubahdata($data, $where, $table)
-    // {
-    //     $this->db->where($where);
-    //     $this->db->update($table, $data);
-    // }
 
     public function hapusdata($table, $where)
     {

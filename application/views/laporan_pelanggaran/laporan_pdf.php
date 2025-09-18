@@ -58,6 +58,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="judul">Laporan Pelanggaran Siswa</div>
     <hr class="custom-line">
@@ -97,6 +98,5 @@
     <div class="footer">
         Dicetak pada: <?= date('d-m-Y H:i') ?>
     </div>
-
 </body>
 </html>

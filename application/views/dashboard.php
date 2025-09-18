@@ -12,18 +12,40 @@
 
   .card {
     margin-bottom: 1.5rem;
-    /* spasi sebelum footer */
+  }
+
+  .batas-poin {
+    background-color: #f8d7da;  
+    border: 1px solid #f5c2c7;   
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .batas-poin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.2);
+  }
+
+  /* Ikon tanda seru */
+  .batas-poin .icon {
+    width: 35px;
+    height: 35px;
+    background-color: #dc3545;   /* merah solid */
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
   }
 
   footer.footer {
     flex-shrink: 0;
-    /* footer tidak mengecil */
   }
 
   .main-content {
     flex: 1 0 auto;
     padding: 1rem 1rem;
-    /* tambahkan default padding semua ukuran layar */
   }
 
   @media (min-width: 1200px) {
@@ -35,12 +57,10 @@
   }
 </style>
 
-<!-- Bootstrap & Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <div class="container-fluid py-2">
-
   <div class="row">
     <div class="col-12 p-0">
       <h3 class="mb-3 h4 x">Dashboard</h3>
@@ -68,35 +88,71 @@
   </div>
 
   <div class="row mt-4">
-    <!-- Ranking Siswa -->
     <div class="col-lg-8 col-md-7">
       <div class="card shadow-sm border-0" style="border-radius: 15px;">
         <div class="card-body">
-          <h4 class="mb-3 font-weight-bold">Siswa dengan poin terbanyak</h4>
 
-          <?php foreach ($ranking as $i => $row): ?>
-            <div class="d-flex align-items-center p-2 mb-2 rounded"
-              style="background-color: <?= ($i == 0) ? '#FFD70033' : (($i == 1) ? '#C0C0C033' : (($i == 2) ? '#CD7F3233' : '#F8F9FA')); ?>;">
-              <div class="text-center mr-3"
-                style="width: 35px; height: 35px; background-color: #2C6A74; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                <?= $i + 1 ?>
-              </div>
+          <!-- Section: Siswa sudah mencapai batas poin -->
+          <h4 class="mb-3 font-weight-bold text-danger">Siswa sudah mencapai batas poin</h4>
+          <?php 
+            $batasPoinAda = false;
+            foreach ($ranking as $row): 
+              if ($row['poin'] >= 250): 
+                $batasPoinAda = true;
+          ?>
+            <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
+              <div class="icon mr-3">!</div>
               <div class="flex-grow-1">
                 <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
                 <small class="text-muted"><?= $row['kelas'] ?></small>
               </div>
+              <span class="badge badge-danger p-2" style="min-width: 60px;">
+                <?= $row['poin'] ?> Poin
+              </span>
+            </div>
+          <?php 
+              endif; 
+            endforeach;
+
+            if (!$batasPoinAda): ?>
+            <p class="text-muted">Tidak ada siswa yang mencapai batas poin.</p>
+          <?php endif; ?>
+
+          <!-- Section: Siswa dengan poin terbanyak -->
+          <h4 class="mt-4 mb-3 font-weight-bold">Siswa dengan poin terbanyak</h4>
+          <?php foreach ($ranking as $i => $row): ?>
+            <?php if ($row['poin'] >= 250) continue; // skip siswa yg sudah mencapai batas ?>
+
+            <div class="d-flex align-items-center p-2 mb-2 rounded"
+              style="background-color: <?= ($i == 0) ? '#FFD70033' : (($i == 1) ? '#C0C0C033' : (($i == 2) ? '#CD7F3233' : '#F8F9FA')); ?>;">
+              
+              <!-- Ranking number -->
+              <div class="text-center mr-3"
+                style="width: 35px; height: 35px; background-color: #2C6A74; color: white; 
+                      border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                <?= $i + 1 ?>
+              </div>
+
+              <!-- Student info -->
+              <div class="flex-grow-1">
+                <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
+                <small class="text-muted"><?= $row['kelas'] ?></small>
+              </div>
+
+              <!-- Poin badge -->
               <span class="badge 
-              <?= ($row['poin'] <= 55) ? 'badge-success' : (($row['poin'] <= 150) ? 'badge-warning' : 'badge-danger') ?> p-2"
+                <?= ($row['poin'] <= 55) ? 'badge-success' : (($row['poin'] <= 150) ? 'badge-warning' : 'badge-danger') ?> p-2"
                 style="min-width: 60px;">
                 <?= $row['poin'] ?> Poin
               </span>
             </div>
           <?php endforeach; ?>
+
         </div>
       </div>
     </div>
 
-    <!-- Statistik Kanan -->
+    <!-- Rekap Siswa -->
     <div class="col-lg-4 col-md-5">
       <div class="row">
         <h4 class="mb-3 font-weight-bold">Rekap Siswa</h4>
@@ -135,38 +191,7 @@
       </div>
     </div>
   </div>
-
-
 </div>
-
-<!-- <footer class="footer mt-auto py-4 bg-white shadow-sm">
-    <div class="container-fluid">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-          <span class="text-sm text-muted">
-            © <script>document.write(new Date().getFullYear())</script>, made with ❤️ by 
-            <a href="https://www.creative-tim.com" target="_blank" class="text-decoration-none fw-bold">Meyna</a>
-          </span>
-        </div>
-        <div class="col-md-6">
-          <ul class="nav justify-content-center justify-content-md-end">
-            <li class="nav-item">
-              <a class="nav-link text-muted px-2" href="#">Creative Tim</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-muted px-2" href="#">About Us</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-muted px-2" href="#">Blog</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-muted px-2" href="#">License</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </footer> -->
 
 <script>
   if (document.querySelector('.input-group input')) {
