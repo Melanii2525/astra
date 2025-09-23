@@ -33,16 +33,34 @@
     <?php foreach ($revisi as $item): ?>
         <?php
             $poin = isset($item['poin']) ? (int)$item['poin'] : 0;
+
+            // Tentukan warna badge normal
             if ($poin <= 55) $badgeClass = 'badge-hijau';
             elseif ($poin <= 150) $badgeClass = 'badge-kuning';
             else $badgeClass = 'badge-merah';
+
+            // Cek apakah sudah mencapai batas poin
+            $isBatas = $poin >= 250;
         ?>
-        <div class="item">
+        <div class="item" style="<?= $isBatas ? 'border:2px solid #ed2939; background:#ffe5e5;' : '' ?>">
             <div><span class="label">Nama</span>: <?= htmlspecialchars($item['nama_siswa']) ?> (<?= htmlspecialchars($item['kelas']) ?>)</div>
             <div><span class="label">NISN</span>: <?= htmlspecialchars($item['nisn']) ?></div>
             <div><span class="label">Wali Kelas</span>: <?= htmlspecialchars($item['wali_kelas']) ?></div>
-            <div><span class="label">Poin</span>: <span class="badge <?= $badgeClass ?>"><?= $poin ?></span></div>
-            <div><span class="label">Tindak Lanjut</span>: <?= htmlspecialchars($item['tindak_lanjut'] ?? '-') ?></div>
+            <div><span class="label">Poin</span>: 
+                <span class="badge <?= $badgeClass ?>"><?= $poin ?></span>
+                <?php if ($isBatas): ?>
+                    <span style="color:#ed2939; font-weight:bold; margin-left:8px;">
+                        ⚠ Batas poin tercapai
+                    </span>
+                <?php endif; ?>
+            </div>
+            <div><span class="label">Tindak Lanjut</span>: 
+                <?php if ($isBatas): ?>
+                    <span style="color:#ed2939; font-weight:bold;">Tidak bisa treatment</span>
+                <?php else: ?>
+                    <?= htmlspecialchars($item['tindak_lanjut'] ?? '-') ?>
+                <?php endif; ?>
+            </div>
         </div>
     <?php endforeach; ?>
 </body>

@@ -1,9 +1,22 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/**
+ * @property CI_Session $session
+ */
+
 class Pasal extends CI_Controller {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
+
+        if (!$this->session->userdata('logged_in')) {
+            redirect('landingpage');
+        }
+
+        $this->load->model('M_kehadiran');
+        $this->load->model('M_revisi');
+        $this->load->model('M_pelanggaran');
     }
 
     public function pasal_16() {

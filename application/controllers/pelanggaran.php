@@ -10,6 +10,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Output $output
  * @property Dompdf_gen $dompdf_gen
  * @property CI_DB_query_builder $db
+ * @property CI_Session $session
  */
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -19,10 +20,22 @@ use Dompdf\Options;
 
 class Pelanggaran extends CI_Controller
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
+
+        // Cek session login
+        if (!$this->session->userdata('logged_in')) {
+            redirect('landingpage');
+        }
+
+        // Load model
         $this->load->model('m_pelanggaran', 'm');
+        $this->load->model('M_kehadiran');
+        $this->load->model('M_revisi');
+        $this->load->model('M_pelanggaran');
+
+        // Load helper
         $this->load->helper(['form', 'url']);
     }
 

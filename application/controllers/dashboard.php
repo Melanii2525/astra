@@ -6,6 +6,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property M_revisi $M_revisi
  * @property M_pelanggaran $M_pelanggaran
  * @property M_kehadiran $M_kehadiran
+ * @property db $db
  */
 
 class Dashboard extends CI_Controller

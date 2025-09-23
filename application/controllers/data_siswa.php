@@ -17,21 +17,21 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 class Data_siswa extends CI_Controller
 {
     public function __construct()
-{
-    parent::__construct();
+    {
+        parent::__construct();
 
-    // Cek apakah user sudah login
-    if (!$this->session->userdata('logged_in')) {
-        redirect('landingpage'); // redirect ke halaman login/landing jika belum login
+        // Cek apakah user sudah login
+        if (!$this->session->userdata('logged_in')) {
+            redirect('landingpage'); // redirect ke halaman login/landing jika belum login
+        }
+
+        // Load semua model & helper yang dibutuhkan
+        $this->load->model('M_kehadiran');
+        $this->load->model('M_revisi');
+        $this->load->model('M_pelanggaran');
+        $this->load->model('m_siswa', 'm');
+        $this->load->helper(['form', 'url']);
     }
-
-    // Load semua model & helper yang dibutuhkan
-    $this->load->model('M_kehadiran');
-    $this->load->model('M_revisi');
-    $this->load->model('M_pelanggaran');
-    $this->load->model('m_siswa', 'm');
-    $this->load->helper(['form', 'url']);
-}
 
     public function index()
     {

@@ -14,6 +14,14 @@
 
 <body>
     <h2 style="text-align:center;">LAPORAN REVISI <?= $siswa['nama_siswa']; ?></h2>
+
+    <?php if ($total_poin >= 250): ?>
+        <p style="color:red; font-weight:bold; text-align:center; font-size:14px; margin-bottom:10px;">
+            PERINGATAN: Siswa sudah mencapai batas poin (<?= $total_poin; ?>). 
+            Treatment tidak dapat dilakukan.
+        </p>
+    <?php endif; ?>
+
     <br>
     <table>
         <tr><th width="25%">NISN</th><td><?= $siswa['nisn']; ?></td></tr>
@@ -94,7 +102,17 @@
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr><td colspan="3" style="text-align:center;">Belum ada treatment</td></tr>
+                <?php if ($total_poin < 250): ?>
+                    <tr><td colspan="3" style="text-align:center;">Belum ada treatment</td></tr>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($total_poin >= 250): ?>
+                <tr>
+                    <td colspan="3" style="color:red; font-weight:bold; text-align:center;">
+                        Peringatan: Siswa sudah mencapai batas poin, treatment tidak dapat dilakukan.
+                    </td>
+                </tr>
             <?php endif; ?>
         </tbody>
     </table>
@@ -102,7 +120,18 @@
     <h3>Rekap Akhir</h3>
     <table>
         <tr><th>Total Poin Terakhir</th><td><?= max(0, $total_poin); ?></td></tr>
-        <tr><th>Jumlah Treatment</th><td><?= $treatment_count; ?> kali</td></tr>
+        <tr>
+            <th>Jumlah Treatment</th>
+            <td>
+                <?php if ($total_poin < 250): ?>
+                    <?= $treatment_count; ?> kali
+                <?php else: ?>
+                    <span style="color:red; font-weight:bold;">
+                        (sudah mencapai batas, tidak bisa treatment)
+                    </span>
+                <?php endif; ?>
+            </td>
+        </tr>
     </table>
 </body>
 </html>

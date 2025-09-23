@@ -20,23 +20,23 @@ class Kehadiran extends CI_Controller
 {
 
     public function __construct()
-{
-    parent::__construct();
+    {
+        parent::__construct();
 
-    // Cek apakah user sudah login
-    if (!$this->session->userdata('logged_in')) {
-        redirect('landingpage');
+        // Cek apakah user sudah login
+        if (!$this->session->userdata('logged_in')) {
+            redirect('landingpage');
+        }
+
+        // Load semua model yang dipakai
+        $this->load->model('M_kehadiran');
+        $this->load->model('M_revisi');
+        $this->load->model('M_pelanggaran');
+        $this->load->model('m_kehadiran', 'm');
+
+        // Load helper
+        $this->load->helper(['form', 'url']);
     }
-
-    // Load semua model yang dipakai
-    $this->load->model('M_kehadiran');
-    $this->load->model('M_revisi');
-    $this->load->model('M_pelanggaran');
-    $this->load->model('m_kehadiran', 'm');
-
-    // Load helper
-    $this->load->helper(['form', 'url']);
-}
 
     public function index()
     {
