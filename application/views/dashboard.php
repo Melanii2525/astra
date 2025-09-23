@@ -93,7 +93,7 @@
         <div class="card-body">
 
           <!-- Section: Siswa sudah mencapai batas poin -->
-          <h4 class="mb-3 font-weight-bold text-danger">Siswa sudah mencapai batas poin pelanggaran</h4>
+          <h4 class="mb-3 font-weight-bold text-danger">Telah mencapai batas maksimum poin</h4>
           <?php 
             $batasPoinAda = false;
             foreach ($ranking as $row): 
