@@ -204,7 +204,7 @@
         <li class="nav-item">
           <a class="nav-link <?php echo active_menu('revisi'); ?>" href="<?php echo base_url('revisi'); ?>">
             <i class="material-symbols-rounded opacity-5">autorenew</i>
-            <span class="nav-link-text ms-1">Revisi Poin</span>
+            <span class="nav-link-text ms-1">Validasi Poin</span>
           </a>
         </li>
         <li class="nav-item">
