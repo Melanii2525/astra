@@ -71,6 +71,29 @@
       color: #999;
       font-style: italic;
     }
+
+    .badge-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem; /* samakan dengan .btn-sm */
+  font-size: 0.850rem;       /* sama dengan btn-sm */
+  font-weight: 600;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  min-height: 31px;          /* samakan tinggi minimal btn-sm */
+  text-transform: uppercase;
+}
+
+.badge-status.aktif {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.badge-status.nonaktif {
+  background-color: #dc3545;
+  color: #fff;
+}
   </style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -218,6 +241,7 @@
             <th>Kelas</th>
             <th>JK</th>
             <th>Wali Kelas</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -365,6 +389,11 @@
               <td>${item.kelas}</td>
               <td>${item.jenis_kelamin}</td>
               <td>${item.wali_kelas}</td>
+              <td>
+                <span class="badge-status ${item.status === 'aktif' ? 'aktif' : 'nonaktif'}">
+                  ${item.status}
+                </span>
+              </td>
               <td>${btnFoto}</td>
             </tr>`;
       });

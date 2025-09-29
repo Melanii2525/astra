@@ -17,26 +17,16 @@ class Revisi extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-
-        // Load database & library
         $this->load->database();
         $this->load->library('session');
-
-        // Cek login
-        if (!$this->session->userdata('logged_in')) {
-            redirect('landingpage');
-        }
-
-        // Load models
         $this->load->model('M_revisi');
-        $this->load->model('M_kehadiran');
-        $this->load->model('M_pelanggaran');
     }
 
     public function index()
     {
         $pelanggaran = $this->M_revisi->get_pelanggaran();
         $kehadiran = $this->M_revisi->get_kehadiran();
+        $data['revisi'] = $this->M_revisi->get_revisi();
 
         $siswa = [];
 

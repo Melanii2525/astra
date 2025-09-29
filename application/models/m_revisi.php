@@ -179,6 +179,7 @@ class M_revisi extends CI_Model
         return $this->db->select('r.nisn, s.nama_siswa, s.kelas, s.wali_kelas, r.poin')
             ->from('revisi r')
             ->join('data_siswa s', 's.nisn = r.nisn', 'left')
+            ->where('s.status', 'aktif')
             ->order_by('r.poin', 'DESC')
             ->limit($limit)
             ->get()
@@ -194,4 +195,35 @@ class M_revisi extends CI_Model
         $this->db->limit(1);
         return $this->db->get()->row_array();
     }
+
+    public function get_siswa_dikeluarkan()
+{
+    return $this->db->select('s.nisn, s.nama_siswa, s.kelas, s.wali_kelas, s.tanggal_keluar')
+        ->from('data_siswa s')
+        ->where('s.status', 'dikeluarkan')
+        ->where('tanggal_keluar >=', date('Y-m-d H:i:s', strtotime('-5 months')))
+        ->order_by('s.tanggal_keluar', 'DESC')
+        ->get()
+        ->result_array();
+}
+
+// contoh di model M_revisi.php
+public function get_revisi()
+{
+    return $this->db->select('
+    data_siswa.nisn, 
+    data_siswa.nama_siswa, 
+    data_siswa.kelas, 
+    data_siswa.wali_kelas, 
+    COALESCE(data_siswa.status, "aktif") as status, 
+    data_siswa.tanggal_keluar, 
+    revisi.tanggal, 
+    revisi.keterangan
+')
+->from('revisi')
+->join('data_siswa', 'data_siswa.nisn = revisi.nisn', 'left')
+->get()
+->result_array();
+}
+
 }

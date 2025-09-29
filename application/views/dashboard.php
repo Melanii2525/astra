@@ -1,3 +1,6 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <style>
   html,
   body {
@@ -15,8 +18,8 @@
   }
 
   .batas-poin {
-    background-color: #f8d7da;  
-    border: 1px solid #f5c2c7;   
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -29,7 +32,8 @@
   .batas-poin .icon {
     width: 35px;
     height: 35px;
-    background-color: #dc3545;   /* merah solid */
+    background-color: #dc3545;
+    /* merah solid */
     color: #fff;
     border-radius: 50%;
     display: flex;
@@ -65,6 +69,24 @@
     <div class="col-12 p-0">
       <h3 class="mb-3 h4 x">Dashboard</h3>
 
+      <?php if ($this->session->flashdata('success')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <?= $this->session->flashdata('success') ?>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <?= $this->session->flashdata('error') ?>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <?php endif; ?>
+
       <div class="card p-4 border-0" style="background-color: #D0EFEF; border-radius: 20px;">
         <div class="row align-items-center">
           <div class="col-md-7 col-12 mb-3 mb-md-0">
@@ -94,38 +116,46 @@
 
           <!-- Section: Siswa sudah mencapai batas poin -->
           <h4 class="mb-3 font-weight-bold text-danger">Telah mencapai batas maksimum poin</h4>
-          <?php 
-            $batasPoinAda = false;
-            foreach ($ranking as $row): 
-              if ($row['poin'] >= 250): 
-                $batasPoinAda = true;
+          <?php
+          $batasPoinAda = false;
+          foreach ($ranking as $row):
+            if ($row['poin'] >= 250):
+              $batasPoinAda = true;
           ?>
-            <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
-              <div class="icon mr-3">!</div>
-              <div class="flex-grow-1">
-                <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
-                <small class="text-muted"><?= $row['kelas'] ?></small>
-              </div>
-              <span class="badge badge-danger p-2" style="min-width: 60px;">
-                <?= $row['poin'] ?> Poin
-              </span>
-            </div>
-          <?php 
-              endif; 
-            endforeach;
+              <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
+                <div class="icon mr-3">!</div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
+                  <small class="text-muted"><?= $row['kelas'] ?></small>
+                </div>
+                <span class="badge badge-danger p-2 mr-2" style="min-width: 60px;">
+                  <?= $row['poin'] ?> Poin
+                </span>
 
-            if (!$batasPoinAda): ?>
+                <!-- Tombol upload bukti -->
+                <button class="btn btn-sm btn-outline-danger uploadBtn" 
+                        data-nisn="<?= $row['nisn'] ?>" 
+                        data-nama="<?= $row['nama_siswa'] ?>">
+                  <i class="fas fa-upload"></i> Upload Bukti
+                </button>
+              </div>
+            <?php
+            endif;
+          endforeach;
+
+          if (!$batasPoinAda): ?>
             <p class="text-muted">Tidak ada siswa yang mencapai batas poin.</p>
           <?php endif; ?>
 
           <!-- Section: Siswa dengan poin terbanyak -->
           <h4 class="mt-4 mb-3 font-weight-bold">Siswa dengan poin terbanyak</h4>
           <?php foreach ($ranking as $i => $row): ?>
-            <?php if ($row['poin'] >= 250) continue; // skip siswa yg sudah mencapai batas ?>
+            <?php if ($row['poin'] >= 250) continue; // skip siswa yg sudah mencapai batas 
+            ?>
 
             <div class="d-flex align-items-center p-2 mb-2 rounded"
               style="background-color: <?= ($i == 0) ? '#FFD70033' : (($i == 1) ? '#C0C0C033' : (($i == 2) ? '#CD7F3233' : '#F8F9FA')); ?>;">
-              
+
               <!-- Ranking number -->
               <div class="text-center mr-3"
                 style="width: 35px; height: 35px; background-color: #2C6A74; color: white; 
@@ -148,9 +178,12 @@
             </div>
           <?php endforeach; ?>
 
+
         </div>
       </div>
     </div>
+
+    
 
     <!-- Rekap Siswa -->
     <div class="col-lg-4 col-md-5">
@@ -189,9 +222,46 @@
           </div>
         </div>
       </div>
+
+      <!-- Section: Log Siswa Dikeluarkan (dipindah ke bawah rekap) -->
+<div class="mt-4">
+  <h4 class="mb-1 font-weight-bold text-danger">Siswa Dikeluarkan</h4>
+  <small class="text-muted d-block mb-3" style="font-size: 0.85rem;">
+    *Daftar ini hanya menampilkan siswa yang dikeluarkan dalam 5 bulan terakhir.  
+    Setelah lewat 5 bulan, data tidak lagi ditampilkan di dashboard.
+  </small>
+
+  <?php if (!empty($log_keluar)): ?>
+    <?php foreach ($log_keluar as $row): ?>
+      <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
+        <div class="flex-grow-1">
+          <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
+          <small class="text-muted">
+            <?= $row['kelas'] ?> - Wali: <?= $row['wali_kelas'] ?>
+          </small><br>
+          <small class="text-muted">
+            Dikeluarkan: <?= date('d-m-Y H:i', strtotime($row['tanggal_keluar'])) ?>
+          </small>
+        </div>
+        <span class="badge badge-dark p-2 mr-2">NISN: <?= $row['nisn'] ?></span>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p class="text-muted">Belum ada siswa yang dikeluarkan.</p>
+  <?php endif; ?>
+</div>
+
     </div>
+
   </div>
 </div>
+
+      <!-- Input tersembunyi untuk upload -->
+<form id="uploadForm" method="post" enctype="multipart/form-data" action="<?= base_url('dashboard/upload_bukti'); ?>">
+  <input type="hidden" name="nisn" id="nisn">
+  <input type="file" name="bukti" id="bukti" class="d-none" accept=".pdf,.jpg,.png" required>
+</form>
+ 
 
 <script>
   if (document.querySelector('.input-group input')) {
@@ -215,4 +285,18 @@
   }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Klik tombol upload → buka file manager
+  $(document).on('click', '.uploadBtn', function () {
+    var nisn = $(this).data('nisn');
+    $('#nisn').val(nisn);
+    $('#bukti').click(); // buka file manager
+  });
+
+  // Setelah file dipilih → auto submit
+  $('#bukti').on('change', function () {
+    if (this.files.length > 0) {
+      $('#uploadForm').submit();
+    }
+  });
+</script>
