@@ -114,7 +114,7 @@
       <div class="card shadow-sm border-0" style="border-radius: 15px;">
         <div class="card-body">
 
-          <!-- Section: Siswa sudah mencapai batas poin -->
+          <!-- Siswa sudah mencapai batas poin -->
           <h4 class="mb-3 font-weight-bold text-danger">Telah mencapai batas maksimum poin</h4>
           <?php
           $batasPoinAda = false;
@@ -132,7 +132,6 @@
                   <?= $row['poin'] ?> Poin
                 </span>
 
-                <!-- Tombol upload bukti -->
                 <button class="btn btn-sm btn-outline-danger uploadBtn" 
                         data-nisn="<?= $row['nisn'] ?>" 
                         data-nama="<?= $row['nama_siswa'] ?>">
@@ -147,29 +146,26 @@
             <p class="text-muted">Tidak ada siswa yang mencapai batas poin.</p>
           <?php endif; ?>
 
-          <!-- Section: Siswa dengan poin terbanyak -->
+          <!-- Siswa dengan poin terbanyak -->
           <h4 class="mt-4 mb-3 font-weight-bold">Siswa dengan poin terbanyak</h4>
           <?php foreach ($ranking as $i => $row): ?>
-            <?php if ($row['poin'] >= 250) continue; // skip siswa yg sudah mencapai batas 
+            <?php if ($row['poin'] >= 250) continue; 
             ?>
 
             <div class="d-flex align-items-center p-2 mb-2 rounded"
               style="background-color: <?= ($i == 0) ? '#FFD70033' : (($i == 1) ? '#C0C0C033' : (($i == 2) ? '#CD7F3233' : '#F8F9FA')); ?>;">
 
-              <!-- Ranking number -->
               <div class="text-center mr-3"
                 style="width: 35px; height: 35px; background-color: #2C6A74; color: white; 
                       border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
                 <?= $i + 1 ?>
               </div>
 
-              <!-- Student info -->
               <div class="flex-grow-1">
                 <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
                 <small class="text-muted"><?= $row['kelas'] ?></small>
               </div>
 
-              <!-- Poin badge -->
               <span class="badge 
                 <?= ($row['poin'] <= 55) ? 'badge-success' : (($row['poin'] <= 150) ? 'badge-warning' : 'badge-danger') ?> p-2"
                 style="min-width: 60px;">
@@ -177,14 +173,10 @@
               </span>
             </div>
           <?php endforeach; ?>
-
-
         </div>
       </div>
     </div>
-
     
-
     <!-- Rekap Siswa -->
     <div class="col-lg-4 col-md-5">
       <div class="row">
@@ -223,80 +215,74 @@
         </div>
       </div>
 
-      <!-- Section: Log Siswa Dikeluarkan (dipindah ke bawah rekap) -->
-<div class="mt-4">
-  <h4 class="mb-1 font-weight-bold text-danger">Siswa Dikeluarkan</h4>
-  <small class="text-muted d-block mb-3" style="font-size: 0.85rem;">
-    *Daftar ini hanya menampilkan siswa yang dikeluarkan dalam 5 bulan terakhir.  
-    Setelah lewat 5 bulan, data tidak lagi ditampilkan di dashboard.
-  </small>
+      <!-- Log Siswa Dikeluarkan (dipindah ke bawah rekap) -->
+      <div class="mt-4">
+        <h4 class="mb-1 font-weight-bold text-danger">Siswa Dikeluarkan</h4>
+        <small class="text-muted d-block mb-3" style="font-size: 0.85rem;">
+          *Daftar ini hanya menampilkan siswa yang dikeluarkan dalam 5 bulan terakhir.  
+          Setelah lewat 5 bulan, data tidak lagi ditampilkan di dashboard.
+        </small>
 
-  <?php if (!empty($log_keluar)): ?>
-    <?php foreach ($log_keluar as $row): ?>
-      <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
-        <div class="flex-grow-1">
-          <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
-          <small class="text-muted">
-            <?= $row['kelas'] ?> - Wali: <?= $row['wali_kelas'] ?>
-          </small><br>
-          <small class="text-muted">
-            Dikeluarkan: <?= date('d-m-Y H:i', strtotime($row['tanggal_keluar'])) ?>
-          </small>
-        </div>
-        <span class="badge badge-dark p-2 mr-2">NISN: <?= $row['nisn'] ?></span>
+        <?php if (!empty($log_keluar)): ?>
+          <?php foreach ($log_keluar as $row): ?>
+            <div class="d-flex align-items-center p-2 mb-2 rounded batas-poin">
+              <div class="flex-grow-1">
+                <h6 class="mb-0 font-weight-bold"><?= $row['nama_siswa'] ?></h6>
+                <small class="text-muted">
+                  <?= $row['kelas'] ?> - Wali: <?= $row['wali_kelas'] ?>
+                </small><br>
+                <small class="text-muted">
+                  Dikeluarkan: <?= date('d-m-Y H:i', strtotime($row['tanggal_keluar'])) ?>
+                </small>
+              </div>
+              <span class="badge badge-dark p-2 mr-2">NISN: <?= $row['nisn'] ?></span>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p class="text-muted">Belum ada siswa yang dikeluarkan.</p>
+        <?php endif; ?>
       </div>
-    <?php endforeach; ?>
-  <?php else: ?>
-    <p class="text-muted">Belum ada siswa yang dikeluarkan.</p>
-  <?php endif; ?>
-</div>
-
+      </div>
+      </div>
     </div>
 
-  </div>
-</div>
-
-      <!-- Input tersembunyi untuk upload -->
-<form id="uploadForm" method="post" enctype="multipart/form-data" action="<?= base_url('dashboard/upload_bukti'); ?>">
-  <input type="hidden" name="nisn" id="nisn">
-  <input type="file" name="bukti" id="bukti" class="d-none" accept=".pdf,.jpg,.png" required>
-</form>
+    <form id="uploadForm" method="post" enctype="multipart/form-data" action="<?= base_url('dashboard/upload_bukti'); ?>">
+      <input type="hidden" name="nisn" id="nisn">
+      <input type="file" name="bukti" id="bukti" class="d-none" accept=".pdf,.jpg,.png" required>
+    </form>
  
-
-<script>
-  if (document.querySelector('.input-group input')) {
-    var inputs = document.querySelectorAll('.input-group input');
-    inputs.forEach(input => {
-      if (input.value != "") {
-        input.parentElement.classList.add("is-filled");
-      }
-
-      input.addEventListener("focus", function() {
-        input.parentElement.classList.add("is-focused");
-      });
-
-      input.addEventListener("blur", function() {
-        if (input.value == "") {
-          input.parentElement.classList.remove("is-filled");
+  <script>
+    if (document.querySelector('.input-group input')) {
+      var inputs = document.querySelectorAll('.input-group input');
+      inputs.forEach(input => {
+        if (input.value != "") {
+          input.parentElement.classList.add("is-filled");
         }
-        input.parentElement.classList.remove("is-focused");
+
+        input.addEventListener("focus", function() {
+          input.parentElement.classList.add("is-focused");
+        });
+
+        input.addEventListener("blur", function() {
+          if (input.value == "") {
+            input.parentElement.classList.remove("is-filled");
+          }
+          input.parentElement.classList.remove("is-focused");
+        });
       });
-    });
-  }
-</script>
-
-<script>
-  // Klik tombol upload → buka file manager
-  $(document).on('click', '.uploadBtn', function () {
-    var nisn = $(this).data('nisn');
-    $('#nisn').val(nisn);
-    $('#bukti').click(); // buka file manager
-  });
-
-  // Setelah file dipilih → auto submit
-  $('#bukti').on('change', function () {
-    if (this.files.length > 0) {
-      $('#uploadForm').submit();
     }
-  });
-</script>
+  </script>
+
+  <script>
+    $(document).on('click', '.uploadBtn', function () {
+      var nisn = $(this).data('nisn');
+      $('#nisn').val(nisn);
+      $('#bukti').click(); 
+    });
+
+    $('#bukti').on('change', function () {
+      if (this.files.length > 0) {
+        $('#uploadForm').submit();
+      }
+    });
+  </script>

@@ -54,19 +54,6 @@ class Dashboard extends CI_Controller
         redirect('dashboard');
     }
 
-    // Fungsi keluarkan siswa
-// public function keluarkan($nisn)
-// {
-//     $this->db->where('nisn', $nisn);
-//     $this->db->update('data_siswa', [
-//         'status' => 'dikeluarkan',
-//         'tanggal_keluar' => date('Y-m-d H:i:s')
-//     ]);
-
-//     $this->session->set_flashdata('success', '✅ Siswa berhasil dikeluarkan.');
-//     redirect('dashboard');
-// }
-
     public function upload_bukti()
     {
         if ($this->input->method() === 'post') {

@@ -73,27 +73,27 @@
     }
 
     .badge-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.75rem; /* samakan dengan .btn-sm */
-  font-size: 0.850rem;       /* sama dengan btn-sm */
-  font-weight: 600;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  min-height: 31px;          /* samakan tinggi minimal btn-sm */
-  text-transform: uppercase;
-}
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem 0.75rem; 
+      font-size: 0.850rem;       
+      font-weight: 600;
+      line-height: 1.5;
+      border-radius: 0.25rem;
+      min-height: 31px;          
+      text-transform: uppercase;
+    }
 
-.badge-status.aktif {
-  background-color: #28a745;
-  color: #fff;
-}
+    .badge-status.aktif {
+      background-color: #28a745;
+      color: #fff;
+    }
 
-.badge-status.nonaktif {
-  background-color: #dc3545;
-  color: #fff;
-}
+    .badge-status.nonaktif {
+      background-color: #dc3545;
+      color: #fff;
+    }
   </style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

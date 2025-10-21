@@ -41,20 +41,45 @@ class M_kehadiran extends CI_Model
 
     public function get_laporan_persiswa()
     {
-        return $this->db->select('
+        $query = $this->db->select('
                 data_siswa.nisn,
                 data_siswa.nama_siswa,
                 data_siswa.kelas,
                 data_siswa.wali_kelas,
-                GROUP_CONCAT(CONCAT(DATE_FORMAT(kehadiran.tanggal, "%d-%m-%Y"), " - ", kehadiran.kode, " (", kehadiran.poin, " poin)") SEPARATOR "<br>") as daftar_kehadiran,
-                SUM(kehadiran.poin) as total_poin
+                kehadiran.tanggal,
+                kehadiran.kode,
+                kehadiran.poin
             ')
             ->from('kehadiran')
             ->join('data_siswa', 'kehadiran.nisn = data_siswa.nisn')
-            ->group_by('data_siswa.nisn')
-            ->order_by('total_poin', 'DESC')
-            ->get()
-            ->result();
+            ->order_by('data_siswa.nisn, kehadiran.tanggal', 'ASC')
+            ->get();
+
+        $result = $query->result_array();
+        $laporan = [];
+
+        foreach ($result as $row) {
+            $nisn = $row['nisn'];
+            if (!isset($laporan[$nisn])) {
+                $laporan[$nisn] = [
+                    'nisn' => $row['nisn'],
+                    'nama_siswa' => $row['nama_siswa'],
+                    'kelas' => $row['kelas'],
+                    'wali_kelas' => $row['wali_kelas'],
+                    'daftar_kehadiran' => [],
+                    'total_poin' => 0
+                ];
+            }
+
+            $laporan[$nisn]['daftar_kehadiran'][] =
+                date('d-m-Y', strtotime($row['tanggal'])) .
+                " - " . $row['kode'] .
+                " (" . $row['poin'] . " poin)";
+
+            $laporan[$nisn]['total_poin'] += $row['poin'];
+        }
+
+        return array_values($laporan);
     }
 
     public function search_data($keyword)

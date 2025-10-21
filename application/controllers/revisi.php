@@ -88,8 +88,15 @@ class Revisi extends CI_Controller
             ];            
         }
 
+        $this->load->model('M_siswa'); 
+
         $data['revisi'] = [];
         foreach ($siswa as $item) {
+
+            $data_siswa = $this->m_siswa->get_by_nisn($item['nisn']);
+            $status = $data_siswa['status'] ?? 'aktif';
+            $tanggal_keluar = $data_siswa['tanggal_keluar'] ?? null;
+
             if ($item['poin'] >= 10) {
                 $data['revisi'][] = [
                     'nisn' => $item['nisn'],
@@ -101,7 +108,10 @@ class Revisi extends CI_Controller
                     'jenis_data' => implode(', ', array_unique($item['jenis_data'])),
                     'poin' => $item['poin'],
                     'pelanggaran' => $item['pelanggaran'],
-                    'kehadiran' => $item['kehadiran']
+                    'kehadiran' => $item['kehadiran'],
+
+                    'status' => $status,
+                    'tanggal_keluar' => $tanggal_keluar
                 ];
             }
         }
@@ -130,77 +140,70 @@ class Revisi extends CI_Controller
     }
 
     public function simpan()
-{
-    $revisi = $this->input->post('revisi');
-    $treatment_checked = $this->input->post('treatment_checked'); 
+    {
+        $revisi = $this->input->post('revisi');
+        $treatment_checked = $this->input->post('treatment_checked'); 
 
-    if ($revisi) {
-        foreach ($revisi as $r) {
-            $treatment_count = 0;
+        if ($revisi) {
+            foreach ($revisi as $r) {
+                $treatment_count = 0;
 
-            $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
-            
-            // Hitung total poin asli (sebelum dikurangi treatment)
-            $total_poin_asli = $this->M_revisi->get_total_poin($r['nisn']);
+                $cek = $this->db->get_where('revisi', ['nisn' => $r['nisn']])->row();
 
-            // Cek apakah sudah >= 250
-            if (!empty($treatment_checked) && in_array($r['nisn'], $treatment_checked)) {
-                if ($total_poin_asli < 250) {
-                    // Boleh ditreatment
-                    $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count + 1 : 1;
+                $total_poin_asli = $this->get_total_poin($r['nisn']);
 
-                    $this->db->insert('treatment', [
-                        'nisn'    => $r['nisn'],
-                        'tanggal' => date('Y-m-d'), 
-                        'poin'    => 30
-                    ]);
+                if (!empty($treatment_checked) && in_array($r['nisn'], $treatment_checked)) {
+                    if ($total_poin_asli < 250) {
+                        $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count + 1 : 1;
+
+                        $this->db->insert('treatment', [
+                            'nisn'    => $r['nisn'],
+                            'tanggal' => date('Y-m-d'), 
+                            'poin'    => 30
+                        ]);
+                    } else {
+                        $this->session->set_flashdata('error', 'Siswa ' . $r['nama_siswa'] . ' sudah mencapai 250 poin. Tidak bisa melakukan treatment.');
+                        $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count : 0;
+                    }
                 } else {
-                    // Sudah 250 ke atas → tidak boleh treatment
-                    $this->session->set_flashdata('error', 'Siswa ' . $r['nama_siswa'] . ' sudah mencapai 250 poin. Tidak bisa melakukan treatment.');
-                    $treatment_count = ($cek && isset($cek->treatment_count)) ? $cek->treatment_count : 0;
+                    if ($cek && isset($cek->treatment_count)) {
+                        $treatment_count = $cek->treatment_count;
+                    }
                 }
-            } else {
-                if ($cek && isset($cek->treatment_count)) {
-                    $treatment_count = $cek->treatment_count;
-                }
+
+                $total_poin = $this->get_total_poin($r['nisn']);
+                if ($total_poin < 0) $total_poin = 0;
+
+                $tindak_lanjut = '';
+                if ($total_poin >= 0 && $total_poin <= 10) $tindak_lanjut = 'Pengarahan Tim Tatib';
+                elseif ($total_poin >= 11 && $total_poin <= 35) $tindak_lanjut = 'Peringatan ke I (Petugas Ketertiban)';
+                elseif ($total_poin >= 36 && $total_poin <= 55) $tindak_lanjut = 'Peringatan ke II (Koordinator Ketertiban)';
+                elseif ($total_poin >= 56 && $total_poin <= 75) $tindak_lanjut = 'Panggilan Orang Tua ke I + Form Treatment';
+                elseif ($total_poin >= 76 && $total_poin <= 100) $tindak_lanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+                elseif ($total_poin >= 101 && $total_poin <= 150) $tindak_lanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+                elseif ($total_poin >= 151 && $total_poin <= 200) $tindak_lanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+                elseif ($total_poin >= 201 && $total_poin <= 249) $tindak_lanjut = 'Skorsing (Waka Kesiswaan)';
+                else $tindak_lanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
+
+                $this->M_revisi->simpan_revisi([
+                    'nisn'            => $r['nisn'],
+                    'nama_siswa'      => $r['nama_siswa'],
+                    'kelas'           => $r['kelas'],
+                    'wali_kelas'      => $r['wali_kelas'],
+                    'tanggal'         => $r['tanggal'],
+                    'jenis'           => $r['jenis_data'],
+                    'keterangan'      => $r['keterangan'],
+                    'poin'            => $total_poin, 
+                    'treatment_count' => $treatment_count,
+                    'tindak_lanjut'   => $tindak_lanjut 
+                ]);
             }
 
-            // Hitung ulang total poin setelah treatment (jika ada)
-            $total_poin = $this->M_revisi->get_total_poin($r['nisn']);
-            if ($total_poin < 0) $total_poin = 0;
-
-            // Tentukan tindak lanjut
-            $tindak_lanjut = '';
-            if ($total_poin >= 0 && $total_poin <= 10) $tindak_lanjut = 'Pengarahan Tim Tatib';
-            elseif ($total_poin >= 11 && $total_poin <= 35) $tindak_lanjut = 'Peringatan ke I (Petugas Ketertiban)';
-            elseif ($total_poin >= 36 && $total_poin <= 55) $tindak_lanjut = 'Peringatan ke II (Koordinator Ketertiban)';
-            elseif ($total_poin >= 56 && $total_poin <= 75) $tindak_lanjut = 'Panggilan Orang Tua ke I + Form Treatment';
-            elseif ($total_poin >= 76 && $total_poin <= 100) $tindak_lanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
-            elseif ($total_poin >= 101 && $total_poin <= 150) $tindak_lanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
-            elseif ($total_poin >= 151 && $total_poin <= 200) $tindak_lanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
-            elseif ($total_poin >= 201 && $total_poin <= 249) $tindak_lanjut = 'Skorsing (Waka Kesiswaan)';
-            else $tindak_lanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
-
-            // Simpan revisi
-            $this->M_revisi->simpan_revisi([
-                'nisn'            => $r['nisn'],
-                'nama_siswa'      => $r['nama_siswa'],
-                'kelas'           => $r['kelas'],
-                'wali_kelas'      => $r['wali_kelas'],
-                'tanggal'         => $r['tanggal'],
-                'jenis'           => $r['jenis_data'],
-                'keterangan'      => $r['keterangan'],
-                'poin'            => $total_poin, 
-                'treatment_count' => $treatment_count,
-                'tindak_lanjut'   => $tindak_lanjut 
-            ]);
+            $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');
         }
 
-        $this->session->set_flashdata('success', 'Rekap berhasil disimpan ke revisi.');
+        redirect('revisi');
     }
-
-    redirect('revisi');
-}
 
     public function export_pdf()
     {

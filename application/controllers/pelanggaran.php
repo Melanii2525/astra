@@ -24,18 +24,15 @@ class Pelanggaran extends CI_Controller
     {
         parent::__construct();
 
-        // Cek session login
         if (!$this->session->userdata('logged_in')) {
             redirect('landingpage');
         }
 
-        // Load model
         $this->load->model('m_pelanggaran', 'm');
         $this->load->model('M_kehadiran');
         $this->load->model('M_revisi');
         $this->load->model('M_pelanggaran');
 
-        // Load helper
         $this->load->helper(['form', 'url']);
     }
 

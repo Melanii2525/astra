@@ -479,109 +479,106 @@
         </div>
       <?php else: ?>
 
-        <div class="timeline">
-  <?php foreach ($revisi as $index => $item): ?>
-    <?php
-      $badgeClass = '';
-      if ($item['poin'] <= 55) {
-        $badgeClass = 'badge-poin-hijau';
-      } elseif ($item['poin'] <= 150) {
-        $badgeClass = 'badge-poin-kuning';
-      } else {
-        $badgeClass = 'badge-poin-merah';
-      }
+      <div class="timeline">
+      <?php foreach ($revisi as $index => $item): ?>
+        <?php
+          $badgeClass = '';
+          if ($item['poin'] <= 55) {
+            $badgeClass = 'badge-poin-hijau';
+          } elseif ($item['poin'] <= 150) {
+            $badgeClass = 'badge-poin-kuning';
+          } else {
+            $badgeClass = 'badge-poin-merah';
+          }
 
-      $poin = $item['poin'];
-      $tindakLanjut = '';
-      if ($poin >= 0 && $poin <= 10) {
-        $tindakLanjut = 'Pengarahan Tim Tatib';
-      } elseif ($poin >= 11 && $poin <= 35) {
-        $tindakLanjut = 'Peringatan ke I (Petugas Ketertiban)';
-      } elseif ($poin >= 36 && $poin <= 55) {
-        $tindakLanjut = 'Peringatan ke II (Koordinator Ketertiban)';
-      } elseif ($poin >= 56 && $poin <= 75) {
-        $tindakLanjut = 'Panggilan Orang Tua ke I + Form Treatment';
-      } elseif ($poin >= 76 && $poin <= 100) {
-        $tindakLanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
-      } elseif ($poin >= 101 && $poin <= 150) {
-        $tindakLanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
-      } elseif ($poin >= 151 && $poin <= 200) {
-        $tindakLanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
-      } elseif ($poin >= 201 && $poin <= 249) {
-        $tindakLanjut = 'Skorsing (Waka Kesiswaan)';
-      } else {
-        $tindakLanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
-      }
-    ?>
+          $poin = $item['poin'];
+          $tindakLanjut = '';
+          if ($poin >= 0 && $poin <= 10) {
+            $tindakLanjut = 'Pengarahan Tim Tatib';
+          } elseif ($poin >= 11 && $poin <= 35) {
+            $tindakLanjut = 'Peringatan ke I (Petugas Ketertiban)';
+          } elseif ($poin >= 36 && $poin <= 55) {
+            $tindakLanjut = 'Peringatan ke II (Koordinator Ketertiban)';
+          } elseif ($poin >= 56 && $poin <= 75) {
+            $tindakLanjut = 'Panggilan Orang Tua ke I + Form Treatment';
+          } elseif ($poin >= 76 && $poin <= 100) {
+            $tindakLanjut = 'Panggilan Orang Tua ke II + Surat Peringatan I';
+          } elseif ($poin >= 101 && $poin <= 150) {
+            $tindakLanjut = 'Panggilan Orang Tua ke III + Surat Peringatan II';
+          } elseif ($poin >= 151 && $poin <= 200) {
+            $tindakLanjut = 'Panggilan Orang Tua ke IV + Surat Peringatan III';
+          } elseif ($poin >= 201 && $poin <= 249) {
+            $tindakLanjut = 'Skorsing (Waka Kesiswaan)';
+          } else {
+            $tindakLanjut = 'Dikembalikan ke Orang Tua (Kepala Sekolah)';
+          }
+        ?>
 
-    <div class="timeline-item <?= isset($item['status']) && $item['status'] == 'dikeluarkan' ? 'siswa-dikeluarkan' : '' ?>"
-        data-tindak="<?= $tindakLanjut ?>">
-      <div class="timeline-line"></div>
-      <div class="card course-card">
-        <div class="card-body">
-          <h6 class="course-title"><?= $item['nama_siswa'] ?> — <?= $item['kelas'] ?></h6>
-          <p class="course-desc">NISN: <?= $item['nisn'] ?></p>
-          <p class="course-info">Wali Kelas: <?= $item['wali_kelas'] ?></p>
+        <div class="timeline-item <?= isset($item['status']) && $item['status'] == 'dikeluarkan' ? 'siswa-dikeluarkan' : '' ?>"
+            data-tindak="<?= $tindakLanjut ?>">
+          <div class="timeline-line"></div>
+          <div class="card course-card">
+            <div class="card-body">
+              <h6 class="course-title"><?= $item['nama_siswa'] ?> — <?= $item['kelas'] ?></h6>
+              <p class="course-desc">NISN: <?= $item['nisn'] ?></p>
+              <p class="course-info">Wali Kelas: <?= $item['wali_kelas'] ?></p>
 
-          <?php if (isset($item['status']) && $item['status'] == 'dikeluarkan'): ?>
-            <p class="text-danger fw-bold">
-              ⚠️ Siswa sudah dikeluarkan pada 
-              <?= !empty($item['tanggal_keluar']) ? date('d-m-Y', strtotime($item['tanggal_keluar'])) : '-' ?>
-            </p>
-          <?php else: ?>
-            <span class="badge badge-info">Aktif</span>
+              <?php if (isset($item['status']) && $item['status'] == 'dikeluarkan'): ?>
+                <p class="text-danger fw-bold">
+                  ⚠️ Siswa sudah dikeluarkan pada 
+                  <?= !empty($item['tanggal_keluar']) ? date('d-m-Y', strtotime($item['tanggal_keluar'])) : '-' ?>
+                </p>
+              <?php else: ?>
+                <span class="badge badge-info">Aktif</span>
 
-            <span class="badge <?= $badgeClass ?>" id="badge-poin-<?= $index ?>" data-poin="<?= $item['poin'] ?>">
-              POIN: <span id="poin-value-<?= $index ?>"><?= $item['poin'] ?></span>
-            </span>
+                <span class="badge <?= $badgeClass ?>" id="badge-poin-<?= $index ?>" data-poin="<?= $item['poin'] ?>">
+                  POIN: <span id="poin-value-<?= $index ?>"><?= $item['poin'] ?></span>
+                </span>
 
-            <button type="button" class="btn custom-btn btn-sm" onclick="showDetailPelanggaran(<?= $index ?>)">
-              Detail
-            </button>
+                <button type="button" class="btn custom-btn btn-sm" onclick="showDetailPelanggaran(<?= $index ?>)">
+                  Detail
+                </button>
 
-            <p class="tindak-lanjut-info" id="tindak-lanjut-<?= $index ?>">
-              <strong>Tindak Lanjut:</strong> <?= $tindakLanjut ?>
-            </p>
+                <p class="tindak-lanjut-info" id="tindak-lanjut-<?= $index ?>">
+                  <strong>Tindak Lanjut:</strong> <?= $tindakLanjut ?>
+                </p>
 
-            <div class="mt-3">
-              <div class="form-check">
-                <?php if ($item['poin'] >= 250): ?>
-                  <span class="text-danger fw-bold small">
-                    Siswa sudah mencapai batas poin, dikembalikan ke orang tua
-                  </span>
-                <?php else: ?>
-                  <input class="form-check-input" type="checkbox"
-                         name="treatment_checked[]"
-                         value="<?= $item['nisn'] ?>"
-                         id="treatment1_<?= $item['nisn'] ?>"
-                         onchange="updatePoin(<?= $index ?>, '<?= $item['nisn'] ?>')">
-                  <label class="form-check-label" for="treatment1_<?= $item['nisn'] ?>">
-                    Telah menyelesaikan treatment
-                  </label>
-                <?php endif; ?>
-              </div>
+                <div class="mt-3">
+                  <div class="form-check">
+                    <?php if ($item['poin'] >= 250): ?>
+                      <span class="text-danger fw-bold small">
+                        Siswa sudah mencapai batas poin, dikembalikan ke orang tua
+                      </span>
+                    <?php else: ?>
+                      <input class="form-check-input" type="checkbox"
+                            name="treatment_checked[]"
+                            value="<?= $item['nisn'] ?>"
+                            id="treatment1_<?= $item['nisn'] ?>"
+                            onchange="updatePoin(<?= $index ?>, '<?= $item['nisn'] ?>')">
+                      <label class="form-check-label" for="treatment1_<?= $item['nisn'] ?>">
+                        Telah menyelesaikan treatment
+                      </label>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endif; ?> 
+
+              <input type="hidden" name="revisi[<?= $index ?>][nisn]" value="<?= $item['nisn'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][nama_siswa]" value="<?= $item['nama_siswa'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][kelas]" value="<?= $item['kelas'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][wali_kelas]" value="<?= $item['wali_kelas'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][tanggal]" value="<?= $item['tanggal'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][jenis_data]" value="<?= $item['jenis_data'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][keterangan]" value="<?= $item['keterangan'] ?>">
+              <input type="hidden" name="revisi[<?= $index ?>][poin]" id="poin_akhir_<?= $index ?>" value="<?= $item['poin'] ?>">
+              <input type="hidden" name="nisn[]" value="<?= $item['nisn'] ?>">
             </div>
-          <?php endif; ?> <!-- ini nutup if status -->
-          
-          <!-- hidden input supaya bisa ikut ke POST -->
-          <input type="hidden" name="revisi[<?= $index ?>][nisn]" value="<?= $item['nisn'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][nama_siswa]" value="<?= $item['nama_siswa'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][kelas]" value="<?= $item['kelas'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][wali_kelas]" value="<?= $item['wali_kelas'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][tanggal]" value="<?= $item['tanggal'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][jenis_data]" value="<?= $item['jenis_data'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][keterangan]" value="<?= $item['keterangan'] ?>">
-          <input type="hidden" name="revisi[<?= $index ?>][poin]" id="poin_akhir_<?= $index ?>" value="<?= $item['poin'] ?>">
-          <!-- tambahan hidden input -->
-          <input type="hidden" name="nisn[]" value="<?= $item['nisn'] ?>">
+          </div>
         </div>
-      </div>
+      <?php endforeach; ?>
     </div>
-  <?php endforeach; ?>
-</div>
-</form>
-<?php endif; ?>
-
+  </form>
+  <?php endif; ?>
         <?php if ($this->session->flashdata('success')): ?>
           <div class="alert alert-success mt-3">
             <?= $this->session->flashdata('success') ?>
@@ -614,7 +611,7 @@
 
       options.forEach(opt => {
         if (opt.value.toUpperCase() === inputVal.toUpperCase()) {
-          nisn = opt.dataset.nisn; // ambil nisn dari data attribute
+          nisn = opt.dataset.nisn; 
         }
       });
 
@@ -631,7 +628,6 @@
 
         window.open("<?= base_url('revisi/export_pdf_per_siswa') ?>?nisn=" + encodeURIComponent(nisn), "_blank");
 
-        // reset
         $("#namaSiswa").val("");
         $("#nisnSiswa").val("");
     }
@@ -650,9 +646,7 @@
           source: "<?= base_url('revisi/search_siswa') ?>",
           minLength: 2,
           select: function(event, ui) {
-              // isi input nama
               $("#namaSiswa").val(ui.item.value); 
-              // simpan NISN ke hidden field (biar validasi lolos)
               $("#nisnSiswa").val(ui.item.nisn);
               return false;
           }
@@ -687,7 +681,7 @@
       const initialPoin = parseInt(poinBadge.getAttribute('data-poin'));
 
       const checkbox = document.getElementById(`treatment1_${nisn}`);
-      if (!checkbox) return; // kalau tidak ada checkbox, stop
+      if (!checkbox) return; 
 
       const isChecked = checkbox.checked;
       const newPoin = initialPoin - (isChecked ? 30 : 0);
@@ -696,11 +690,9 @@
       poinValueSpan.textContent = finalPoin;
       document.getElementById(`poin_akhir_${index}`).value = finalPoin;
 
-      // update tindak lanjut
       const tindakLanjutText = getTindakLanjut(finalPoin);
       document.getElementById(`tindak-lanjut-${index}`).innerHTML = `<strong>Tindak Lanjut:</strong> ${tindakLanjutText}`;
 
-      // update badge warna
       const badge = document.getElementById(`badge-poin-${index}`);
       badge.classList.remove('badge-poin-hijau', 'badge-poin-kuning', 'badge-poin-merah');
       if (finalPoin <= 55) {
@@ -711,7 +703,6 @@
         badge.classList.add('badge-poin-merah');
       }
 
-      // kalau poin >= 250, checkbox hilang + tampilkan teks
       if (finalPoin >= 250) {
         checkbox.parentElement.innerHTML = `<p class="text-danger fw-bold">
           Siswa sudah mencapai batas poin, dikembalikan ke orang tua

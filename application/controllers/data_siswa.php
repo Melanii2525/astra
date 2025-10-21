@@ -20,12 +20,10 @@ class Data_siswa extends CI_Controller
     {
         parent::__construct();
 
-        // Cek apakah user sudah login
         if (!$this->session->userdata('logged_in')) {
-            redirect('landingpage'); // redirect ke halaman login/landing jika belum login
+            redirect('landingpage');
         }
 
-        // Load semua model & helper yang dibutuhkan
         $this->load->model('M_kehadiran');
         $this->load->model('M_revisi');
         $this->load->model('M_pelanggaran');

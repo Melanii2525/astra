@@ -34,12 +34,10 @@
         <?php
             $poin = isset($item['poin']) ? (int)$item['poin'] : 0;
 
-            // Tentukan warna badge normal
             if ($poin <= 55) $badgeClass = 'badge-hijau';
             elseif ($poin <= 150) $badgeClass = 'badge-kuning';
             else $badgeClass = 'badge-merah';
 
-            // Cek apakah sudah mencapai batas poin
             $isBatas = $poin >= 250;
         ?>
         <div class="item" style="<?= $isBatas ? 'border:2px solid #ed2939; background:#ffe5e5;' : '' ?>">
